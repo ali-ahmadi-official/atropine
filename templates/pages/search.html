@@ -1,0 +1,223 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+جستجو
+{% endblock %}
+
+{% block header %}
+<!-- header start -->
+<header class="main-header learning-header h-136">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="top-header">
+                    <div class="header-left">
+                        <a class="text-white" data-bs-toggle="offcanvas" href="#sideMenu" role="button">
+                            <i class="ri-menu-3-fill"></i>
+                        </a>
+                        <a href="{% url 'main' %}" class="header-logo">
+                            <h4 class="text-white">آتروپین</h4>
+                        </a>
+                    </div>
+
+                    <div class="header-right">
+                        <div class="notification-box">
+                            <a class="text-white" href="{% url 'sign_in' %}">
+                                <i class="ri-logout-box-line"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-box search-box-2">
+                    <input type="search" class="form-control" placeholder="جستجو کنید...">
+                    <i class="ri-search-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- header end -->
+{% endblock %}
+
+{% block content %}
+<!-- Category Section Start -->
+<div class="category-section section-t-space">
+    <div class="title px-15">
+        <h4>دسته بندی ها</h4>
+    </div>
+
+    <ul class="category-box overflow-auto px-15">
+        <li>
+            <ul class="category-list">
+                <li class="active">
+                    <a href="category.html">طراحی</a>
+                </li>
+                <li>
+                    <a href="category.html">کد نویسی</a>
+                </li>
+                <li>
+                    <a href="category.html">بازار یابی</a>
+                </li>
+                <li>
+                    <a href="category.html">سلامت و تناسب اندام</a>
+                </li>
+                <li>
+                    <a href="category.html">هنر</a>
+                </li>
+                <li>
+                    <a href="category.html">کسب و کار</a>
+                </li>
+            </ul>
+        </li>
+
+        <li>
+            <ul class="category-list">
+                <li>
+                    <a href="category.html">توسعه</a>
+                </li>
+                <li>
+                    <a href="category.html">سبک زندگی</a>
+                </li>
+                <li>
+                    <a href="category.html">کسب و کار</a>
+                </li>
+                <li>
+                    <a href="category.html">هنر</a>
+                </li>
+                <li>
+                    <a href="category.html">سلامت و تناسب اندام</a>
+                </li>
+                <li>
+                    <a href="category.html">بازار یابی</a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+<!-- Category Section End -->
+
+<!-- Popular Course Start -->
+<section class="section-t-space popular-course-section">
+    <div class="custom-container">
+        <div class="title">
+            <h4>دوره های پرطرفدار</h4>
+        </div>
+        <div class="row g-4">
+            <div class="col-12">
+                <div class="popular-box">
+                    <a href="my-course.html" class="popular-image">
+                        <img src="{% static 'images/learning/course/3.jpg' %}" class="img-fluid w-100" alt="">
+                    </a>
+                    <div class="popular-detail">
+                        <a href="my-course.html">
+                            <h6>پایتون فراتر از اصول - برنامه نویسی شی گرا</h6>
+                        </a>
+                        <div class="video-play">
+                            <i class="ri-play-circle-line"></i>
+                            <span>10 درس</span>
+                        </div>
+                        <ul class="rating-box">
+                            <li>
+                                <ul class="rating">
+                                    <li><i class="ri-star-fill"></i></li>
+                                    <li class="title-color">4.5</li>
+                                    <li class="content-color">(250 رتبه بندی)</li>
+                                </ul>
+                            </li>
+                            <li class="fw-500 theme-color">برنامه نویسی</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="popular-box">
+                    <div class="popular-image">
+                        <img src="{% static 'images/learning/course/4.jpg' %}" class="img-fluid w-100" alt="">
+                    </div>
+                    <div class="popular-detail">
+                        <a href="my-course.html">
+                            <h6>برنامه نویسی شی گرا با پایتون</h6>
+                        </a>
+                        <div class="video-play">
+                            <i class="ri-play-circle-line"></i>
+                            <span>5 ​​درس</span>
+                        </div>
+                        <ul class="rating-box">
+                            <li>
+                                <ul class="rating">
+                                    <li><i class="ri-star-fill"></i></li>
+                                    <li class="title-color">4.5</li>
+                                    <li class="content-color">(250 رتبه بندی)</li>
+                                </ul>
+                            </li>
+                            <li class="fw-500 theme-color">برنامه نویسی</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Popular Course End -->
+
+<!-- Top instructors Section Start -->
+<div class="top-instructors-section section-t-space">
+    <div class="title px-15">
+        <h4>مدرسان برتر</h4>
+    </div>
+
+    <div class="instructors-box">
+        <ul class="instructors-list px-15">
+            <li>
+                <a href="instructor.html" class="instructors-contain">
+                    <div class="instructors-image">
+                        <img src="{% static 'images/avtar/1.jpg' %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="instructors-detail">
+                        <h5>مارک جکنو</h5>
+                        <h6>56212 دانش آموز</h6>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="instructor.html" class="instructors-contain">
+                    <div class="instructors-image">
+                        <img src="{% static 'images/avtar/2.jpg' %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="instructors-detail">
+                        <h5>ادوارد همچنین</h5>
+                        <h6>25584 دانش آموز</h6>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="instructor.html" class="instructors-contain">
+                    <div class="instructors-image">
+                        <img src="{% static 'images/avtar/3.jpg' %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="instructors-detail">
+                        <h5>آلن جکنو</h5>
+                        <h6>77050 دانش آموز</h6>
+                    </div>
+                </a>
+            </li>
+            <li>
+                <a href="instructor.html" class="instructors-contain">
+                    <div class="instructors-image">
+                        <img src="{% static 'images/avtar/4.jpg' %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="instructors-detail">
+                        <h5>مارک جکنو</h5>
+                        <h6>56212 دانش آموز</h6>
+                    </div>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<!-- Top instructors Section End -->
+{% endblock %}

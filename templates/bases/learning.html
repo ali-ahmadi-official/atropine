@@ -1,0 +1,288 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="آتروپین">
+    <meta name="keywords" content="آتروپین">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
+    <meta name="theme-color" content="#172561">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="آتروپین">
+    <meta name="msapplication-TileImage" content="{% static 'images/logo.jpg' %}">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo-optimized.jpg' %}">
+
+    <!--Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet">
+
+    <!-- Loader Normalize css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/normalize.min.css' %}">
+
+    <!-- Bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="{% static 'css/vendors/bootstrap.css' %}">
+
+    <!-- Swiper css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/swiper/swiper-bundle.min.css' %}">
+
+    <!-- Remix Icon css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/remixicon.css' %}">
+
+    <!-- Style css -->
+    <link id="change-link" rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="inter-body learning-color">
+    <!-- Loader Box Start -->
+    <div class="min-loader-wrapper">
+        <img src="{% static 'images/loader/chatting.gif' %}" class="img-fluid loader" alt="">
+        <div class="loader-section chatting-color section-left"></div>
+        <div class="loader-section chatting-color section-right"></div>
+    </div>
+    <!-- Loader Box End -->
+    
+    <main class="position-relative">
+        {% block header %}
+        {% endblock %}
+
+        <!-- Mobile Section Start -->
+        <div class="mobile-style-1">
+            <ul>
+                <li class="{% if '/index/' in request.path %} active {% endif %}">
+                    <a href="{% url 'main' %}" class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-home-5-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>خانه</h5>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="{% if '/search/' in request.path %} active {% endif %}">
+                    <a href="{% url 'search' %}" class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-search-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>جستجو</h5>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="{% if '/my-course/' in request.path %} active {% endif %}">
+                    <a href="{% url 'my_course' %}" class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-play-circle-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>دوره آموزشی </h5>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="{% if '/wishlist/' in request.path %} active {% endif %}">
+                    <a href="{% url 'wishlist' %}" class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-bookmark-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>علاقه مندی ها</h5>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat_list' %}" class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-message-3-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>گفتگو ها</h5>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <!-- Mobile Section End -->
+
+        {% block content %}
+        {% endblock %}
+
+        <!-- space box start -->
+        <div class="learning-box"></div>
+        <!-- space box end -->
+
+        <!-- Side menu offcanvas start -->
+        <div class="offcanvas theme-offcanvas learning-offcanvas offcanvas-start" tabindex="-1" id="sideMenu">
+            <div class="offcanvas-header">
+                <div class="profile-box">
+                    <div class="profile-image">
+                        <img src="{% static 'images/learning/menu-profile.jpg' %}" class="img-fluid" alt="">
+                    </div>
+                    <div class="profile-name">
+                        <h4 class="text-white">محمد عموئی</h4>
+                        <h6 class="content-color">test@gmail.com</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="offcanvas-body">
+                <div class="title px-15">
+                    <h4>تنظیمات کلی</h4>
+                </div>
+                <ul class="menu-setting-list">
+                    <li>
+                        <a href="personal-setting.html" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-user-3-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>تنظیمات شخصی</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="javascript:void(0)" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-download-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>گزینه دانلود</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="javascript:void(0)" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-play-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>گزینه های پخش ویدئو</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="account-security.html" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-lock-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>امنیت حساب</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="app-setting.html" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-settings-5-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>تنظیمات برنامه</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <section class="section-t-space section-b-space">
+                    <div class="divider"></div>
+                </section>
+
+                <div class="title px-15">
+                    <h4>پیوندهای دیگر</h4>
+                </div>
+                <ul class="menu-setting-list">
+                    <li>
+                        <a href="instructor.html" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-phone-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>مدرس</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="term-condition.html" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-information-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>شرایط و شرایط</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Side menu offcanvas end -->
+
+        <!-- Theme Option Setting Box Start -->
+        <div class="theme-setting-box">
+            <div class="theme-box">
+                <button class="theme-icon text-white">
+                    <i class="ri-pencil-line"></i>
+                </button>
+                <ul class="theme-option">
+                    <li>
+                        <button class="theme-setting-button" id="light-btn">
+                            <i class="ri-sun-line"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="theme-setting-button" id="dark-btn">
+                            <i class="ri-moon-line"></i>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="theme-setting-button" id="system-btn">
+                            <i class="ri-computer-line"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <!-- Theme Option Setting Box End -->
+    </main>
+
+    <!-- Bootstrap js-->
+    <script src="{% static 'js/vendors/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- swiper js -->
+    <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'js/custom_swiper.js' %}"></script>
+
+    <!-- Loader js -->
+    <script src="{% static 'js/loader.js' %}"></script>
+
+    <!-- Theme js-->
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- Theme Settings js-->
+    <script src="{% static 'js/theme-setting.js' %}"></script>
+</body>
+
+
+</html>

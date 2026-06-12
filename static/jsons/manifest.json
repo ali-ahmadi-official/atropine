@@ -1,0 +1,17 @@
+{
+  "name": "آتروپین",
+  "short_name": "آتروپین",
+  "lang": "en-US",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "white",
+  "theme_color": "#172561",
+  "description": "Atropine app",
+  "icons": [
+    {
+      "src": "/static/images/logo.jpg",
+      "sizes": "1500x609",
+      "type": "image/jpg"
+    }
+  ]
+}

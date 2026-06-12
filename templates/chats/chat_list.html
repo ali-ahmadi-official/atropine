@@ -1,0 +1,290 @@
+{% extends 'bases/chat.html' %}
+
+{% load static %}
+
+{% block title %}
+گفتگو ها
+{% endblock %}
+
+{% block header %}
+<header class="chatting-header">
+    <div class="custom-container">
+        <div class="header-box">
+            <a href="{% url 'main' %}" class="left-header">
+                <h4 class="text-white">آتروپین</h4>
+            </a>
+            <div class="right-header">
+                <button class="search-button btn text-white">
+                    <i class="ri-search-line"></i>
+                </button>
+                <div class="dropdown edit-option">
+                    <button class="btn dropdown-button text-white" type="button" data-bs-toggle="dropdown">
+                        <i class="ri-more-2-line"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item d-flex gap-2" href="invite-friend.html">
+                                <i class="ri-share-line"></i>
+                                <span>دعوت دوستان</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex gap-2" href="chat-history.html">
+                                <i class="ri-history-line"></i>
+                                <span>تاریخچه گفتگو</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="search-box">
+                <input type="text" class="form-control" placeholder="جستجو کنید.....">
+                <i class="ri-close-line close-search"></i>
+            </div>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<!-- Mobile Section Start -->
+<div class="mobile-style-2">
+    <ul class="mobile-list">
+        <li class="">
+            <a href="{% url 'main' %}">
+                <i class="ri-home-3-line unactive-icon"></i>
+                <i class="ri-home-3-fill active-icon"></i>
+                <h5>خانه</h5>
+            </a>
+        </li>
+
+        <li class="active">
+            <a href="{% url 'chat_list' %}">
+                <i class="ri-message-3-line unactive-icon"></i>
+                <i class="ri-message-3-fill active-icon"></i>
+                <h5>گفتگو ها</h5>
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'sign_in' %}">
+                <i class="ri-logout-box-line unactive-icon"></i>
+                <i class="ri-logout-box-line active-icon"></i>
+                <h5>خروج</h5>
+            </a>
+        </li>
+    </ul>
+</div>
+<!-- Mobile Section End -->
+
+<!-- Chatting Box Section Start -->
+<section class="chatting-section">
+    <div class="custom-container">
+        <div class="chatting-title">
+            <h4>چت های اخیر</h4>
+        </div>
+        <div class="chatting-list-box">
+            <ul class="chatting-list">
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box online unread-story unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/1.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>پیپا</h5>
+                                <h6>خوبه!!</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box unread-story unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/2.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>مایکل اندرسون</h5>
+                                <h6>ببخشید مردم همه نیاز دارند..</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box delivered-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/3.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>کلر بیکر</h5>
+                                <h6>احساس می کنم تمام زندگی شما را می شناسم..</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/4.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>الا</h5>
+                                <h6>این یک نمونه کامل از کیفیت است..</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box delivered-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/5.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>دایان</h5>
+                                <h6>هی رفیق؟ کی میرویم..</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/6.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>رابرت بال</h5>
+                                <h6>خسته شدم از دلتنگی رفقا..</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/1.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>سام بلک</h5>
+                                <h6>سام تصویر را برای شما ارسال کرده است</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box unread-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/2.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>لوک اوری</h5>
+                                <h6>رفیق چیه...</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'chat' %}" class="chatting-box read-message">
+                        <div class="chatting-image">
+                            <img src="{% static 'images/chatting/profile/3.jpg' %}" class="img-fluid" alt="">
+                        </div>
+                        <div class="chatting-content">
+                            <div class="chatting-name">
+                                <h5>هنری بیوینز</h5>
+                                <h6>سام فایل صوتی را برای شما ارسال کرده است</h6>
+                            </div>
+                            <div class="chatting-message">
+                                <h6>06.00 ظهر</h6>
+                                <span>
+                                    <span class="msg-count">5</span>
+                                    <i class="ri-check-line delivered-icon"></i>
+                                    <i class="ri-check-double-line read-icon"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- Chatting Box Section End -->
+{% endblock %}

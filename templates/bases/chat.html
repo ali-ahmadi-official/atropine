@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html dir="rtl">
+
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="آتروپین">
+    <meta name="keywords" content="آتروپین">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
+    <meta name="theme-color" content="#172561">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="آتروپین">
+    <meta name="msapplication-TileImage" content="{% static 'images/logo.jpg' %}">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo-optimized.jpg' %}">
+
+    <!--Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet">
+
+    <!-- Loader Normalize css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/normalize.min.css' %}">
+
+    <!-- Bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="{% static 'css/vendors/bootstrap.css' %}">
+
+    <!-- Swiper css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendors/swiper/swiper-bundle.min.css' %}">
+
+    <!-- Remix Icon css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/remixicon.css' %}">
+
+    <!-- Style css -->
+    <link id="change-link" rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+</head>
+
+<body class="rubik-body theme-bg-color chatting-color">
+    <!-- Loader Box Start -->
+    <div class="min-loader-wrapper">
+        <img src="{% static 'images/loader/chatting.gif' %}" class="img-fluid loader" alt="">
+        <div class="loader-section chatting-color section-left"></div>
+        <div class="loader-section chatting-color section-right"></div>
+    </div>
+    <!-- Loader Box End -->
+
+    {% block header %}
+
+    {% endblock %}
+
+    {% block content %}
+
+    {% endblock %}
+
+    <!-- Theme Option Setting Box Start -->
+    <div class="theme-setting-box">
+        <div class="theme-box">
+            <button class="theme-icon text-white">
+                <i class="ri-pencil-line"></i>
+            </button>
+            <ul class="theme-option">
+                <li>
+                    <button class="theme-setting-button" id="light-btn">
+                        <i class="ri-sun-line"></i>
+                    </button>
+                </li>
+                <li>
+                    <button class="theme-setting-button" id="dark-btn">
+                        <i class="ri-moon-line"></i>
+                    </button>
+                </li>
+                <li>
+                    <button class="theme-setting-button" id="system-btn">
+                        <i class="ri-computer-line"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- Theme Option Setting Box End -->
+
+    <!-- Bootstrap js-->
+    <script src="{% static 'js/vendors/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- swiper js -->
+    <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'js/custom_swiper.js' %}"></script>
+
+    <!-- Loader js -->
+    <script src="{% static 'js/loader.js' %}"></script>
+
+    <!-- Search Open-Close js -->
+    <script src="{% static 'js/search-open-close.js' %}"></script>
+
+    <!-- Theme js-->
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- Theme Settings js-->
+    <script src="{% static 'js/theme-setting.js' %}"></script>
+</body>
+
+
+</html>

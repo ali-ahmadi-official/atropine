@@ -1,0 +1,665 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+دوره آموزشی
+{% endblock %}
+
+{% block header %}
+<!-- header start -->
+<header class="main-header locked-header learning-header overflow-hidden">
+        <div class="watch-video">
+            <div class="top-header">
+                <div class="header-left">
+                    <a class="text-white" data-bs-toggle="offcanvas" href="#sideMenu" role="button">
+                        <i class="ri-menu-3-fill"></i>
+                    </a>
+                    <a href="{% url 'main' %}" class="header-logo">
+                        <h4 class="text-white">آتروپین</h4>
+                    </a>
+                </div>
+
+                <div class="header-right">
+                    <div class="notification-box">
+                        <a class="text-white" href="{% url 'sign_in' %}">
+                            <i class="ri-logout-box-line"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-header">
+                <div class="bg-overlay"></div>
+                <img src="{% static 'images/learning/course/1.jpg' %}" class="img-fluid" alt="">
+                <div class="video-icon">
+                    <div class="icon">
+                        <i class="ri-play-fill"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+<!-- header end -->
+{% endblock %}
+
+{% block content %}
+<!-- Video Name Section Start -->
+<section class="video-name-section pt-3">
+    <div class="custom-container">
+        <div class="name-title">
+            <h5>توسط آلن جکنو</h5>
+            <h4>پایتون فراتر از اصول - برنامه نویسی شی گرا</h4>
+            <ul class="course-number">
+                <li>1 ساعت و 23 دقیقه</li>
+                <li>10 دوره</li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- Video Name Section End -->
+
+<!-- About Course Section Start -->
+<section class="about-course-section section-t-space">
+    <div class="custom-container">
+        <div class="title mb-1">
+            <h4>درباره این دوره</h4>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="about-detail">
+                    <p>در یک یافته تکان دهنده، دانشمند گله ای از تکشاخ ها را کشف کرد
+                        در دره ای دورافتاده که قبلاً کشف نشده بود.<span id="dots">...</span></p>
+                    <p id="more" class="more">یکی از اسب‌های تک شاخ ماده به‌ویژه دوستانه بود و محققین هم دوست بودند
+                        قادر به برقراری ارتباط با حیوانات حتی اسمش را هم گذاشتند.</p>
+                    <button class="btn hide-show-button" onclick="showhide()" id="toggle">
+                        <i class="ri-arrow-down-s-line"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- About Course Section End -->
+
+<!-- Course Section Start -->
+<div class="section course-section section-t-space section-b-space">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="nav nav-tabs custom-nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="course-tab" data-bs-toggle="tab"
+                            data-bs-target="#course-tab-pane" type="button" role="tab">دوره های آموزشی</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="more-tab" data-bs-toggle="tab" data-bs-target="#more-tab-pane"
+                            type="button" role="tab">بیشتر</button>
+                    </li>
+                </ul>
+                <div class="tab-content custom-tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="course-tab-pane" role="tabpanel" tabindex="0">
+                        <div class="video-box-list">
+                            <ul class="video-list">
+                                <li>
+                                    <div class="video-box complete">
+                                        <div class="video-number">
+                                            <h4>01</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>مقدمه</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="video-box watching">
+                                        <div class="video-number">
+                                            <h4>02</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>نمای کلی دوره</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="video-box download">
+                                        <div class="video-number">
+                                            <h4>03</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>مبانی در پایتون</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="video-box download">
+                                        <div class="video-number">
+                                            <h4>04</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>جاسازی PHP در HTML</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="video-box download">
+                                        <div class="video-number">
+                                            <h4>05</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>استفاده از داده پویا</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <div class="video-box download">
+                                        <div class="video-number">
+                                            <h4>06</h4>
+                                        </div>
+                                        <div class="video-content">
+                                            <h5>ورزش</h5>
+                                            <h6>ویدئو - 4.15 دقیقه</h6>
+                                        </div>
+                                        <div class="video-icon">
+                                            <i class="ri-play-fill play-icon"></i>
+                                            <i class="ri-check-line check-icon"></i>
+                                            <i class="ri-download-2-line download-icon"></i>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="more-tab-pane" role="tabpanel" tabindex="0">
+                        <div class="more-option-box">
+                            <ul class="more-option-list">
+                                <li>
+                                    <button class="option-box" data-bs-target="#shareCourse"
+                                        data-bs-toggle="offcanvas">
+                                        <span class="option-icon">
+                                            <i class="ri-share-box-line"></i>
+                                        </span>
+                                        <span class="option-content">
+                                            <span>اشتراک گذاری دوره</span>
+                                        </span>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button class="option-box" data-bs-target="#certificate"
+                                        data-bs-toggle="offcanvas">
+                                        <span class="option-icon">
+                                            <i class="ri-award-line"></i>
+                                        </span>
+                                        <span class="option-content">
+                                            <span>گواهی دوره</span>
+                                        </span>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button class="option-box" data-bs-target="#question"
+                                        data-bs-toggle="offcanvas">
+                                        <span class="option-icon">
+                                            <i class="ri-question-line"></i>
+                                        </span>
+                                        <span class="option-content">
+                                            <span>سوالات متداول</span>
+                                        </span>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button class="option-box" data-bs-target="#notes" data-bs-toggle="offcanvas">
+                                        <span class="option-icon">
+                                            <i class="ri-file-text-line"></i>
+                                        </span>
+                                        <span class="option-content">
+                                            <span>یادداشت</span>
+                                        </span>
+                                    </button>
+                                </li>
+
+                                <li>
+                                    <button class="option-box" id="liveToastBtn">
+                                        <span class="option-icon">
+                                            <i class="ri-download-2-line"></i>
+                                        </span>
+                                        <span class="option-content">
+                                            <span>بایگانی این دوره آموزشی</span>
+                                        </span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Course Section End -->
+
+<!-- share product offcanvas start -->
+<div class="offcanvas share-modal theme-bottom-offcanvas offcanvas-bottom" tabindex="-1" id="shareCourse">
+    <div class="offcanvas-header">
+        <h5>اشتراک گذاری محصول</h5>
+    </div>
+    <div class="offcanvas-body">
+        <div class="product-detail-box">
+            <div class="share-detail">
+                <div class="share-title">
+                    <p class="text-content">صفحه ما را با جهان به اشتراک بگذارید، افزایش دهید
+                        قرار گرفتن در معرض صفحه شما با جهان</p>
+                </div>
+
+                <div class="copy-link">
+                    <ul class="social-media-share">
+                        <li>
+                            <a href="https://www.facebook.com/" target="_blank" class="fb">
+                                <i class="ri-facebook-fill"></i>
+                            </a>
+                            <h6>Facebook</h6>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/" target="_blank" class="twitter">
+                                <i class="ri-twitter-fill"></i>
+                            </a>
+                            <h6>Twitter</h6>
+                        </li>
+                        <li>
+                            <a href="https://www.google.com/" target="_blank" class="google">
+                                <i class="ri-google-fill"></i>
+                            </a>
+                            <h6>Google</h6>
+                        </li>
+                        <li>
+                            <a href="https://www.linkedin.com/" target="_blank" class="link">
+                                <i class="ri-linkedin-fill"></i>
+                            </a>
+                            <h6>Linkedin</h6>
+                        </li>
+                        <li>
+                            <a href="https://mail.google.com/mail/" target="_blank" class="mail">
+                                <i class="ri-mail-line"></i>
+                            </a>
+                            <h6>Mail</h6>
+                        </li>
+                        <li>
+                            <a href="https://web.whatsapp.com/" target="_blank" class="whatsapp">
+                                <i class="ri-whatsapp-line"></i>
+                            </a>
+                            <h6>Whatsapp</h6>
+                        </li>
+                        <li>
+                            <a href="https://in.pinterest.com/" target="_blank" class="pint">
+                                <i class="ri-pinterest-fill"></i>
+                            </a>
+                            <h6>Pinterest</h6>
+                        </li>
+                        <li>
+                            <a href="javascript:void(0)" class="more">
+                                <i class="ri-more-fill"></i>
+                            </a>
+                            <h6>بیشتر</h6>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- share product offcanvas end -->
+
+<!-- certificate offcanvas start -->
+<div class="offcanvas certificate-modal theme-bottom-offcanvas offcanvas-bottom" tabindex="-1" id="certificate">
+    <div class="offcanvas-header">
+        <h5>گواهی دوره</h5>
+    </div>
+    <div class="offcanvas-body">
+        <div class="product-detail-box">
+            <div class="certificate-box">
+                <div class="certificate-image">
+                    <img src="{% static 'images/learning/certificate.jpg' %}" class="img-fluid" alt="">
+                </div>
+                <div class="certificate-content">
+                    <p>می‌توانید بخش گواهی نمایه خود را در رزومه‌های چاپی، رزومه‌ها یا موارد دیگر به اشتراک بگذارید
+                        اسناد.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- certificate offcanvas end -->
+
+<!-- Question & Answer offcanvas start -->
+<div class="offcanvas question-modal theme-bottom-offcanvas offcanvas-bottom" tabindex="-1" id="question">
+    <div class="offcanvas-header">
+        <h5>پرسش و پاسخ</h5>
+    </div>
+    <div class="offcanvas-body">
+        <div class="accordion question-accordion" id="accordionExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                        <span>1.</span>
+                        <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ</span>
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo">
+                        <span>2.</span>
+                        <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ</span>
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree">
+                        <span>3.</span>
+                        <span>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ</span>
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Question & Answer offcanvas end -->
+
+<!-- Notes offcanvas start -->
+<div class="offcanvas notes-modal theme-bottom-offcanvas offcanvas-bottom" tabindex="-1" id="notes">
+    <div class="offcanvas-header">
+        <h5>یادداشت ها را به اشتراک بگذارید</h5>
+    </div>
+    <div class="offcanvas-body">
+        <div class="note-box">
+            <div class="note-text">
+                <label for="noteBook" class="form-label">یادداشت خود را وارد کنید</label>
+            </div>
+            <div class="note-form">
+                <textarea class="form-control" id="noteBook" rows="3"
+                    placeholder="یادداشت خود را در ساعت 07:11 وارد کنید"></textarea>
+                <button class="btn">
+                    <i class="ri-save-line"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="note-review-box">
+            <ul class="nav nav-pills note-pills" id="pills-tab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="pills-note-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-note" type="button" role="tab">یادداشت</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-high-tab" data-bs-toggle="pill" data-bs-target="#pills-high"
+                        type="button" role="tab">نکات برجسته</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="pills-favorite-tab" data-bs-toggle="pill"
+                        data-bs-target="#pills-favorite" type="button" role="tab">یادداشت های مورد علاقه</button>
+                </li>
+            </ul>
+            <div class="tab-content note-list-box" id="pills-tabContent">
+                <div class="tab-pane fade show active" id="pills-note" role="tabpanel">
+                    <ul class="note-list">
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane fade" id="pills-high" role="tabpanel">
+                    <ul class="note-list">
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-pane fade" id="pills-favorite" role="tabpanel">
+                    <ul class="note-list">
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li>
+                            <div class="note-review-box-list favorite-box">
+                                <div class="favorite-icon">
+                                    <i class="ri-star-fill"></i>
+                                </div>
+                                <div class="note-title">
+                                    <h5>دستورالعمل های راه اندازی عمومی و نصب MongoDB در macOS</h5>
+                                </div>
+                                <div class="note-content">
+                                    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Notes offcanvas end -->
+
+<!-- Archive offcanvas start -->
+<div class="toast-container archive-toast position-fixed top-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">با موفقیت این دوره را بایگانی کنید</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+<!-- Archive offcanvas end -->
+{% endblock %}
