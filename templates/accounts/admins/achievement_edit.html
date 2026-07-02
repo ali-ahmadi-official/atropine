@@ -1,0 +1,31 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+ادیت افتخار
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.full_name.label }}</p>
+            {% include 'includes/error.html' with errors=form.full_name.errors %}
+            {{ form.full_name }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.rank.label }}</p>
+            {% include 'includes/error.html' with errors=form.rank.errors %}
+            {{ form.rank }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.cover.label }}</p>
+            {% include 'includes/error.html' with errors=form.cover.errors %}
+            {{ form.cover }}
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+{% endblock %}

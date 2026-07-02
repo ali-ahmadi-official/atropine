@@ -15,13 +15,13 @@
     </title>
     <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
     <meta name="theme-color" content="#172561">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="آتروپین">
-    <meta name="msapplication-TileImage" content="{% static 'images/logo.jpg' %}">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon.ico' %}">
     <meta name="msapplication-TileColor" content="#FFFFFF">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" type="image/x-icon" href="{% static 'images/logo-optimized.jpg' %}">
+    <link rel="icon" type="images/x-icon" href="{% static 'images/favicon.ico' %}">
 
     <!--Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -42,6 +42,9 @@
 
     <!-- Style css -->
     <link id="change-link" rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+    {% block static %}
+    {% endblock %}
 </head>
 
 <body class="inter-body learning-color">
@@ -60,7 +63,7 @@
         <!-- Mobile Section Start -->
         <div class="mobile-style-1">
             <ul>
-                <li class="{% if '/index/' in request.path %} active {% endif %}">
+                <li class="{% if '/' == request.path %} active {% endif %}">
                     <a href="{% url 'main' %}" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-home-5-line"></i>
@@ -71,46 +74,58 @@
                     </a>
                 </li>
 
-                <li class="{% if '/search/' in request.path %} active {% endif %}">
-                    <a href="{% url 'search' %}" class="mobile-box">
+                <li class="{% if '/plans/' in request.path %} active {% endif %}">
+                    <a href="{% url 'plans' %}" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-search-line"></i>
+                            <i class="ri-vip-crown-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>جستجو</h5>
+                            <h5>پلن ها</h5>
                         </div>
                     </a>
                 </li>
 
-                <li class="{% if '/my-course/' in request.path %} active {% endif %}">
-                    <a href="{% url 'my_course' %}" class="mobile-box">
+                <li class="{% if '/dashboard/' in request.path %}active{% endif %}">
+                    <a href="
+                        {% if request.user.role == 'super_admin' %}
+                            {% url 'admin_dashboard' %}
+                        {% elif request.user.role == 'supervisor' %}
+                            {% url 'supervisor_dashboard' %}
+                        {% elif request.user.role == 'consultant' %}
+                            {% url 'consultant_dashboard' %}
+                        {% elif request.user.role == 'student' %}
+                            {% url 'student_dashboard' %}
+                        {% else %}
+                            {% url 'login' %}
+                        {% endif %}
+                    " class="mobile-box">
+                        <div class="mobile-icon">
+                            <i class="ri-user-line"></i>
+                        </div>
+                        <div class="mobile-name">
+                            <h5>داشبورد</h5>
+                        </div>
+                    </a>
+                </li>
+
+                <li class="{% if '/courses/' in request.path %} active {% endif %}">
+                    <a href="{% url 'courses' %}" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-play-circle-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>دوره آموزشی </h5>
-                        </div>
-                    </a>
-                </li>
-
-                <li class="{% if '/wishlist/' in request.path %} active {% endif %}">
-                    <a href="{% url 'wishlist' %}" class="mobile-box">
-                        <div class="mobile-icon">
-                            <i class="ri-bookmark-line"></i>
-                        </div>
-                        <div class="mobile-name">
-                            <h5>علاقه مندی ها</h5>
+                            <h5>دوره ها</h5>
                         </div>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{% url 'chat_list' %}" class="mobile-box">
+                    <a href="{% url 'counseling_introduction' %}" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-message-3-line"></i>
+                            <i class="ri-customer-service-2-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>گفتگو ها</h5>
+                            <h5>مشاورین</h5>
                         </div>
                     </a>
                 </li>
@@ -130,74 +145,120 @@
             <div class="offcanvas-header">
                 <div class="profile-box">
                     <div class="profile-image">
-                        <img src="{% static 'images/learning/menu-profile.jpg' %}" class="img-fluid" alt="">
+                        {% if request.user.avatar %}
+                        <img src="{{ request.user.avatar.url }}" class="img-fluid" alt="profile">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="profile">
+                        {% endif %}
                     </div>
                     <div class="profile-name">
-                        <h4 class="text-white">محمد عموئی</h4>
-                        <h6 class="content-color">test@gmail.com</h6>
+                        <h4 class="text-white">
+                            {% if request.user.get_full_name %}
+                            {{ request.user.get_full_name }}
+                            {% else %}
+                            کاربر مهمان
+                            {% endif %}
+                        </h4>
+                        <h6 class="content-color">
+                            {% if request.user.mobile %}
+                            {{ request.user.mobile }}
+                            {% endif %}
+                        </h6>
                     </div>
                 </div>
             </div>
             <div class="offcanvas-body">
                 <div class="title px-15">
-                    <h4>تنظیمات کلی</h4>
+                    <h4>حساب کاربری</h4>
                 </div>
                 <ul class="menu-setting-list">
                     <li>
-                        <a href="personal-setting.html" class="menu-setting-box">
+                        <a href="{% url 'login' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-user-3-line"></i>
+                                <i class="ri-user-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>تنظیمات شخصی</h4>
+                                <h4>ورود</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'register' %}" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-user-add-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>ثبت نام</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <section class="section-t-space section-b-space">
+                    <div class="divider"></div>
+                </section>
+
+                <div class="title px-15">
+                    <h4>خدمات آتروپین</h4>
+                </div>
+                <ul class="menu-setting-list">
+                    <li>
+                        <a href="{% url 'courses' %}" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-book-open-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>دوره های آموزشی</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
 
                     <li>
-                        <a href="javascript:void(0)" class="menu-setting-box">
+                        <a href="{% url 'counseling_introduction' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-download-line"></i>
+                                <i class="ri-customer-service-2-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>گزینه دانلود</h4>
+                                <h4>مشاوره انتخاب رشته</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
 
                     <li>
-                        <a href="javascript:void(0)" class="menu-setting-box">
+                        <a href="{% url 'estimation_introduction' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-play-line"></i>
+                                <i class="ri-line-chart-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>گزینه های پخش ویدئو</h4>
+                                <h4>تخمین قبولی</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
 
                     <li>
-                        <a href="account-security.html" class="menu-setting-box">
+                        <a href="{% url 'choice_introduction' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-lock-line"></i>
+                                <i class="ri-compass-3-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>امنیت حساب</h4>
+                                <h4>انتخاب رشته بر اساس شخصیت</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
 
                     <li>
-                        <a href="app-setting.html" class="menu-setting-box">
+                        <a href="{% url 'live_introduction' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-settings-5-line"></i>
+                                <i class="ri-video-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>تنظیمات برنامه</h4>
+                                <h4>وبینار های طلایی</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
@@ -213,23 +274,23 @@
                 </div>
                 <ul class="menu-setting-list">
                     <li>
-                        <a href="instructor.html" class="menu-setting-box">
+                        <a href="{% url 'about_us' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-phone-line"></i>
+                                <i class="ri-information-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>مدرس</h4>
+                                <h4>درباره ما</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
                     <li>
-                        <a href="term-condition.html" class="menu-setting-box">
+                        <a href="{% url 'trust' %}" class="menu-setting-box">
                             <div class="setting-icon">
-                                <i class="ri-information-line"></i>
+                                <i class="ri-shield-check-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>شرایط و شرایط</h4>
+                                <h4>نماد اعتماد</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
@@ -282,6 +343,19 @@
 
     <!-- Theme Settings js-->
     <script src="{% static 'js/theme-setting.js' %}"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                .then((reg) => console.log('Service Worker registered!'))
+                .catch((err) => console.log('Service Worker failed:', err));
+            });
+        }
+    </script>
+
+    {% block script %}
+    {% endblock %}
 </body>
 
 

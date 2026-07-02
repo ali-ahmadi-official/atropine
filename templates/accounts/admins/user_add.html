@@ -1,0 +1,56 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+افزودن کاربر
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.username.label }}</p>
+            {% include 'includes/error.html' with errors=form.username.errors %}
+            {{ form.username }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.password1.label }}</p>
+            {% include 'includes/error.html' with errors=form.password1.errors %}
+            {{ form.password1 }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.password2.label }}</p>
+            {% include 'includes/error.html' with errors=form.password2.errors %}
+            {{ form.password2 }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.first_name.label }}</p>
+            {% include 'includes/error.html' with errors=form.first_name.errors %}
+            {{ form.first_name }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.last_name.label }}</p>
+            {% include 'includes/error.html' with errors=form.last_name.errors %}
+            {{ form.last_name }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.mobile.label }}</p>
+            {% include 'includes/error.html' with errors=form.mobile.errors %}
+            {{ form.mobile }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.role.label }}</p>
+            {% include 'includes/error.html' with errors=form.role.errors %}
+            {{ form.role }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.avatar.label }}</p>
+            {% include 'includes/error.html' with errors=form.avatar.errors %}
+            {{ form.avatar }}
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+{% endblock %}

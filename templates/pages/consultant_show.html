@@ -1,0 +1,91 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+صفحه مشاور
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white">{{ consultant.get_full_name }}</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<section class="section-t-space instructors-section">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                <div class="instructors-box">
+                    <div class="instructors-image">
+                        {% if consultant.avatar %}
+                        <img src="{{ consultant.avatar.url }}" class="img-fluid" alt="">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="">
+                        {% endif %}
+                    </div>
+                    <div class="instructors-content">
+                        <h3>{{ consultant.get_full_name }}</h3>
+                        <ul class="review-list">
+                            <li>دانش آموزان: <span>{{ student_count }}</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="about-course-section section-t-space">
+    <div class="custom-container">
+        <div class="title mb-1">
+            <h4>درباره من</h4>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="about-detail">
+                    <p>{{ consultant.user_consultant.bio|linebreaks }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-t-space feature-course-section popular-course-section">
+    <div class="custom-container">
+        <div class="title mb-1">
+            <h4>نوبت های فعال</h4>
+        </div>
+        <ul class="feature-course-list">
+            {% for schedule in schedules %}
+            <li>
+                <div class="feature-box">
+                    <a href="" class="feature-image">
+                        <img src="{% static 'images/services/3.png' %}" class="img-fluid" alt="">
+                    </a>
+                    <div class="feature-detail">
+                        <a href="">
+                            <h6>نوبت از {{ consultant.get_full_name }}</h6>
+                        </a>
+                        <ul class="rate-course">
+                            <li><i class="ri-time-fill"></i>{{ schedule.date_shamsi }} - {{ schedule.start_time }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock %}

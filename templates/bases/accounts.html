@@ -1,0 +1,133 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="آتروپین">
+    <meta name="keywords" content="آتروپین">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
+    <meta name="theme-color" content="#172561">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="آتروپین">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon.ico' %}">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="images/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    <!--Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap css -->
+    <link id="rtl-link" rel="stylesheet" type="text/css" href="{% static 'css/vendors/bootstrap.css' %}">
+
+    <!-- Remix Icon css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/remixicon.css' %}">
+
+    <!-- Style css -->
+    <link id="change-link" rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+    <style>
+        .alert {
+            width: 100%;
+            background-color: rgba(255, 0, 0, 0.529);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body class="inter-body learning-color">
+
+    <!-- Log In Form Start -->
+    <section class="learning-auth">
+        <div class="learning-header new-auth px-15">
+            <div class="home-contain welcome">
+                <img src="{% static 'images/logo-2.png' %}" alt="welcome" width="150" class="mb-2">
+                <h4 style="font-weight: bold;">دپارتمان مشاوره و منتورینگ آتروپین</h4>
+            </div>
+            <div class="login-float">
+                <div class="pb-3 mb-3" style="border-bottom: 1px solid gray; text-align: center;">
+                    <h5>با محیط پنل آشنا شوید <br> و از خدمات رایگان استفاده کنید</h5>
+                </div>
+                <div>
+                    <p><span style="color: orange;"> + </span> استفاده از خدمات انتخاب رشته آتروپین </p>
+                    <a href="{% url 'main' %}" class="btn btn-danger mb-1">ورود به پنل بدون اشتراک</a>
+                </div>
+            </div>
+        </div>
+        <div class="custom-container" style="margin-top: 60px;">
+            <div class="row">
+                <div class="col-12">
+                    {% block form %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Log In Form End -->
+
+    <!-- Theme Option Setting Box Start -->
+    <div class="theme-setting-box">
+        <div class="theme-box">
+            <button class="theme-icon text-white">
+                <i class="ri-pencil-line"></i>
+            </button>
+            <ul class="theme-option">
+                <li>
+                    <button class="theme-setting-button" id="light-btn">
+                        <i class="ri-sun-line"></i>
+                    </button>
+                </li>
+                <li>
+                    <button class="theme-setting-button" id="dark-btn">
+                        <i class="ri-moon-line"></i>
+                    </button>
+                </li>
+                <li>
+                    <button class="theme-setting-button" id="system-btn">
+                        <i class="ri-computer-line"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- Theme Option Setting Box End -->
+
+    <!-- space box start -->
+    <div class="spacing-box"></div>
+    <!-- space box end -->
+
+    <!-- Bootstrap js-->
+    <script src="{% static 'js/vendors/bootstrap/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Theme js-->
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <!-- Theme Settings js-->
+    <script src="{% static 'js/theme-setting.js' %}"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                .then((reg) => console.log('Service Worker registered!'))
+                .catch((err) => console.log('Service Worker failed:', err));
+            });
+        }
+    </script>
+</body>
+
+
+</html>

@@ -1,0 +1,82 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+{% load tz %}
+
+{% block title %}
+لیست وبینار ها
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست وبینار ها
+                <a href="{% url 'live_event_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">کاور</th>
+                <th scope="col">عنوان</th>
+                <th scope="col">زمان شروع</th>
+                <th scope="col">زمان پایان</th>
+                <th scope="col">نمایش عمومی</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for live_event in live_events %}
+            <tr>
+                <td>
+                    {{ live_event.id }}
+                </td>
+                <td>
+                    <div class="avatar avatar-sm me-۲ avatar-rounded">
+                        {% if live_event.cover %}
+                        <img src="{{ live_event.cover.url }}" alt="profile">
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    {{ live_event.title }}
+                </td>
+                <td>
+                    {{ live_event.start_datetime_shamsi }} - {{ live_event.start_datetime|localtime|time }}
+                </td>
+                <td>
+                    {{ live_event.end_datetime_shamsi }} - {{ live_event.end_datetime|localtime|time }}
+                </td>
+                <td>
+                    {% if live_event.is_public %}
+                    <span class="badge bg-success-transparent">منتشر شده</span>
+                    {% else %}
+                    <span class="badge bg-danger-transparent">منتشر نشده</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'live_event_edit' live_event.id %}" class="btn btn-icon btn-sm btn-info-transparent rounded-pill">
+                        <i class="ri-eye-2-line"></i>
+                    </a>
+                    <a href="{% url 'live_event_delete' live_event.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

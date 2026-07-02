@@ -1,0 +1,25 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+فرم تحلیل شخصیت 60 سوالی
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            {% for field in form %}
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ field.label }}</p>
+                {% include 'includes/error.html' with errors=field.errors %}
+                {{ field }}
+            </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+{% endblock %}

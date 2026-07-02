@@ -1,0 +1,87 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+نتیجه تخمین رشته قبولی
+{% endblock %}
+
+{% block content %}
+<div class="row" dir="rtl">
+    <div class="col-xl-12">
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="card-title">نتیجه تخمین رشته قبولی</div>
+            </div>
+            <div class="card-body">
+                <div class="m-1">
+                    <h3 class="btn bg-success-transparent w-100 mb-3" style="font-size: larger;">
+                        قبولی با احتمال قطعی
+                    </h3>
+                    {% if calculate_result.قطعی %}
+                    <div class="w-100 mb-4">
+                        {% for item in calculate_result.قطعی %}
+                            <span class="btn bg-success-transparent m-1">
+                                {{ item.رشته }} - {{ item.دانشگاه }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="btn bg-info-transparent w-100 mb-3" style="font-size: larger;">
+                        قبولی با احتمال زیاد
+                    </h3>
+                    {% if calculate_result.زیاد %}
+                    <div class="w-100 mb-4">
+                        {% for item in calculate_result.زیاد %}
+                            <span class="btn bg-info-transparent m-1">
+                                {{ item.رشته }} - {{ item.دانشگاه }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="btn bg-warning-transparent w-100 mb-3" style="font-size: larger;">
+                        قبولی با احتمال متوسط
+                    </h3>
+                    {% if calculate_result.متوسط %}
+                    <div class="w-100 mb-4">
+                        {% for item in calculate_result.متوسط %}
+                            <span class="btn bg-warning-transparent m-1">
+                                {{ item.رشته }} - {{ item.دانشگاه }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="btn bg-orange-transparent w-100 mb-3" style="font-size: larger;">
+                        قبولی با احتمال کم
+                    </h3>
+                    {% if calculate_result.کم %}
+                    <div class="w-100 mb-4">
+                        {% for item in calculate_result.کم %}
+                            <span class="btn bg-orange-transparent m-1">
+                                {{ item.رشته }} - {{ item.دانشگاه }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <h3 class="btn bg-danger-transparent w-100 mb-3" style="font-size: larger;">
+                        قبولی بعید
+                    </h3>
+                    {% if calculate_result.بعید %}
+                    <div class="w-100">
+                        {% for item in calculate_result.بعید %}
+                            <span class="btn bg-danger-transparent m-1">
+                                {{ item.رشته }} - {{ item.دانشگاه }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

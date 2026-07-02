@@ -1,0 +1,51 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+{{ form.media }}
+
+{% block title %}
+افزودن پلن
+{% endblock %}
+
+{% block header %}
+    {{ form.media }}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.service.label }}</p>
+            {% include 'includes/error.html' with errors=form.service.errors %}
+            {{ form.service }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.type.label }}</p>
+            {% include 'includes/error.html' with errors=form.type.errors %}
+            {{ form.type }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.content.label }}</p>
+            {% include 'includes/error.html' with errors=form.content.errors %}
+            {{ form.content }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.total_price.label }}</p>
+            {% include 'includes/error.html' with errors=form.total_price.errors %}
+            {{ form.total_price }}
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+<script>
+    $('#id_service').select2({
+        width: '100%',
+        placeholder: 'خدمات را انتخاب کنید'
+    });
+</script>
+{% endblock %}

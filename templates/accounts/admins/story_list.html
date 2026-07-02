@@ -1,0 +1,65 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست استوری ها
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست استوری ها
+                <a href="{% url 'story_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">کاور</th>
+                <th scope="col">عنوان</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for story in stories %}
+            <tr>
+                <td>
+                    {{ story.id }}
+                </td>
+                <td>
+                    <div class="avatar avatar-sm me-۲ avatar-rounded">
+                        {% if story.cover %}
+                        <img src="{{ story.cover.url }}" alt="profile">
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    {{ story.title }}
+                </td>
+                <td>
+                    <a href="{% url 'story_show' story.id %}" class="btn btn-icon btn-sm btn-info-transparent rounded-pill">
+                        <i class="ri-eye-2-line"></i>
+                    </a>
+                    <a href="{% url 'story_delete' story.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

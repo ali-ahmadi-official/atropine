@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="آتروپین">
+    <meta name="keywords" content="آتروپین">
+    <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
+    <meta name="theme-color" content="#172561">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="آتروپین">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon.ico' %}">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="images/x-icon" href="{% static 'images/favicon.ico' %}">
+    <title>استوری ها</title>
+
+    <link rel="stylesheet" href="{% static 'css/story.css' %}">
+</head>
+
+<body>
+    <div class="story-container">
+
+        <div class="progress-container" id="progressContainer"></div>
+
+        <div class="story-info" id="storyTitle">
+            Story
+        </div>
+
+        <img id="imageStory" class="story-media" style="display:none;">
+        <video id="videoStory" class="story-media" style="display:none;" playsinline muted></video>
+
+    </div>
+
+    {{ stories|json_script:"stories-data" }}
+    <script src="{% static 'js/story.js' %}"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                .then((reg) => console.log('Service Worker registered!'))
+                .catch((err) => console.log('Service Worker failed:', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,300 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+فرم اطلاعات سطح B
+{% endblock %}
+
+{% block header %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.gender.label }}</p>
+                {% include 'includes/error.html' with errors=form.gender.errors %}
+                {{ form.gender }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.marital.label }}</p>
+                {% include 'includes/error.html' with errors=form.marital.errors %}
+                {{ form.marital }}
+            </div>
+
+            <div id="married-fields" class="row w-100">
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <p class="mt-2 text-muted">{{ form.wife_condition.label }}</p>
+                    {% include 'includes/error.html' with errors=form.wife_condition.errors %}
+                    {{ form.wife_condition }}
+                </div>
+
+                <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                    <p class="mt-2 text-muted">{{ form.child.label }}</p>
+                    {% include 'includes/error.html' with errors=form.child.errors %}
+                    {{ form.child }}
+                </div>
+
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.family_support.label }}</p>
+                {% include 'includes/error.html' with errors=form.family_support.errors %}
+                {{ form.family_support }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.interest_surgical.label }}</p>
+                {% include 'includes/error.html' with errors=form.interest_surgical.errors %}
+                {{ form.interest_surgical }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.interest_non_surgical.label }}</p>
+                {% include 'includes/error.html' with errors=form.interest_non_surgical.errors %}
+                {{ form.interest_non_surgical }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.field_preference.label }}</p>
+                {% include 'includes/error.html' with errors=form.field_preference.errors %}
+                {{ form.field_preference }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.paraclinic_preference.label }}</p>
+                {% include 'includes/error.html' with errors=form.paraclinic_preference.errors %}
+                {{ form.paraclinic_preference }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.income_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.income_importance.errors %}
+                {{ form.income_importance }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.residency_free_time_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.residency_free_time_importance.errors %}
+                {{ form.residency_free_time_importance }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.career_free_time_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.career_free_time_importance.errors %}
+                {{ form.career_free_time_importance }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.no_night_shift_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.no_night_shift_importance.errors %}
+                {{ form.no_night_shift_importance }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.private_practice_interest.label }}</p>
+                {% include 'includes/error.html' with errors=form.private_practice_interest.errors %}
+                {{ form.private_practice_interest }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.academic_interest.label }}</p>
+                {% include 'includes/error.html' with errors=form.academic_interest.errors %}
+                {{ form.academic_interest }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.immigration_interest.label }}</p>
+                {% include 'includes/error.html' with errors=form.immigration_interest.errors %}
+                {{ form.immigration_interest }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.better_activity.label }}</p>
+                {% include 'includes/error.html' with errors=form.better_activity.errors %}
+                {{ form.better_activity }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.favorite_activity.label }}</p>
+                {% include 'includes/error.html' with errors=form.favorite_activity.errors %}
+                {{ form.favorite_activity }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.guard.label }}</p>
+                {% include 'includes/error.html' with errors=form.guard.errors %}
+                {{ form.guard }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.age.label }}</p>
+                {% include 'includes/error.html' with errors=form.age.errors %}
+                {{ form.age }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.city.label }}</p>
+                {% include 'includes/error.html' with errors=form.city.errors %}
+                {{ form.city }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.university.label }}</p>
+                {% include 'includes/error.html' with errors=form.university.errors %}
+                {{ form.university }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.taking_assistantship_exam.label }}</p>
+                {% include 'includes/error.html' with errors=form.taking_assistantship_exam.errors %}
+                {{ form.taking_assistantship_exam }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.quota.label }}</p>
+                {% include 'includes/error.html' with errors=form.quota.errors %}
+                {{ form.quota }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.commitment.label }}</p>
+                {% include 'includes/error.html' with errors=form.commitment.errors %}
+                {{ form.commitment }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.commitment_other.label }}</p>
+                {% include 'includes/error.html' with errors=form.commitment_other.errors %}
+                {{ form.commitment_other }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.service_status.label }}</p>
+                {% include 'includes/error.html' with errors=form.service_status.errors %}
+                {{ form.service_status }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.service_location.label }}</p>
+                {% include 'includes/error.html' with errors=form.service_location.errors %}
+                {{ form.service_location }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.service_location_other.label }}</p>
+                {% include 'includes/error.html' with errors=form.service_location_other.errors %}
+                {{ form.service_location_other }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.military_status.label }}</p>
+                {% include 'includes/error.html' with errors=form.military_status.errors %}
+                {{ form.military_status }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.field_selection_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.field_selection_importance.errors %}
+                {{ form.field_selection_importance }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.favorite_specialties.label }}</p>
+                {% include 'includes/error.html' with errors=form.favorite_specialties.errors %}
+                {{ form.favorite_specialties }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.unacceptable_specialties.label }}</p>
+                {% include 'includes/error.html' with errors=form.unacceptable_specialties.errors %}
+                {{ form.unacceptable_specialties }}
+            </div>
+
+            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.city_priority_importance.label }}</p>
+                {% include 'includes/error.html' with errors=form.city_priority_importance.errors %}
+                {{ form.city_priority_importance }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.favorite_universities.label }}</p>
+                {% include 'includes/error.html' with errors=form.favorite_universities.errors %}
+                {{ form.favorite_universities }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.unacceptable_universities.label }}</p>
+                {% include 'includes/error.html' with errors=form.unacceptable_universities.errors %}
+                {{ form.unacceptable_universities }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.biggest_challenge.label }}</p>
+                {% include 'includes/error.html' with errors=form.biggest_challenge.errors %}
+                {{ form.biggest_challenge }}
+            </div>
+
+            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <p class="mt-2 text-muted">{{ form.additional_notes.label }}</p>
+                {% include 'includes/error.html' with errors=form.additional_notes.errors %}
+                {{ form.additional_notes }}
+            </div>
+
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const marital = document.getElementById("id_marital");
+        const marriedFields = document.getElementById("married-fields");
+
+        function toggleMarriedFields() {
+            if (marital.value === "2") {
+                marriedFields.style.display = "";
+            } else {
+                marriedFields.style.display = "none";
+
+                document.getElementById("id_wife_condition").value = "";
+                document.getElementById("id_child").value = "";
+            }
+        }
+
+        toggleMarriedFields();
+
+        marital.addEventListener("change", toggleMarriedFields);
+
+    });
+</script>
+<script>
+    $('#id_better_activity').select2({
+        width: '100%',
+        placeholder: 'موارد را انتخاب کنید'
+    });
+    $('#id_favorite_activity').select2({
+        width: '100%',
+        placeholder: 'موارد را انتخاب کنید'
+    });
+    $('#id_quota').select2({
+        width: '100%',
+        placeholder: 'انتخاب کنید'
+    });
+
+    $('#id_commitment').select2({
+        width: '100%',
+        placeholder: 'انتخاب کنید'
+    });
+</script>
+{% endblock %}

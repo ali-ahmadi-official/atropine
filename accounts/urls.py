@@ -1,0 +1,149 @@
+from django.urls import path
+from .views import (
+    # auth
+    register,
+    verify_register,
+    set_password,
+    login_view,
+    otp_login,
+    otp_verify,
+    complete_profile,
+
+    # admin
+    admin_dashboard,
+    UserListView,
+    UserCreateView,
+    UserUpdateView,
+    UserDeleteView,
+    StoryListView,
+    StoryCreateView,
+    StoryDeleteView,
+    AchievementListView,
+    AchievementCreateView,
+    AchievementUpdateView,
+    AchievementDeleteView,
+    LiveEventListView,
+    LiveEventCreateView,
+    LiveEventUpdateView,
+    LiveEventDeleteView,
+    PackageListView,
+    PackageCreateView,
+    PackageUpdateView,
+    PackageDeleteView,
+
+    PlansIntroductionCreateView,
+    PlansIntroductionUpdateView,
+    CounselingIntroductionCreateView,
+    CounselingIntroductionUpdateView,
+    EstimationIntroductionCreateView,
+    EstimationIntroductionUpdateView,
+    ChoiceIntroductionCreateView,
+    ChoiceIntroductionUpdateView,
+    LiveIntroductionCreateView,
+    LiveIntroductionUpdateView,
+
+    # consultant
+    consultant_dashboard,
+    ConsultantCreateView,
+    ConsultantUpdateView,
+    ConsultantScheduleListView,
+    ConsultantScheduleCreateView,
+    ConsultantScheduleDeleteView,
+    MyStudentListView,
+
+    # students
+    student_dashboard,
+    PaymentListView,
+    personality60,
+    validity,
+)
+
+urlpatterns = [
+    # ===========================
+    # Authentication
+    # ===========================
+    path("register/", register, name="register"),
+    path("verify-register/", verify_register, name="verify-register"),
+    path("set-password/", set_password, name="set-password"),
+    path("login/", login_view, name="login"),
+    path("otp-login/", otp_login, name="otp-login"),
+    path("otp-verify/", otp_verify, name="otp-verify"),
+    path("complete-profile/", complete_profile, name="complete-profile"),
+
+    # ===========================
+    # Admin
+    # ===========================
+    path("admins/dashboard/", admin_dashboard, name="admin_dashboard"),
+
+    # Users
+    path("admins/users/", UserListView.as_view(), name="user_list"),
+    path("admins/users/add/", UserCreateView.as_view(), name="user_add"),
+    path("admins/users/<int:pk>/edit/", UserUpdateView.as_view(), name="user_edit"),
+    path("admins/users/<int:pk>/delete/", UserDeleteView.as_view(), name="user_delete"),
+
+    # Stories
+    path("admins/stories/", StoryListView.as_view(), name="story_list"),
+    path("admins/stories/add/", StoryCreateView.as_view(), name="story_add"),
+    path("admins/stories/<int:pk>/delete/", StoryDeleteView.as_view(), name="story_delete"),
+
+    # Achievements
+    path("admins/achievements/", AchievementListView.as_view(), name="achievement_list"),
+    path("admins/achievements/add/", AchievementCreateView.as_view(), name="achievement_add"),
+    path("admins/achievements/<int:pk>/edit/", AchievementUpdateView.as_view(), name="achievement_edit"),
+    path("admins/achievements/<int:pk>/delete/", AchievementDeleteView.as_view(), name="achievement_delete"),
+
+    # Live Events
+    path("admins/live-events/", LiveEventListView.as_view(), name="live_event_list"),
+    path("admins/live-events/add/", LiveEventCreateView.as_view(), name="live_event_add"),
+    path("admins/live-events/<int:pk>/edit/", LiveEventUpdateView.as_view(), name="live_event_edit"),
+    path("admins/live-events/<int:pk>/delete/", LiveEventDeleteView.as_view(), name="live_event_delete"),
+
+    # Packages Events
+    path("admins/packages/", PackageListView.as_view(), name="package_list"),
+    path("admins/packages/add/", PackageCreateView.as_view(), name="package_add"),
+    path("admins/packages/<int:pk>/edit/", PackageUpdateView.as_view(), name="package_edit"),
+    path("admins/packages/<int:pk>/delete/", PackageDeleteView.as_view(), name="package_delete"),
+
+    # Plans
+    path("admins/plans-introduction/create/", PlansIntroductionCreateView.as_view(), name="plans-introduction-create"),
+    path("admins/plans-introduction/<int:pk>/edit/", PlansIntroductionUpdateView.as_view(),name="plans-introduction-update"),
+
+    # Counseling
+    path("admins/counseling-introduction/create/", CounselingIntroductionCreateView.as_view(), name="counseling-introduction-create"),
+    path("admins/counseling-introduction/<int:pk>/edit/", CounselingIntroductionUpdateView.as_view(), name="counseling-introduction-update"),
+
+    # Estimation
+    path("admins/estimation-introduction/create/", EstimationIntroductionCreateView.as_view(), name="estimation-introduction-create"),
+    path("admins/estimation-introduction/<int:pk>/edit/", EstimationIntroductionUpdateView.as_view(), name="estimation-introduction-update"),
+
+    # Choice
+    path("admins/choice-introduction/create/", ChoiceIntroductionCreateView.as_view(), name="choice-introduction-create"),
+    path("admins/choice-introduction/<int:pk>/edit/", ChoiceIntroductionUpdateView.as_view(), name="choice-introduction-update"),
+
+    # Live
+    path("admins/live-introduction/create/", LiveIntroductionCreateView.as_view(), name="live-introduction-create"),
+    path("admins/live-introduction/<int:pk>/edit/", LiveIntroductionUpdateView.as_view(), name="live-introduction-update"),
+
+    # ===========================
+    # Consultant
+    # ===========================
+    path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
+
+    path("consultants/consultant/add/", ConsultantCreateView.as_view(), name="consultant_add"),
+    path("consultants/consultant/<int:pk>/edit/", ConsultantUpdateView.as_view(), name="consultant_edit"),
+
+    path("consultants/schedules/", ConsultantScheduleListView.as_view(), name="schedule_list"),
+    path("consultants/schedules/add/", ConsultantScheduleCreateView.as_view(), name="schedule_add"),
+    path("consultants/schedules/<int:pk>/delete/", ConsultantScheduleDeleteView.as_view(), name="schedule_delete"),
+
+    path("consultants/my-students/", MyStudentListView.as_view(), name="my_student_list"),
+
+    # ===========================
+    # Student
+    # ===========================
+    path("students/dashboard/", student_dashboard, name="student_dashboard"),
+
+    path("students/payments/", PaymentListView.as_view(), name="payment_list"),
+    path("students/personality/", personality60, name="personality60"),
+    path("students/validity/", validity, name="validity"),
+]

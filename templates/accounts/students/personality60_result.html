@@ -1,0 +1,180 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+نتیجه تحلیل شخصیت
+{% endblock %}
+
+{% block content %}
+<div class="row" dir="rtl">
+    <div class="col-xl-6">
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="card-title">تیپ شخصیتی پزشک شما</div>
+            </div>
+            <div class="card-body">
+                <h3 class="btn bg-success-transparent w-100 mb-3" style="font-size: larger;">
+                    {{ detect_personality_type_result.name }}
+                </h3>
+                <div class="w-100">
+                    {% for general_feature in detect_personality_type_result.general_features %}
+                    <span class="btn bg-info-transparent m-1">{{ general_feature }}</span>
+                    {% endfor %}
+                </div>
+                <p>
+                    {{ detect_personality_type_result.description|linebreaks }}
+                </p>
+                <h6>رشته های نزدیک به شخصیت شما</h6>
+                <div class="w-100">
+                    {% for related_specialtie in detect_personality_type_result.related_specialties %}
+                    <span class="btn bg-secondary-transparent m-1">{{ related_specialtie }}</span>
+                    {% endfor %}
+                </div>
+                {% if calculate_item_scores_result.pediatrics_flag.score > 3 %}
+                <h3 class="btn bg-warning-transparent w-100 mt-3" style="font-size: larger;">
+                    <strong>توجه:</strong>
+                    در پاسخ‌های شما علاقه قابل‌توجهی به کار با کودکان و نوزادان مشاهده شد.
+                    پیشنهاد می‌شود رشته <strong>اطفال</strong> و زیرشاخه‌های مرتبط را به‌صورت جداگانه بررسی کنید؛ زیرا این علاقه می‌تواند در انتخاب نهایی شما نقش مهمی داشته باشد.
+                </h3>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="card-title">آنالیز ویژگی های شخصیتی شما</div>
+            </div>
+            <div class="card-body">
+                <canvas id="chartjs-bar" class="chartjs-chart" style="height: 600px !important; max-height: none !important;"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-12">
+        <div class="card custom-card">
+            <div class="card-header">
+                <div class="card-title">نتایج آنالیز انتخاب رشته بر اساس شخصیت</div>
+            </div>
+            <div class="card-body">
+                <div class="m-1">
+                    <h3 class="btn bg-success-transparent w-100 mb-3" style="font-size: larger;">
+                    رشته های پیشنهادی
+                    </h3>
+                    <div class="w-100">
+                        {% for field in categorize_specialties_result.recommended %}
+                        <span class="btn bg-success-transparent m-1">{{ field.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="m-1">
+                    <h3 class="btn bg-warning-transparent w-100 mb-3" style="font-size: larger;">
+                    رشته های قابل بررسی
+                    </h3>
+                    <div class="w-100">
+                        {% for field in categorize_specialties_result.alternatives %}
+                        <span class="btn bg-warning-transparent m-1">{{ field.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="m-1">
+                    <h3 class="btn bg-danger-transparent w-100 mb-3" style="font-size: larger;">
+                    رشته های نامناسب
+                    </h3>
+                    <div class="w-100">
+                        {% for field in categorize_specialties_result.incompatible %}
+                        <span class="btn bg-danger-transparent m-1">{{ field.name }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'dashboard/libs/chart.js/chart.umd.js' %}"></script>
+
+{{ calculate_item_scores_result|json_script:"scores-data" }}
+
+<script>
+    const scoresData = JSON.parse(
+        document.getElementById("scores-data").textContent
+    );
+</script>
+<script>
+    const labels = Object.values(scoresData).map(item => item.name);
+
+    const scores = Object.values(scoresData).map(item => item.score);
+
+    const colors = [
+        '#985FFD',
+        '#FF49CD',
+        '#FDAF22',
+        '#32D484',
+        '#00C9FF',
+        '#FF6757',
+        '#7C4DFF',
+        '#26A69A',
+        '#FFB300',
+        '#EC407A',
+        '#42A5F5',
+        '#66BB6A',
+        '#AB47BC',
+        '#EF5350',
+        '#5C6BC0',
+        '#26C6DA',
+        '#D4E157',
+        '#FFA726',
+        '#8D6E63',
+        '#78909C'
+    ];
+
+    const config = {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'امتیاز ویژگی‌ها',
+                data: scores,
+                backgroundColor: colors.map(c => c + '33'),
+                borderColor: colors,
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'ویژگی‌های شخصیتی'
+                }
+            },
+
+            scales: {
+                x: {
+                    min: 0,
+                    max: 5,
+                    ticks: {
+                        stepSize: 1
+                    }
+                },
+                y: {
+                    ticks: {
+                        autoSkip: false
+                    }
+                }
+            }
+        }
+    };
+
+    new Chart(
+        document.getElementById('chartjs-bar'),
+        config
+    );
+</script>
+{% endblock %}

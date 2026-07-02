@@ -1,0 +1,88 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+وبینار های طلایی آتروپین
+{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white">وبینار های طلایی آتروپین</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="category-section section-t-space pt-4">
+    <div class="intro-plans mx-3">
+        <video class="intro-plans-video" id="first-player" controls>
+            <source src="{{ intro.video.url }}" type="video/mp4">
+        </video>
+        <div class="description">
+            {{ intro.content|safe }}
+        </div>
+    </div>
+</div>
+
+<section class="section-t-space popular-course-section">
+    <div class="custom-container">
+        <div class="title">
+            <h4>وبینار ها رو از دست نده!</h4>
+        </div>
+        <div class="row g-4">
+            <div class="col-12">
+                {% for next_live in next_lives %}
+                <div class="popular-box mb-4">
+                    <div class="popular-image" style="height: auto !important;">
+                        <img src="{{ next_live.cover.url }}" class="img-fluid w-100" alt="">
+                    </div>
+                    <div class="popular-detail">
+                        <a href="my-course.html">
+                            <h5>{{ next_live.title }}</h5>
+                        </a>
+                        <div class="video-play">
+                            <span>
+                                <i class="ri-play-circle-line"></i>
+                                {{ next_live.description }}
+                            </span>
+                        </div>
+                        <ul class="rating-box">
+                            <li>
+                                <ul class="rating">
+                                    <li>
+                                        <i class="ri-time-fill"></i>
+                                    </li>
+                                    <li class="new-text-black">{{ next_live.start_datetime_shamsi }}</li>
+                                </ul>
+                            </li>
+                            <li class="fw-500 new-text-black">ثبت نام</li>
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script>
+    const player = new Plyr('#first-player');
+</script>
+{% endblock %}

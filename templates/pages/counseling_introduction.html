@@ -1,0 +1,78 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+مشاوره اختصاصی
+{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white">مشاوره اختصاصی</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="category-section section-t-space pt-4">
+    <div class="intro-plans mx-3">
+        <video class="intro-plans-video" id="first-player" controls>
+            <source src="{{ intro.video.url }}" type="video/mp4">
+        </video>
+        <div class="description">
+            {{ intro.content|safe }}
+        </div>
+        <div class="d-flex w-100 gap-4">
+            <a href="{% url 'register' %}" class="btn btn-warning w-100">میخوام ثبت نام کنم</a>
+        </div>
+    </div>
+</div>
+
+<section class="section-t-space feature-course-section popular-course-section">
+    <div class="custom-container">
+        <ul class="feature-course-list">
+            {% for consultant in consultants %}
+            <li>
+                <div class="feature-box">
+                    <a href="{% url 'consultant_show' consultant.id %}" class="feature-image">
+                        {% if consultant.avatar %}
+                        <img src="{{ consultant.avatar.url }}" class="img-fluid" alt="">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="">
+                        {% endif %}
+                    </a>
+                    <div class="feature-detail">
+                        <a href="{% url 'consultant_show' consultant.id %}">
+                            <h6>{{ consultant.get_full_name }}</h6>
+                        </a>
+                        <ul class="rate-course">
+                            <li><i class="ri-user-fill"></i>{{ consultant.get_role_display }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</section>
+{% endblock %}
+
+{% block script %}
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script>
+    const player = new Plyr('#first-player');
+</script>
+{% endblock %}

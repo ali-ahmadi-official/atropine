@@ -1,0 +1,72 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست نوبت های مشاوره
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست نوبت های مشاوره
+                <a href="{% url 'schedule_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">تاریخ</th>
+                <th scope="col">ساعت شروع</th>
+                <th scope="col">ساعت پایان</th>
+                <th scope="col">رزرو توسط</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in schedules %}
+            <tr>
+                <td>
+                    {{ schedule.id }}
+                </td>
+                <td>
+                    {{ schedule.date_shamsi }}
+                </td>
+                <td>
+                    {{ schedule.start_time }}
+                </td>
+                <td>
+                    {{ schedule.end_time }}
+                </td>
+                <td>
+                    {% if schedule.request %}
+                    <a href="" class="badge bg-success-transparent">{{ schedule.request.student.user.get_full_name }}</a>
+                    {% else %}
+                    <span class="badge bg-warning-transparent">رزرو نشده</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.request == None %}
+                    <a href="{% url 'schedule_delete' schedule.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

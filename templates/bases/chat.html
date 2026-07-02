@@ -16,13 +16,13 @@
     </title>
     <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
     <meta name="theme-color" content="#172561">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="آتروپین">
-    <meta name="msapplication-TileImage" content="{% static 'images/logo.jpg' %}">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon.ico' %}">
     <meta name="msapplication-TileColor" content="#FFFFFF">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="icon" type="image/x-icon" href="{% static 'images/logo-optimized.jpg' %}">
+    <link rel="icon" type="images/x-icon" href="{% static 'images/favicon.ico' %}">
 
     <!--Google font-->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -107,6 +107,16 @@
 
     <!-- Theme Settings js-->
     <script src="{% static 'js/theme-setting.js' %}"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js') // مسیر فایل خود را اینجا بگذارید
+                .then((reg) => console.log('Service Worker registered!'))
+                .catch((err) => console.log('Service Worker failed:', err));
+            });
+        }
+    </script>
 </body>
 
 

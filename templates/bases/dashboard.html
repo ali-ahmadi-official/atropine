@@ -1,0 +1,266 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="ltr" data-nav-layout="vertical" data-theme-mode="dark" data-header-styles="transparent"
+    data-width="fullwidth" data-menu-styles="transparent" data-page-style="flat" data-toggled="close"
+    data-vertical-style="doublemenu" data-toggled="double-menu-open">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    <meta name="description" content="آتروپین">
+    <meta name="keywords" content="آتروپین">
+    <link rel="manifest" href="{% static 'jsons/manifest.json' %}">
+    <meta name="theme-color" content="#172561">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="آتروپین">
+    <meta name="msapplication-TileImage" content="{% static 'images/favicon.ico' %}">
+    <meta name="msapplication-TileColor" content="#FFFFFF">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="icon" type="images/x-icon" href="{% static 'images/favicon.ico' %}">
+
+    <!-- جاوا اسکریپت دلخواه -->
+    <script src="{% static 'dashboard/libs/choices.js/public/assets/scripts/choices.min.js' %}"></script>
+
+    <!-- جاوا اسکریپت اصلی -->
+    <script src="{% static 'dashboard/js/main.js' %}"></script>
+
+    <!-- استایل بوت استرپ -->
+    <link id="style" href="{% static 'dashboard/libs/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- استایل اصلی -->
+    <link href="{% static 'dashboard/css/styles.css' %}" rel="stylesheet">
+
+    <!-- استایل آیکون -->
+    <link href="{% static 'dashboard/css/icons.css' %}" rel="stylesheet">
+
+    <!-- استایل کتابخانه Waves -->
+    <link href="{% static 'dashboard/libs/node-waves/waves.min.css' %}" rel="stylesheet">
+
+    <!-- استایل نوار اسکرول -->
+    <link href="{% static 'dashboard/libs/simplebar/simplebar.min.css' %}" rel="stylesheet">
+
+    <!-- استایل انتخابگر رنگ -->
+    <link rel="stylesheet" href="{% static 'dashboard/libs/flatpickr/flatpickr.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dashboard/libs/%40simonwep/pickr/themes/nano.min.css' %}">
+
+    <!-- استایل انتخاب‌گرها -->
+    <link rel="stylesheet" href="{% static 'dashboard/libs/choices.js/public/assets/styles/choices.min.css' %}">
+
+    <!-- استایل انتخابگر تاریخ -->
+    <link rel="stylesheet" href="{% static 'dashboard/libs/flatpickr/flatpickr.min.css' %}">
+
+    <!-- استایل کتابخانه Auto Complete -->
+    <link rel="stylesheet" href="{% static 'dashboard/libs/%40tarekraafat/autocomplete.js/css/autoComplete.css' %}">
+
+
+    <!-- استایل کنابخانه هایلایت -->
+    <link rel="stylesheet" href="{% static 'dashboard/libs/prismjs/themes/prism-coy.min.css' %}">
+
+    <link type="text/css" rel="stylesheet" href="{% static 'css/jalalidatepicker.min.css' %}" />
+    <script type="text/javascript" src="{% static 'js/jalalidatepicker.min.js' %}"></script>
+
+    {% block header %}
+
+    {% endblock %}
+
+</head>
+
+<body>
+    <div class="progress-top-bar"></div>
+    <!-- لودر -->
+    <div id="loader">
+        <img src="https://sprukomarket.com/products/html/bootstrap/vyzor/dist/assets/images/media/loader.svg" alt="">
+    </div>
+    <!-- لودر -->
+
+    <div class="page">
+
+        <!-- هدر -->
+        <header class="app-header sticky" id="header">
+
+            <!-- شروع::کنتاینر هدر اصلی -->
+            <div class="main-header-container container-fluid">
+
+                <!-- شروع::موارد سمت راست هدر -->
+                <div class="header-content-left">
+                    <!-- شرورع::عنصر هدر -->
+                    <div class="header-element mx-lg-0 mx-2">
+                        <a aria-label="Hide Sidebar"
+                            class="sidemenu-toggle header-link animated-arrow hor-toggle horizontal-navtoggle"
+                            data-bs-toggle="sidebar" href="javascript:void(0);"><span></span></a>
+                    </div>
+                    <!-- پایان::عنصر هدر -->
+
+                    <div class="header-element  header-search header-search-content d-md-block d-none">
+                        <!-- شروع :: جستجو -->
+                        <input type="text" class="header-search-bar form-control bg-white" id="header-search"
+                            placeholder="جستجو" spellcheck=false autocomplete="off" autocapitalize="off">
+                        <a href="javascript:void(0);" class="header-search-icon border-0">
+                            <i class="bi bi-search fs-12 mb-1"></i>
+                        </a>
+                        <!-- پایان::جستجو -->
+                    </div>
+
+                </div>
+                <!-- پایان::موارد سمت راست هدر -->
+                <!-- شروع::موارد سمت چپ هدر -->
+                <ul class="header-content-right">
+
+                    <!-- شروع::عنصر هدر -->
+                    <li class="header-element d-md-none d-block">
+                        <a href="javascript:void(0);" class="header-link" data-bs-toggle="modal"
+                            data-bs-target="#header-responsive-search">
+                            <!-- شروع::پیوند آیکون هدر -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" viewBox="0 0 256 256">
+                                <rect width="256" height="256" fill="none" />
+                                <circle cx="112" cy="112" r="80" opacity="0.2" />
+                                <circle cx="112" cy="112" r="80" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <line x1="168.57" y1="168.57" x2="224" y2="224" fill="none" stroke="currentColor"
+                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                            </svg>
+                            <!-- پایان::پیوند آیکون هدر -->
+                        </a>
+                    </li>
+                    <!-- پایان::عنصر هدر -->
+
+                </ul>
+                <!-- پایان::موارد سمت چپ هدر -->
+
+            </div>
+
+            <!-- پایان::کنتاینر هدر اصلی -->
+
+        </header>
+
+        <!-- پایان هدر -->
+        <!-- شروع::سایدبار -->
+        {% if request.user.role == "super_admin" %}
+        {% include 'includes/aside_super_admin.html' %}
+        {% elif request.user.role == "supervisor" %}
+        {% include 'includes/aside_supervisor.html' %}
+        {% elif request.user.role == "consultant" %}
+        {% include 'includes/aside_consultant.html' %}
+        {% else %}
+        {% include 'includes/aside_student.html' %}
+        {% endif %}
+        <!-- پایان::سایدبار -->
+        <!--شروع محتوای صفحه-->
+        <div class="main-content app-content">
+            <div class="container-fluid page-container main-body-container">
+                {% block content %}
+                {% endblock %}
+            </div>
+        </div>
+        <!-- پایان محتوای اصلی  -->
+        <div class="modal fade" id="header-responsive-search" tabindex="-1" aria-labelledby="header-responsive-search"
+            aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control border-end-0" placeholder="Search Anything ..."
+                                aria-label="Search Anything ..." aria-describedby="button-addon2">
+                            <button class="btn btn-primary" type="button" id="button-addon2">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Scroll To Top -->
+    <div class="scrollToTop">
+        <span class="arrow lh-1"><i class="ti ti-arrow-big-up fs-18"></i></span>
+    </div>
+    <div id="responsive-overlay"></div>
+    <!-- Scroll To Top -->
+    <script src="{% static 'dashboard/libs/%40popperjs/core/umd/popper.min.js' %}"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="{% static 'dashboard/libs/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Defaultmenu JS -->
+    <script src="{% static 'dashboard/js/defaultmenu.min.js' %}"></script>
+
+    <!-- Node Waves JS-->
+    <script src="{% static 'dashboard/libs/node-waves/waves.min.js' %}"></script>
+
+    <!-- Sticky JS -->
+    <script src="{% static 'dashboard/js/sticky.js' %}"></script>
+
+    <!-- Simplebar JS -->
+    <script src="{% static 'dashboard/libs/simplebar/simplebar.min.js' %}"></script>
+    <script src="{% static 'dashboard/js/simplebar.js' %}"></script>
+
+    <!-- Auto Complete JS -->
+    <script src="{% static 'dashboard/libs/%40tarekraafat/autocomplete.js/autoComplete.min.js' %}"></script>
+
+    <!-- Color Picker JS -->
+    <script src="{% static 'dashboard/libs/%40simonwep/pickr/pickr.es5.min.js' %}"></script>
+
+    <!-- Date & Time Picker JS -->
+    <script src="{% static 'dashboard/libs/flatpickr/flatpickr.min.js' %}"></script>
+
+
+    <!-- Apex Charts JS -->
+    <script src="{% static 'dashboard/libs/apexcharts/apexcharts.min.js' %}"></script>
+
+    <!-- Sales Dashboard -->
+    <script src="{% static 'dashboard/js/sales-dashboard.js' %}"></script>
+
+    <!-- Custom JS -->
+    <script src="{% static 'dashboard/js/custom.js' %}"></script>
+
+
+    <!-- Custom-Switcher JS -->
+    <!-- <script src="../dashboard/js/custom-switcher.min.js"></script> -->
+    <script>
+        function englishToPersianDigits(str) {
+            const persianDigits = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+            return str.replace(/[0-9]/g, d => persianDigits[d]);
+        }
+        function convertEnglishNumbersToPersian(element = document.body) {
+
+            const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+            while (walker.nextNode()) {
+                const node = walker.currentNode;
+                node.nodeValue = englishToPersianDigits(node.nodeValue);
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            convertEnglishNumbersToPersian();
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9849493cca7b882b',t:'MTc1ODc5MDM1Mw=='};var a=document.createElement('script');a.src='../../../../../../cdn-cgi/challenge-platform/h/b/scripts/jsd/5783333ceb22/maind41d.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+    <script defer
+        src="https://static.cloudflareinsights.com/beacon.min.js/vcd15cbe7772f49c399c6a5babf22c1241717689176015"
+        integrity="sha512-ZpsOmlRQV6y907TI0dKBHq9Md29nnaEIPlkf84rnaERnq6zvWvPUqr2ft8M1aS28oN72PdrCzSjY4U6VaAw1EQ=="
+        data-cf-beacon='{"version":"2024.11.0","token":"c0172a2c3fc743d6bf65683eed55a966","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}'
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/rtheme746-qc/rtl-iframe-js/sample1.js"></script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/static/service-worker.js')
+                .then((reg) => console.log('Service Worker registered!'))
+                .catch((err) => console.log('Service Worker failed:', err));
+            });
+        }
+    </script>
+</body>
+
+
+</html>

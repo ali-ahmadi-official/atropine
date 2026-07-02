@@ -1,0 +1,81 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست کاربران
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست کاربران
+                <a href="{% url 'user_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">پروفایل</th>
+                <th scope="col">نام و نام خانوادگی</th>
+                <th scope="col">شماره تلفن</th>
+                <th scope="col">سطح کاربری</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>
+                    {{ user.id }}
+                </td>
+                <td>
+                    <div class="avatar avatar-sm me-۲ avatar-rounded">
+                        {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" alt="profile">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" alt="profile">
+                        {% endif %}
+                    </div>
+                </td>
+                <td>
+                    {{ user.get_full_name }}
+                </td>
+                <td>{{ user.mobile }}</td>
+                <td>
+                    {% if user.role == "super_admin" %}
+                    <span class="badge bg-secondary-transparent">مدیرکل</span>
+                    {% elif user.role == "supervisor" %}
+                    <span class="badge bg-success-transparent">ناظر</span>
+                    {% elif user.role == "consultant" %}
+                    <span class="badge bg-info-transparent">مشاور</span>
+                    {% else %}
+                    <span class="badge bg-warning-transparent">داوطلب</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'user_edit' user.id %}" class="btn btn-icon btn-sm btn-success-transparent rounded-pill">
+                        <i class="ri-edit-2-line"></i>
+                    </a>
+                    <a href="{% url 'user_delete' user.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,74 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+ادیت وبینار
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.title.label }}</p>
+            {% include 'includes/error.html' with errors=form.title.errors %}
+            {{ form.title }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.description.label }}</p>
+            {% include 'includes/error.html' with errors=form.description.errors %}
+            {{ form.description }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.cover.label }}</p>
+            {% include 'includes/error.html' with errors=form.cover.errors %}
+            {{ form.cover }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">تاریخ شروع</p>
+            <input data-jdp type="text" name="start_date" class="form-control" value="{{ form.start_date.value|default:'' }}" autocomplete="off" required>
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">ساعت شروع</p>
+            <input type="time" name="start_time" class="form-control" value="{{ form.start_time.value|default:'' }}" required>
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">تاریخ پایان</p>
+            <input data-jdp type="text" name="end_date" class="form-control" value="{{ form.end_date.value|default:'' }}" autocomplete="off" required>
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">ساعت پایان</p>
+            <input type="time" name="end_time" class="form-control" value="{{ form.end_time.value|default:'' }}" required>
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.stream_url.label }}</p>
+            {% include 'includes/error.html' with errors=form.stream_url.errors %}
+            {{ form.stream_url }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_public.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_public.errors %}
+            {{ form.is_public }}
+        </div>
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+
+<script>
+    jalaliDatepicker.startWatch();
+
+    const inputFile = document.getElementById('profile_image_input');
+    const previewImage = document.getElementById('profile_image_preview');
+    inputFile.addEventListener('change', function () {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImage.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }); 
+</script>
+{% endblock %}

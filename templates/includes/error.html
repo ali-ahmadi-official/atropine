@@ -1,0 +1,5 @@
+{% if errors %}
+    {% for error in errors %}
+        <p class="my-1 w-100 bg-danger-transparent">{{ error }}</p>
+    {% endfor %}
+{% endif %}

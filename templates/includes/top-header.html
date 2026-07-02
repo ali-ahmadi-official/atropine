@@ -1,0 +1,20 @@
+{% load static %}
+
+<div class="top-header top-header-edited">
+    <div class="header-left">
+        <a class="new-text-black" href="{% url 'main' %}">
+            <img src="{% static 'images/logo.jpg' %}" alt="آتروپین" width="30px" style="border-radius: 100%;">
+        </a>
+        <a href="{% url 'main' %}" class="header-logo">
+            <h3 class="new-text-black">آتروپین</h3>
+        </a>
+    </div>
+
+    <div class="header-right">
+        <div class="notification-box">
+            <a class="new-text-black" data-bs-toggle="offcanvas" href="#sideMenu" role="button">
+                <i class="ri-menu-2-fill"></i>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+﻿(function () {
+  "use strict";
+
+  /* default multi select */
+  const secondElement = new Choices('#choices-multiple-default', { allowSearch: false }).setValue(['انتخاب 2', 'انتخاب 3']);
+
+  /* multi select with remove button */
+  const multipleCancelButton = new Choices(
+    '#choices-multiple-remove-button',
+    {
+      allowHTML: true,
+      removeItemButton: true,
+    }
+  );
+
+  /* multi select with option groups */
+  const multipleDefault = new Choices(document.getElementById('choices-multiple-groups'),
+    { allowHTML: true }
+  );
+
+  /* email address only */
+  const textEmailFilter = new Choices('#choices-text-email-filter', {
+    allowHTML: true,
+    editItems: true,
+    addItemFilter: function (value) {
+      if (!value) {
+        return false;
+      }
+      const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const expression = new RegExp(regex.source, 'i');
+      return expression.test(value);
+    },
+  }).setValue(['abc@hotmail.com']);
+
+  /* passing through values */
+  const textPresetVal = new Choices('#choices-text-preset-values', {
+    allowHTML: true,
+    items: [
+      'یک',
+      {
+        value: 'two',
+        label: 'دو',
+        customProperties: {
+          description: 'Numbers are infinite',
+        },
+      },
+    ],
+  });
+
+  /* options added via config with no search */
+  const singleNoSearch = new Choices('#choices-single-no-search', {
+    allowHTML: true,
+    searchEnabled: false,
+    removeItemButton: true,
+    choices: [
+      { value: 'One', label: 'برچسب یکی' },
+      { value: 'Two', label: 'برچسب دو' },
+      { value: 'Three', label: 'برچسب سه' },
+    ],
+  }).setChoices(
+    [
+      { value: 'Four', label: 'برچسب چهار' },
+      { value: 'Five', label: 'برچسب پنج' },
+      { value: 'Six', label: 'برچسب شش', selected: true },
+    ],
+    'value',
+    'label',
+    false
+  );
+
+  /* passing unique values */
+  const textUniqueVals = new Choices('#choices-text-unique-values', {
+    allowHTML: true,
+    paste: false,
+    duplicateItemsAllowed: false,
+    editItems: true,
+  });
+
+})();
