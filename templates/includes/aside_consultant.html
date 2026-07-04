@@ -99,8 +99,10 @@
             </ul>
             <ul class="doublemenu_bottom-menu main-menu mb-0 border-top">
                 <li class="slide">
-                    <a href="" class="side-menu__item">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256">
+                    <form action="{% url 'logout' %}" method="post" class="side-menu__item" id="logout-form">
+                        {% csrf_token %}
+                        <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256"
+                            onclick="document.getElementById('logout-form').submit();">
                             <rect width="256" height="256" fill="none" />
                             <path
                                 d="M48,40H208a16,16,0,0,1,16,16V200a16,16,0,0,1-16,16H48a0,0,0,0,1,0,0V40A0,0,0,0,1,48,40Z"
@@ -113,7 +115,7 @@
                                 stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
                         </svg>
                         <span class="side-menu__label">خروج از حساب</span>
-                    </a>
+                    </form>
                 </li>
                 <li class="slide">
                     <a href="" class="side-menu__item">

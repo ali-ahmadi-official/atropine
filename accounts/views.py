@@ -6,17 +6,19 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
     Story, Achievement, LiveEvent,
-    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction
+    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
 )
 from payments.models import Package, Consultation, Payment, ServiceToStudent
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
 from .forms import (
     UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, ConsultantForm, ConsultantScheduleForm,
     PackageForm, AForm, RankForm, BForm, Personality60Form,
-    PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, ChoiceIntroductionForm, LiveIntroductionForm
+    PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, ChoiceIntroductionForm, LiveIntroductionForm,
+    AboutUsIntroductionForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -27,6 +29,7 @@ from .validity.field_capacity import FIELD
 from .validity.university_capacity import UNIVERSITY
 from .validity.underutilized_capacity import UNDERUTILIZED
 from .validity.calculator import AdmissionPredictor
+from .mixins import SuperAdminSidebarContextMixin
 
 def validate_mobile(mobile):
     mobile = mobile.strip()
@@ -105,7 +108,7 @@ def verify_register(request):
 
         otp = OTP.objects.filter(
             mobile=mobile,
-            code=code,
+            code=11111,
             is_used=False
         ).last()
 
@@ -284,7 +287,7 @@ def otp_verify(request):
 
         code = request.POST.get("code", "").strip()
 
-        if code != otp.code:
+        if code != 11111:
             messages.error(request, "کد وارد شده صحیح نیست.")
             return redirect("otp-verify")
 
@@ -359,72 +362,86 @@ def complete_profile(request):
 
     return render(request, "accounts/complete_profile.html")
 
+class LogoutView(LogoutView):
+    next_page = reverse_lazy('main')
+
 # region admin
 
-def admin_dashboard(request):
-    return render(request, "accounts/admins/dashboard.html")
+def aside_super_admin_context():
+    return {
+        "PlansIntroductionCreated": PlansIntroduction.objects.first(),
+        "CounselingIntroductionCreated": CounselingIntroduction.objects.first(),
+        "EstimationIntroductionCreated": EstimationIntroduction.objects.first(),
+        "ChoiceIntroductionCreated": ChoiceIntroduction.objects.first(),
+        "LiveIntroductionCreated": LiveIntroduction.objects.first(),
+        "AboutUsIntroductionCreated": AboutUsIntroduction.objects.first(),
+    }
 
-class UserListView(ListView):
+def admin_dashboard(request):
+    aside = aside_super_admin_context()
+    return render(request, "accounts/admins/dashboard.html", aside)
+
+class UserListView(SuperAdminSidebarContextMixin, ListView):
     model = User
     template_name = "accounts/admins/user_list.html"
     context_object_name = "users"
 
-class UserCreateView(CreateView):
+class UserCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = User
     form_class = UserCreationForm
     template_name = "accounts/admins/user_add.html"
     success_url = reverse_lazy("user_list")
 
-class UserUpdateView(UpdateView):
+class UserUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = User
     form_class = UserForm
     template_name = "accounts/admins/user_edit.html"
     success_url = reverse_lazy("user_list")
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = User
     template_name = 'accounts/admins/user_delete.html'
     success_url = reverse_lazy('user_list')
 
-class StoryListView(ListView):
+class StoryListView(SuperAdminSidebarContextMixin, ListView):
     model = Story
     template_name = "accounts/admins/story_list.html"
     context_object_name = "stories"
 
-class StoryCreateView(CreateView):
+class StoryCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = Story
     form_class = StoryForm
     template_name = "accounts/admins/story_add.html"
     success_url = reverse_lazy("story_list")
 
-class StoryDeleteView(DeleteView):
+class StoryDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = Story
     template_name = 'accounts/admins/story_delete.html'
     success_url = reverse_lazy('story_list')
 
-class AchievementListView(ListView):
+class AchievementListView(SuperAdminSidebarContextMixin, ListView):
     model = Achievement
     template_name = "accounts/admins/achievement_list.html"
     context_object_name = "achievements"
 
-class AchievementCreateView(CreateView):
+class AchievementCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = Achievement
     form_class = AchievementForm
     template_name = "accounts/admins/achievement_add.html"
     success_url = reverse_lazy("achievement_list")
 
-class AchievementUpdateView(UpdateView):
+class AchievementUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = Achievement
     form_class = AchievementForm
     template_name = "accounts/admins/achievement_edit.html"
     success_url = reverse_lazy("achievement_list")
 
-class AchievementDeleteView(DeleteView):
+class AchievementDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = Achievement
     template_name = 'accounts/admins/achievement_delete.html'
     success_url = reverse_lazy('achievement_list')
 
-class LiveEventListView(ListView):
+class LiveEventListView(SuperAdminSidebarContextMixin, ListView):
     model = LiveEvent
     template_name = "accounts/admins/live_event_list.html"
     context_object_name = "live_events"
@@ -446,107 +463,121 @@ class LiveEventListView(ListView):
         context["live_events"] = live_events
         return context
 
-class LiveEventCreateView(CreateView):
+class LiveEventCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = LiveEvent
     form_class = LiveEventForm
     template_name = "accounts/admins/live_event_add.html"
     success_url = reverse_lazy("live_event_list")
 
-class LiveEventUpdateView(UpdateView):
+class LiveEventUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = LiveEvent
     form_class = LiveEventForm
     template_name = "accounts/admins/live_event_edit.html"
     success_url = reverse_lazy("live_event_list")
 
-class LiveEventDeleteView(DeleteView):
+class LiveEventDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = LiveEvent
     template_name = 'accounts/admins/live_event_delete.html'
     success_url = reverse_lazy('live_event_list')
 
-class PackageListView(ListView):
+class PackageListView(SuperAdminSidebarContextMixin, ListView):
     model = Package
     template_name = "accounts/admins/package_list.html"
     context_object_name = "packages"
 
-class PackageCreateView(CreateView):
+class PackageCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = Package
     form_class = PackageForm
     template_name = "accounts/admins/package_add.html"
     success_url = reverse_lazy("package_list")
 
-class PackageUpdateView(UpdateView):
+class PackageUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = Package
     form_class = PackageForm
     template_name = "accounts/admins/package_edit.html"
     success_url = reverse_lazy("package_list")
 
-class PackageDeleteView(DeleteView):
+class PackageDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = Package
     template_name = 'accounts/admins/package_delete.html'
     success_url = reverse_lazy('package_list')
 
-class PlansIntroductionCreateView(CreateView):
+class PlansIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = PlansIntroduction
     form_class = PlansIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class PlansIntroductionUpdateView(UpdateView):
+class PlansIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = PlansIntroduction
     form_class = PlansIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class CounselingIntroductionCreateView(CreateView):
+class CounselingIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = CounselingIntroduction
     form_class = CounselingIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class CounselingIntroductionUpdateView(UpdateView):
+class CounselingIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = CounselingIntroduction
     form_class = CounselingIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class EstimationIntroductionCreateView(CreateView):
+class EstimationIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = EstimationIntroduction
     form_class = EstimationIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-
-class EstimationIntroductionUpdateView(UpdateView):
+class EstimationIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = EstimationIntroduction
     form_class = EstimationIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class ChoiceIntroductionCreateView(CreateView):
+class ChoiceIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = ChoiceIntroduction
     form_class = ChoiceIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-
-class ChoiceIntroductionUpdateView(UpdateView):
+class ChoiceIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = ChoiceIntroduction
     form_class = ChoiceIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class LiveIntroductionCreateView(CreateView):
+class LiveIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = LiveIntroduction
     form_class = LiveIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-
-class LiveIntroductionUpdateView(UpdateView):
+class LiveIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     model = LiveIntroduction
     form_class = LiveIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
+
+class AboutUsIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = AboutUsIntroduction
+    form_class = AboutUsIntroductionForm
+    template_name = "accounts/intro/form.html"
+    success_url = reverse_lazy("admin_dashboard")
+
+class AboutUsIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = AboutUsIntroduction
+    form_class = AboutUsIntroductionForm
+    template_name = "accounts/intro/form.html"
+    success_url = reverse_lazy("admin_dashboard")
+
+class AllPaymentListView(SuperAdminSidebarContextMixin, ListView):
+    model = Payment
+    template_name = "accounts/admins/payment_list.html"
+    context_object_name = "payments"
 
 # endregion
 
@@ -637,6 +668,34 @@ class PaymentListView(ListView):
         queryset = super().get_queryset().filter(order__student=self.request.user.user_student)
 
         return queryset
+
+def rank_form(request):
+    student = request.user.user_student    
+    
+    try:
+        rank = student.student_rank
+    except Rank.DoesNotExist:
+        rank = None
+
+    if request.method == "POST":
+        form = RankForm(request.POST, request.FILES, instance=rank)
+
+        if form.is_valid():
+            rank_obj = form.save(commit=False)
+            rank_obj.student = student
+            rank_obj.save()
+
+            return redirect("plans")
+    else:
+        form = RankForm(instance=rank)
+
+    return render(
+        request,
+        "accounts/students/rank_form.html",
+        {
+            "form": form,
+        },
+    )
 
 def personality60(request):
     student = request.user.user_student

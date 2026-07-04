@@ -83,7 +83,7 @@ def courses(request):
 def plans(request):
     intro = PlansIntroduction.objects.last()
     try:
-        rank_form = Rank.objects.filter(student=request.user.user_student)
+        rank_form = Rank.objects.filter(student=request.user.user_student).first()
     except:
         rank_form = None
     plans = Package.objects.all()
@@ -109,7 +109,7 @@ def consultant_show(request, id):
     consultant = get_object_or_404(User, role='consultant', id=id)
     student_count = Student.objects.filter(
         student_packege_requests__paid=True,
-        student_packege_requests__request_consultation__schedule__consultant=request.user.user_consultant
+        student_packege_requests__request_consultation__schedule__consultant__user=request.user
     ).distinct().count()
     
 

@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from pages.models import (
     News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction,
-    CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction,
+    CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
 )
 from payments.models import Package
 from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
@@ -302,6 +302,11 @@ class ChoiceIntroductionForm(BaseModelForm):
 class LiveIntroductionForm(BaseModelForm):
     class Meta:
         model = LiveIntroduction
+        fields = "__all__"
+
+class AboutUsIntroductionForm(BaseModelForm):
+    class Meta:
+        model = AboutUsIntroduction
         fields = "__all__"
 
 class PackageForm(BaseModelForm):

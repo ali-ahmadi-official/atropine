@@ -239,3 +239,19 @@ class LiveIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی وبینار"
         verbose_name_plural = "معرفی های وبینار"
+
+class AboutUsIntroduction(models.Model):
+    video = models.FileField(
+        upload_to="introductions/about_us/",
+        validators=[validate_video],
+        verbose_name="ویدئو معرفی"
+    )
+
+    content = CKEditor5Field(
+        "معرفی و توضیحات",
+        config_name="default"
+    )
+
+    class Meta:
+        verbose_name = "معرفی ما"
+        verbose_name_plural = "معرفی های ما"
