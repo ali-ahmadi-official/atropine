@@ -1,5 +1,4 @@
 {% extends 'bases/dashboard.html' %}
-
 {% load static %}
 
 {% block title %}
@@ -7,5 +6,55 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="container my-4" dir="rtl">
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <h5 class="fw-bold text-center mb-4">
+                🚀 دسترسی سریع
+            </h5>
+
+            <div class="row g-3">
+
+                <!-- تست شخصیت -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'personality60' %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-person-badge-fill d-block fs-3 mb-2"></i>
+                        تست شخصیت شناسی
+                    </a>
+                </div>
+
+                <!-- تخمین قبولی -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'validity' %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-graph-up-arrow d-block fs-3 mb-2"></i>
+                        تخمین قبولی
+                    </a>
+                </div>
+
+                <!-- تراکنش ها -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'payment_list' %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-credit-card-fill d-block fs-3 mb-2"></i>
+                        تراکنش‌ها
+                    </a>
+                </div>
+
+                <!-- مشاوره -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="#" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-chat-dots-fill d-block fs-3 mb-2"></i>
+                        مشاوره <small>(به زودی)</small>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
 
 {% endblock %}

@@ -1,5 +1,4 @@
 {% extends 'bases/dashboard.html' %}
-
 {% load static %}
 
 {% block title %}
@@ -7,5 +6,172 @@
 {% endblock %}
 
 {% block content %}
+<div class="container my-4" dir="rtl">
 
+    <div class="card shadow-sm border-0">
+        <div class="card-body">
+
+            <h5 class="fw-bold text-center mb-4">
+                🚀 دسترسی سریع
+            </h5>
+
+            <div class="row g-3">
+
+                <!-- 1 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'user_list' %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-people-fill d-block fs-3 mb-2"></i>
+                        کاربران
+                    </a>
+                </div>
+
+                <!-- 2 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'story_list' %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-camera-reels-fill d-block fs-3 mb-2"></i>
+                        استوری‌ها
+                    </a>
+                </div>
+
+                <!-- 3 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'live_event_list' %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-broadcast-pin d-block fs-3 mb-2"></i>
+                        وبینارها
+                    </a>
+                </div>
+
+                <!-- 4 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'achievement_list' %}" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-trophy-fill d-block fs-3 mb-2"></i>
+                        افتخارات
+                    </a>
+                </div>
+
+                <!-- 5 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'package_list' %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-box-seam-fill d-block fs-3 mb-2"></i>
+                        پلن‌ها
+                    </a>
+                </div>
+
+                <!-- 6 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'all_payment_list' %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-credit-card-fill d-block fs-3 mb-2"></i>
+                        تراکنش‌ها
+                    </a>
+                </div>
+
+                <!-- 7 -->
+                {% if not PlansIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'plans-introduction-create' %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-file-earmark-plus-fill d-block fs-3 mb-2"></i>
+                        معرفی پلن‌ها
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'plans-introduction-update' 1 %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-pencil-square d-block fs-3 mb-2"></i>
+                        معرفی پلن‌ها
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- 8 -->
+                {% if not CounselingIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'counseling-introduction-create' %}" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-person-plus-fill d-block fs-3 mb-2"></i>
+                        معرفی مشاوره
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'counseling-introduction-update' 1 %}"
+                        class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-pencil-fill d-block fs-3 mb-2"></i>
+                        معرفی مشاوره
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- 9 -->
+                {% if not EstimationIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'estimation-introduction-create' %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-graph-up-arrow d-block fs-3 mb-2"></i>
+                        معرفی تخمین قبولی
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'estimation-introduction-update' 1 %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-pencil-fill d-block fs-3 mb-2"></i>
+                        معرفی تخمین قبولی
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- 10 -->
+                {% if not ChoiceIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'choice-introduction-create' %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-list-check d-block fs-3 mb-2"></i>
+                        معرفی انتخاب رشته
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'choice-introduction-update' 1 %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-pencil-fill d-block fs-3 mb-2"></i>
+                        معرفی انتخاب رشته
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- 11 -->
+                {% if not LiveIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'live-introduction-create' %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-camera-video-fill d-block fs-3 mb-2"></i>
+                        معرفی وبینارها
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'live-introduction-update' 1 %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-pencil-fill d-block fs-3 mb-2"></i>
+                        معرفی وبینارها
+                    </a>
+                </div>
+                {% endif %}
+
+                <!-- 12 -->
+                {% if not AboutUsIntroductionCreated %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'about-introduction-create' %}" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-info-circle-fill d-block fs-3 mb-2"></i>
+                        صفحه درباره ما
+                    </a>
+                </div>
+                {% else %}
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'about-introduction-update' 1 %}" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-pencil-fill d-block fs-3 mb-2"></i>
+                        صفحه درباره ما
+                    </a>
+                </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
 {% endblock %}
