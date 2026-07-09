@@ -1,25 +1,35 @@
 import requests
 import random
 
-USERNAME = "username"
-PASSWORD = "password"
-FROM = "5000xxxx"
-
 def generate_code():
     return str(random.randint(100000, 999999))
 
-def send_sms(mobile, code):
-    url = (
-        "https://rest.payamak-panel.com/api/SendSMS/SendSMS"
-    )
+URL = "https://console.melipayamak.com/api/send/simple/ee4033b63f624bf1bc9edbce94d5ff19"
+
+def send_sms(mobile, text):
+    url = URL
 
     payload = {
-        "username": USERNAME,
-        "password": PASSWORD,
+        "from": "50004001586578",
         "to": mobile,
-        "from": FROM,
-        "text": f"کد ورود شما به آتروپین : {code}",
-        "isflash": False
+        "text": text
     }
 
-    requests.post(url, json=payload)
+    try:
+        response = requests.post(url, json=payload)
+
+        print("Status Code:", response.status_code)
+        print("Response:")
+        print(response.text)
+
+        return response.json()
+
+    except Exception as e:
+        print("Error:", e)
+
+
+# import requests
+
+# data = {'to': '09938285221'}
+# response = requests.post('https://console.melipayamak.com/api/send/otp/ee4033b63f624bf1bc9edbce94d5ff19', json=data)
+# print(response.json())

@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-افزودن استوری
+افزودن پوستر
 {% endblock %}
 
 {% block header %}
@@ -18,19 +18,9 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
-            <p class="mt-2 text-muted">{{ form.title.label }}</p>
-            {% include 'includes/error.html' with errors=form.title.errors %}
-            {{ form.title }}
-        </div>
-        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.cover.label }}</p>
             {% include 'includes/error.html' with errors=form.cover.errors %}
             {{ form.cover }}
-        </div>
-        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
-            <p class="mt-2 text-muted">{{ form.content.label }}</p>
-            {% include 'includes/error.html' with errors=form.content.errors %}
-            {{ form.content }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.show_in.label }}</p>

@@ -60,6 +60,10 @@ class Package(models.Model):
         verbose_name="قیمت به تومان"
     )
 
+    def service_labels(self):
+        choices = dict(self.SERVICE_CHOICES)
+        return [choices[s] for s in self.service]
+
     class Meta:
         verbose_name = "پلن"
         verbose_name_plural = "پلن ها"

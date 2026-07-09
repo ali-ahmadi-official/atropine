@@ -1,0 +1,23 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+حذف پرسش و پاسخ
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post">
+        {% csrf_token %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <h3>
+                آیا از عملیات حذف اطمینان دارید؟
+            </h3>
+        </div>
+        </div>
+        <button type="submit" class="btn btn-danger w-100 my-3">حذف</button>
+        <a href="{% url 'faq_list' %}" class="btn btn-info-transparent w-100 mb-3">بیخیال</a>
+    </form>
+</div>
+{% endblock %}

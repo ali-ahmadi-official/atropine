@@ -1,6 +1,12 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
+from multiselectfield import MultiSelectField
 from .validators import validate_video
+
+SHOW_IN_CHOICES = (
+    ("main", "صفحه خانه"),
+    ("compass", "صفحه قطب نمای آتروپین"),
+)
 
 class News(models.Model):
     title = models.CharField(
@@ -42,6 +48,12 @@ class Story(models.Model):
         verbose_name="محتوا استوری"
     )
 
+    show_in = MultiSelectField(
+        max_length=100,
+        choices=SHOW_IN_CHOICES,
+        verbose_name="نمایش در صفحات"
+    )
+
     class Meta:
         verbose_name = "استوری"
         verbose_name_plural = "استوری ها"
@@ -77,6 +89,12 @@ class LiveEvent(models.Model):
     is_public = models.BooleanField(
         default=True,
         verbose_name="نمایش عمومی"
+    )
+
+    show_in = MultiSelectField(
+        max_length=100,
+        choices=SHOW_IN_CHOICES,
+        verbose_name="نمایش در صفحات"
     )
 
     class Meta:
@@ -142,7 +160,6 @@ class Survey(models.Model):
     class Meta:
         verbose_name = "نظرسنجی"
         verbose_name_plural = "نظرسنجی ها"
-
 
 class SurveyOption(models.Model):
     survey = models.ForeignKey(
@@ -255,3 +272,55 @@ class AboutUsIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی ما"
         verbose_name_plural = "معرفی های ما"
+
+class Poster(models.Model):
+    cover = models.ImageField(
+        upload_to="posters/",
+        verbose_name="پوستر"
+    )
+
+    show_in = MultiSelectField(
+        max_length=100,
+        choices=SHOW_IN_CHOICES,
+        verbose_name="نمایش در صفحات"
+    )
+
+    stream_url = models.URLField(
+        verbose_name="لینک پخش",
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        verbose_name = "پوستر"
+        verbose_name_plural = "پوستر ها"
+
+class Comment(models.Model):
+    cover = models.ImageField(
+        upload_to="comments/",
+        verbose_name="پروفایل"
+    )
+
+    content = models.CharField(
+        max_length=300,
+        verbose_name="نظر"
+    )
+
+    class Meta:
+        verbose_name = "کامنت"
+        verbose_name_plural = "کامنت ها"
+
+class FAQ(models.Model):
+    question = models.CharField(
+        max_length=500,
+        verbose_name="سوال"
+    )
+
+    answer = models.CharField(
+        max_length=500,
+        verbose_name="پاسخ"
+    )
+
+    class Meta:
+        verbose_name = "پرسش و پاسخ"
+        verbose_name_plural = "پرسش و پاسخ ها"

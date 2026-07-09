@@ -8,11 +8,12 @@ from accounts.models import User, Rank, ConsultantSchedule, Student
 from payments.models import Package
 from .models import (
     Story, LiveEvent, Achievement,
-    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction
+    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction,
+    Poster, Comment, FAQ
 )
 
 def main(request):
-    stories = Story.objects.all()
+    stories = Story.objects.filter(show_in__icontains="main")
 
     now = timezone.now()
     a_live_is_active = LiveEvent.objects.filter(
@@ -22,6 +23,7 @@ def main(request):
     ).first()
 
     next_live = LiveEvent.objects.filter(
+        show_in__icontains="main",
         is_public=True,
         start_datetime__gte=now,
     ).first()
@@ -39,6 +41,8 @@ def main(request):
 
     atropine_teams = User.objects.exclude(role='student')
 
+    posters = Poster.objects.filter(show_in__icontains="main")
+
     context = {
         'stories': stories,
         'a_live_is_active': a_live_is_active,
@@ -46,9 +50,66 @@ def main(request):
         'achievements': achievements,
         'atropine_teams': atropine_teams,
         'next_live': next_live,
+        'posters': posters,
     }
 
     return render(request, 'pages/main.html', context)
+
+def compass(request):
+    stories = Story.objects.filter(show_in__icontains="compass")
+
+    now = timezone.now()
+    a_live_is_active = LiveEvent.objects.filter(
+        is_public=True,
+        start_datetime__lte=now,
+        end_datetime__gte=now
+    ).first()
+
+    posters = Poster.objects.filter(show_in__icontains="main")
+
+    lives = LiveEvent.objects.filter(
+        show_in__icontains="compass",
+        is_public=True,
+    )
+
+    for live in lives:
+        live.start_date_shamsi = jdatetime.date.fromgregorian(
+            date=live.start_datetime
+        ).strftime('%Y/%m/%d')
+
+        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    atropine_teams = User.objects.exclude(role='student')
+
+    comments = Comment.objects.all()
+    
+    faqs = FAQ.objects.all()
+
+    context = {
+        "stories": stories,
+        "a_live_is_active": a_live_is_active,
+        "posters": posters,
+        "lives": lives,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+        "atropine_teams": atropine_teams,
+        "comments": comments,
+        "faqs": faqs,
+    }
+
+    return render(request, 'pages/compass.html', context)
 
 def story_show(request, id):
     stories = Story.objects.filter(id__gte=id)

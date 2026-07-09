@@ -9,16 +9,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
-    Story, Achievement, LiveEvent,
+    Story, Achievement, LiveEvent, Poster, Comment, FAQ,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
 )
 from payments.models import Package, Consultation, Payment, ServiceToStudent
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
 from .forms import (
-    UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, ConsultantForm, ConsultantScheduleForm,
-    PackageForm, AForm, RankForm, BForm, Personality60Form,
+    UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, ConsultantScheduleForm,
+    PackageForm, AForm, RankForm, Personality60Form,
     PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, ChoiceIntroductionForm, LiveIntroductionForm,
-    AboutUsIntroductionForm
+    AboutUsIntroductionForm, CommentForm, FAQForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -108,7 +108,7 @@ def verify_register(request):
 
         otp = OTP.objects.filter(
             mobile=mobile,
-            code=11111,
+            code=code,
             is_used=False
         ).last()
 
@@ -287,7 +287,7 @@ def otp_verify(request):
 
         code = request.POST.get("code", "").strip()
 
-        if code != 11111:
+        if code != code:
             messages.error(request, "کد وارد شده صحیح نیست.")
             return redirect("otp-verify")
 
@@ -418,6 +418,54 @@ class StoryDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = Story
     template_name = 'accounts/admins/story_delete.html'
     success_url = reverse_lazy('story_list')
+
+class PosterListView(SuperAdminSidebarContextMixin, ListView):
+    model = Poster
+    template_name = "accounts/admins/poster_list.html"
+    context_object_name = "posters"
+
+class PosterCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = Poster
+    form_class = PosterForm
+    template_name = "accounts/admins/poster_add.html"
+    success_url = reverse_lazy("poster_list")
+
+class PosterDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = Poster
+    template_name = 'accounts/admins/poster_delete.html'
+    success_url = reverse_lazy('poster_list')
+
+class CommentListView(SuperAdminSidebarContextMixin, ListView):
+    model = Comment
+    template_name = "accounts/admins/comment_list.html"
+    context_object_name = "comments"
+
+class CommentCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = "accounts/admins/comment_add.html"
+    success_url = reverse_lazy("comment_list")
+
+class CommentDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = Comment
+    template_name = 'accounts/admins/comment_delete.html'
+    success_url = reverse_lazy('comment_list')
+
+class FAQListView(SuperAdminSidebarContextMixin, ListView):
+    model = FAQ
+    template_name = "accounts/admins/faq_list.html"
+    context_object_name = "faqs"
+
+class FAQCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = FAQ
+    form_class = FAQForm
+    template_name = "accounts/admins/faq_add.html"
+    success_url = reverse_lazy("faq_list")
+
+class FAQDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = FAQ
+    template_name = 'accounts/admins/faq_delete.html'
+    success_url = reverse_lazy('faq_list')
 
 class AchievementListView(SuperAdminSidebarContextMixin, ListView):
     model = Achievement
@@ -722,7 +770,7 @@ def personality60(request):
 
             if form.is_valid():
                 form = form.save(commit=False)
-                obj.student = student
+                form.student = student
                 form.save()
 
                 student.a_completed = True

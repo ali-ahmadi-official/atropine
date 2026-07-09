@@ -56,7 +56,7 @@
     </div>
     <!-- Loader Box End -->
     
-    <main class="position-relative">
+    <main class="position-relative" style="background-color: #eef1f6;">
         {% block header %}
         {% endblock %}
 
@@ -75,57 +75,45 @@
                 </li>
 
                 <li class="{% if '/plans/' in request.path %} active {% endif %}">
-                    <a href="{% url 'plans' %}" class="mobile-box">
+                    <a href="{% url 'main' %}" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-vip-crown-line"></i>
+                            <i class="ri-live-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>پلن ها</h5>
+                            <h5>وبینار ها</h5>
                         </div>
                     </a>
                 </li>
 
                 <li class="{% if '/dashboard/' in request.path %}active{% endif %}">
-                    <a href="
-                        {% if request.user.role == 'super_admin' %}
-                            {% url 'admin_dashboard' %}
-                        {% elif request.user.role == 'supervisor' %}
-                            {% url 'supervisor_dashboard' %}
-                        {% elif request.user.role == 'consultant' %}
-                            {% url 'consultant_dashboard' %}
-                        {% elif request.user.role == 'student' %}
-                            {% url 'student_dashboard' %}
-                        {% else %}
-                            {% url 'login' %}
-                        {% endif %}
-                    " class="mobile-box">
+                    <a href="" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-user-line"></i>
+                            <i class="ri-archive-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>داشبورد</h5>
+                            <h5>محصولات</h5>
                         </div>
                     </a>
                 </li>
 
                 <li class="{% if '/courses/' in request.path %} active {% endif %}">
-                    <a href="{% url 'courses' %}" class="mobile-box">
+                    <a href="" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-play-circle-line"></i>
+                            <i class="ri-archive-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>دوره ها</h5>
+                            <h5>آزمون ها</h5>
                         </div>
                     </a>
                 </li>
 
                 <li>
-                    <a href="{% url 'counseling_introduction' %}" class="mobile-box">
+                    <a href="{% url 'main' %}" class="mobile-box">
                         <div class="mobile-icon">
-                            <i class="ri-customer-service-2-line"></i>
+                            <i class="ri-message-3-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>مشاورین</h5>
+                            <h5>چت</h5>
                         </div>
                     </a>
                 </li>
@@ -299,33 +287,6 @@
             </div>
         </div>
         <!-- Side menu offcanvas end -->
-
-        <!-- Theme Option Setting Box Start -->
-        <div class="theme-setting-box">
-            <div class="theme-box">
-                <button class="theme-icon text-white">
-                    <i class="ri-pencil-line"></i>
-                </button>
-                <ul class="theme-option">
-                    <li>
-                        <button class="theme-setting-button" id="light-btn">
-                            <i class="ri-sun-line"></i>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="theme-setting-button" id="dark-btn">
-                            <i class="ri-moon-line"></i>
-                        </button>
-                    </li>
-                    <li>
-                        <button class="theme-setting-button" id="system-btn">
-                            <i class="ri-computer-line"></i>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <!-- Theme Option Setting Box End -->
     </main>
 
     <!-- Bootstrap js-->

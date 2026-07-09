@@ -3,8 +3,10 @@ from django import forms
 from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from pages.models import (
+    SHOW_IN_CHOICES,
     News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction,
-    CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
+    CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction,
+    Poster, Comment, FAQ
 )
 from payments.models import Package
 from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
@@ -175,6 +177,37 @@ class StoryForm(BaseModelForm):
         model = Story
         fields = "__all__"
 
+        widgets = {
+            "show_in": forms.SelectMultiple(
+                attrs={
+                    "class": "form-select select2",
+                }
+            )
+        }
+
+class PosterForm(BaseModelForm):
+    class Meta:
+        model = Poster
+        fields = "__all__"
+
+        widgets = {
+            "show_in": forms.SelectMultiple(
+                attrs={
+                    "class": "form-select select2",
+                }
+            )
+        }
+
+class CommentForm(BaseModelForm):
+    class Meta:
+        model = Comment
+        fields = "__all__"
+
+class FAQForm(BaseModelForm):
+    class Meta:
+        model = FAQ
+        fields = "__all__"
+
 class LiveEventForm(BaseModelForm):
     start_date = forms.CharField(
         label="تاریخ شروع",
@@ -196,6 +229,12 @@ class LiveEventForm(BaseModelForm):
         label="ساعت پایان",
         widget=forms.TimeInput(attrs={"type": "time"}),
         required=True
+    )
+
+    show_in = forms.MultipleChoiceField(
+        label="نمایش در صفحات",
+        widget=forms.SelectMultiple(attrs={"class": "form-select select2"}),
+        choices=SHOW_IN_CHOICES,
     )
 
     class Meta:

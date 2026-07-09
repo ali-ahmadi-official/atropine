@@ -1,12 +1,13 @@
 from django.urls import path
 from .views import (
-    main, story_show, courses, plans,
+    main, compass, story_show, courses, plans,
     counseling_introduction, consultant_show, estimation_introduction, choice_introduction, live_introduction, 
     about_us, trust, achievement_list, atropine_team
 )
 
 urlpatterns = [
     path('', main, name='main'),
+    path('compass/', compass, name='compass'),
     path('story-show/<int:id>/', story_show, name='story_show'),
     path('courses/', courses, name='courses'),
     path('plans/', plans, name='plans'),

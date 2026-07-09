@@ -1,0 +1,563 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+قطب نمای آتروپین
+{% endblock %}
+
+{% block static %}
+<style>
+    .package-switch {
+        position: relative;
+        display: flex;
+        width: 320px;
+        margin: 20px auto;
+        margin-bottom: 0;
+        background: #e9ecef;
+        border-radius: 40px;
+        overflow: hidden;
+        height: 52px;
+    }
+
+    .package-switch button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        z-index: 2;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #172561;
+        transition: .3s;
+    }
+
+    .package-switch button.active {
+        color: #fff;
+    }
+
+    .switch-bg {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: calc(50% - 4px);
+        height: 44px;
+        background: #172561;
+        border-radius: 30px;
+        transition: .35s;
+    }
+
+    .package-switch.multi .switch-bg {
+        transform: translateX(-100%);
+    }
+
+    .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .check-list li {
+        position: relative;
+        padding-right: 36px;
+        margin-bottom: 14px;
+        line-height: 1.8;
+    }
+
+    .check-list li::before {
+        content: "✓";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+
+        background: #172561;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    #posterSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #posterSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #posterSlider>li {
+        flex: 0 0 100%;
+    }
+
+    #commentSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #commentSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #commentSlider>li {
+        flex: 0 0 100%;
+    }
+</style>
+<style>
+    .testimonial-card { border: 1px solid #eee; padding: 20px; border-radius: 15px; text-align: center; }
+    .user-img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 10px; }
+        #commentSlider {
+        display: flex;
+        overflow-x: auto; /* فعال کردن اسکرول افقی */
+        scroll-behavior: smooth; /* انیمیشن اسکرول نرم */
+        -webkit-overflow-scrolling: touch; /* برای اسکرول بهتر در iOS */
+        list-style: none; /* حذف بولت لیست */
+        padding: 0;
+        margin: 0;
+    }
+
+    #commentSlider li {
+        flex-shrink: 0; /* جلوگیری از کوچک شدن آیتم‌ها */
+        white-space: nowrap; /* جلوگیری از شکستن متن در چند خط */
+        width: 75%; /* یا هر عرض دلخواه دیگری که در HTML تعیین کردید */
+        /* اطمینان حاصل کنید که عرض li به درستی تنظیم شده باشد */
+        /* اگر از `min-width: 75% !important;` استفاده کردید، ممکن است نیاز به تنظیمات بیشتری باشد */
+    }
+
+    /* اگر از `.custom-container` برای padding استفاده می‌کنید، آن را هم در نظر بگیرید */
+    .custom-container {
+        padding: 0 !important; /* اطمینان از حذف padding اضافی */
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        {% include 'includes/top-header.html' %}
+
+        <div class="header-bottom pb-3">
+            <div class="customer-name justify-content-center">
+                {% if request.user.first_name %}
+                <h2>سلام {{ request.user.first_name }} <img src="{% static 'images/learning/hand.png' %}" alt=""> <br>
+                    ما در کنارت هستیم ...</h2>
+                {% else %}
+                <h2>تمام مسیر، در کنار شما هستیم ...</h2>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="pb-1">
+            <div class="search-box search-box-2 mt-0 mb-4" style="opacity: 0.8;">
+                <form action="{% url 'courses' %}">
+                    <input type="search" class="form-control" placeholder="جستجو..."
+                        style="width: 60%; margin: auto; opacity: 0.7;">
+                    <i class="ri-search-line" style="position: absolute; right: calc(20vw + 5px);"></i>
+                </form>
+            </div>
+        </div>
+
+        {% if stories %}
+        <div class="top-instructors-section">
+            <div class="instructors-box">
+                <ul class="instructors-list px-15 pb-4">
+                    {% for story in stories %}
+                    <li>
+                        <a href="{% url 'story_show' story.id %}" class="instructors-contain">
+                            <div class="instructors-image" style="border: 3px solid #ff3332;">
+                                <img src="{{ story.cover.url }}" class="img-fluid" alt="story cover">
+                            </div>
+                            <div class="instructors-detail">
+                                <h5 class="text-white">{{ story.title }}</h5>
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+{% if a_live_is_active %}
+<div class="section-t-space">
+    <a class="blog-btn border-btn vebinar-notif" href="{{ a_live_is_active.stream_url }}"
+        style="justify-content: space-between; align-items: center; box-shadow: none;">
+        <div style="display: flex; justify-content: center; align-items: center;">
+            <img src="{% static 'images/R.png' %}" alt="red logo" width="15px" class="red-circle">
+            <h3>
+                پخش زنده هم اکنون
+            </h3>
+        </div>
+        <button class="btn btn-danger" style="width: 100px;">ورود به لایو</button>
+    </a>
+</div>
+{% endif %}
+
+{% if posters %}
+<div class="top-instructors-section section-t-space mt-3">
+    <div class="instructors-box">
+        <ul class="instructors-list mx-3" id="posterSlider">
+            {% for poster in posters %}
+            <li class="custom-container" style="min-width: 100vw !important;">
+                <div class="row g-4">
+                    <div class="col-12 p-0">
+                        <div class="popular-image w-100" style="height: auto !important;">
+                            <img src="{{ poster.cover.url }}" class="img-fluid w-100" alt="">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% if lives %}
+<div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
+    <div class="title px-15">
+        <h2 style="color: #172561; text-align: center;">لایو های تخصصی انتخاب رشته | 1405</h2>
+    </div>
+
+    <div class="instructors-box">
+        <ul class="instructors-list px-15"
+            style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
+            {% for live in lives %}
+            <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
+                <div class="my-card" style="justify-content: space-between;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-image-edited">
+                            <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">
+                        </div>
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.title }}</h4>
+                            <h6>{{ live.start_datetime|time }}</h6>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.status }}</h4>
+                            <h6>{{ live.start_date_shamsi }}</h6>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<div class="top-instructors-section section-t-space">
+    <div class="instructors-box">
+        <div class="px-15" style="display: grid; grid-template-columns: repeat(2, 1fr);">
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-mail-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h3>خبرنامه</h3>
+                    </div>
+                </div>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-calendar-event-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h3>آرشیو رویدادها</h3>
+                    </div>
+                </div>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-article-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h3>آتروفست ها</h3>
+                    </div>
+                </div>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-settings-3-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h3>گارگاه ها</h3>
+                    </div>
+                </div>
+            </li>
+        </div>
+    </div>
+</div>
+
+<div class="package-switch">
+    <button id="singleBtn" class="active">خدمات تکی</button>
+    <button id="multiBtn">پکیج‌ها</button>
+    <div class="switch-bg"></div>
+</div>
+
+{% if single_service_packages %}
+<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                {% for single_service_package in single_service_packages %}
+                <div class="swiper-slide mt-2">
+                    <a href="" class="reading-list">
+                        <div class="reading-box p-4">
+                            <div class="reading-detail">
+                                <div class="reading-image"
+                                    style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
+                                    <i class="ri-inbox-line" style="font-size: 50px;"></i>
+                                </div>
+                                <div class="reading-name">
+                                    <h2 class="new-text-black">
+                                        {{ single_service_package.get_service_display }}
+                                    </h2>
+                                </div>
+                            </div>
+                            <h5 class="mt-1 new-text-black">{{ single_service_package.content|safe }}</h5>
+                            <button class="btn btn-danger mt-3" style="display: flex; justify-content: space-between;">
+                                <p class="mb-0">خرید</p>
+                                <p class="mb-0">{{ single_service_package.total_price }} ت</p>
+                            </button>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if multi_service_packages %}
+<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                {% for multi_service_package in multi_service_packages %}
+                <div class="plan" {% if multi_service_package.get_type_display == "طلایی" %}
+                    style="background-color: #f4e4a6cd;"
+                    {% endif %}>
+                    <div class="description w-100">
+                        <h2 class="w-100" style="text-align: center;">پکیج
+                            <span {% if multi_service_package.get_type_display == "طلایی" %} 
+                            style="color: #D4AF37;" 
+                            {% endif %}>
+                                {{ multi_service_package.get_type_display }}
+                            </span>
+                        </h2>
+                        <h5 class="p-2 w-75"
+                            style="background-color: #1725611e; color: #172561; margin: auto !important; border-radius: 15px; text-align: center; margin-top: 15px !important;">
+                            {{ multi_service_package.total_price }} تومان
+                        </h5>
+
+                        <ul class="check-list w-100 mt-3">
+                            {% for service in multi_service_package.service_labels %}
+                            <li>{{ service }}</li>
+                            {% endfor %}
+                        </ul>
+
+                        <button class="btn btn-danger mt-2">
+                            خرید پکیج
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if atropine_teams %}
+<div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
+    <div class="title px-15">
+        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
+    </div>
+
+    <div class="instructors-box">
+        <ul class="instructors-list px-15">
+            {% for atropine_team in atropine_teams %}
+            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
+                <div class="my-card">
+                    <div class="instructors-image-edited">
+                        {% if atropine_team.avatar %}
+                        <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="atropine team avatar">
+                        {% endif %}
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h5>{{ atropine_team.get_full_name }}</h5>
+                        <h6>{{ atropine_team.get_role_display }}</h6>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% if comments %}
+<div class="top-instructors-section section-t-space mt-3">
+    <h3 class="text-center mb-4">نظرات همراهان سال های پیش</h3>
+    <div class="instructors-box">
+        <ul class="instructors-list" id="commentSlider">
+            {% for comment in comments %}
+            <li class="custom-container p-0" style="min-width: 100% !important;">
+                <div class="w-100">
+                    <div class="testimonial-card bg-white">
+                        <img src="{{ comment.cover.url }}" class="user-img" alt="user">
+                        <div class="text-warning">★★★★★</div>
+                        <p>{{ comment.content }}</p>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% if faqs %}
+<section class="container mt-5 py-3" style="background-color: white;">
+    <h3 class="text-center mb-4">سوالات متداول</h3>
+    <div class="accordion" id="faqAccordion">
+        {% for faq in faqs %}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q{{ faq.id }}" style="text-align: right; gap: 10px;">
+                    {{ faq.question }}
+                </button>
+            </h2>
+            <div id="q{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">{{ faq.answer }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const slider = document.getElementById("posterSlider");
+        const items = slider.querySelectorAll("li");
+
+        let index = 0;
+
+        setInterval(() => {
+
+            index++;
+
+            if (index >= items.length) {
+                index = 0;
+            }
+
+            slider.scrollTo({
+                left: items[index].offsetLeft,
+                behavior: "smooth"
+            });
+
+        }, 3000);
+
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const slider = document.getElementById("commentSlider");
+        const items = slider.querySelectorAll("li");
+
+        let index = 0;
+
+        setInterval(() => {
+
+            index++;
+
+            if (index >= items.length) {
+                index = 0;
+            }
+
+            slider.scrollTo({
+                left: items[index].offsetLeft,
+                behavior: "smooth"
+            });
+
+        }, 3000);
+
+    });
+</script>
+<script>
+    const singleBtn = document.getElementById("singleBtn");
+    const multiBtn = document.getElementById("multiBtn");
+
+    const single = document.getElementById("singlePackages");
+    const multi = document.getElementById("multiPackages");
+
+    const sw = document.querySelector(".package-switch");
+
+    multi.style.display = "none";
+
+    singleBtn.onclick = function () {
+
+        single.style.display = "block";
+        multi.style.display = "none";
+
+        singleBtn.classList.add("active");
+        multiBtn.classList.remove("active");
+
+        sw.classList.remove("multi");
+    }
+
+    multiBtn.onclick = function () {
+
+        single.style.display = "none";
+        multi.style.display = "block";
+
+        multiBtn.classList.add("active");
+        singleBtn.classList.remove("active");
+
+        sw.classList.add("multi");
+    }
+</script>
+{% endblock %}
