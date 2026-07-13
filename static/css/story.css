@@ -69,3 +69,46 @@ body {
         max-width: none;
     }
 }
+
+.story-top {
+    position: absolute;
+    top: 18px;
+    right: 15px;
+    z-index: 1000;
+}
+
+#soundBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    padding: 8px 14px;
+
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+
+    color: #fff;
+    border: none;
+    border-radius: 999px;
+
+    font-size: 13px;
+    font-weight: 500;
+    font-family: inherit;
+
+    cursor: pointer;
+
+    transition: all .25s ease;
+}
+
+#soundBtn:hover {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+#soundBtn:active {
+    transform: scale(.95);
+}
+
+#soundBtn:focus {
+    outline: none;
+}

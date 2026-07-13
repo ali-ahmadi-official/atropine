@@ -1,5 +1,6 @@
 import os
 import jdatetime
+from datetime import datetime, time
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
@@ -65,7 +66,7 @@ def compass(request):
         end_datetime__gte=now
     ).first()
 
-    posters = Poster.objects.filter(show_in__icontains="main")
+    posters = Poster.objects.filter(show_in__icontains="compass")
 
     lives = LiveEvent.objects.filter(
         show_in__icontains="compass",
@@ -207,31 +208,159 @@ def estimation_introduction(request):
 def choice_introduction(request):
     intro = ChoiceIntroduction.objects.last()
 
+    posters = Poster.objects.filter(show_in__icontains="choice")
+
+    atropine_teams = User.objects.exclude(role='student')
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
     context = {
         'intro': intro,
+        'posters': posters,
+        'atropine_teams': atropine_teams,
+        'single_service_packages': single_service_packages,
+        'multi_service_packages': multi_service_packages,
     }
     return render(request, 'pages/choice_introduction.html', context)
 
-def live_introduction(request):
-    intro = LiveIntroduction.objects.last()
+def live_introduction(request, id):
+    live = get_object_or_404(LiveEvent, id=id)
 
     now = timezone.now()
-    next_lives = LiveEvent.objects.filter(
-        is_public=True,
-        end_datetime__gte=now,
-    )
 
-    for next_live in next_lives:
-        if next_live:
-            next_live.start_datetime_shamsi = jdatetime.datetime.fromgregorian(
-                datetime=next_live.start_datetime
-            ).strftime('%Y/%m/%d %H:%M')
+    live.start_date_shamsi = jdatetime.date.fromgregorian(
+        date=live.start_datetime
+    ).strftime('%Y/%m/%d')
+    live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
 
     context = {
-        'intro': intro,
-        'next_lives': next_lives,
+        "live": live,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
     }
     return render(request, 'pages/live_introduction.html', context)
+
+def live_time_steps(request):
+    now = timezone.now()
+
+    lives = LiveEvent.objects.filter(
+        is_public=True,
+    )
+
+    for live in lives:
+        live.start_date_shamsi = jdatetime.date.fromgregorian(
+            date=live.start_datetime
+        ).strftime('%Y/%m/%d')
+
+        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "lives": lives,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/live_time_steps.html', context)
+
+def live_archives(request):
+    now = timezone.now()
+
+    lives = LiveEvent.objects.filter(
+        show_in__icontains="archives",
+        is_public=True,
+    )
+
+    # استخراج سال‌های شمسی
+    shamsi_years = sorted({
+        jdatetime.date.fromgregorian(
+            date=live.start_datetime.date()
+        ).year
+        for live in lives
+    }, reverse=True)
+
+    selected_year = request.GET.get("year")
+
+    # فیلتر بر اساس سال شمسی
+    if selected_year:
+        selected_year = int(selected_year)
+
+        start = jdatetime.date(selected_year, 1, 1).togregorian()
+        end = jdatetime.date(selected_year + 1, 1, 1).togregorian()
+
+        start_datetime = timezone.make_aware(
+            datetime.combine(start, time.min)
+        )
+
+        end_datetime = timezone.make_aware(
+            datetime.combine(end, time.min)
+        )
+
+        lives = lives.filter(
+            start_datetime__gte=start_datetime,
+            start_datetime__lt=end_datetime,
+        )
+
+    for live in lives:
+        live.start_date_shamsi = jdatetime.date.fromgregorian(
+            date=live.start_datetime.date()
+        ).strftime("%Y/%m/%d")
+
+        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "lives": lives,
+        "years": shamsi_years,
+        "selected_year": str(selected_year) if selected_year else "",
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+
+    return render(request, "pages/live_archives.html", context)
 
 def about_us(request):
     return render(request, 'pages/about_us.html')

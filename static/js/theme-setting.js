@@ -78,7 +78,7 @@ if (savedTheme) {
   applyTheme(savedTheme);
 } else {
   // اگر تمی ذخیره نشده، از حالت سیستم استفاده کن
-  applyTheme("system");
+  applyTheme("light");
 }
 
 // شروع گوش دادن به تغییرات تم سیستم

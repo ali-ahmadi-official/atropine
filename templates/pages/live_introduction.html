@@ -7,7 +7,125 @@
 {% endblock %}
 
 {% block static %}
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+<style>
+    .package-switch {
+        position: relative;
+        display: flex;
+        width: 320px;
+        margin: 20px auto;
+        margin-bottom: 0;
+        background: #e9ecef;
+        border-radius: 40px;
+        overflow: hidden;
+        height: 52px;
+    }
+
+    .package-switch button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        z-index: 2;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #172561;
+        transition: .3s;
+    }
+
+    .package-switch button.active {
+        color: #fff;
+    }
+
+    .switch-bg {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: calc(50% - 4px);
+        height: 44px;
+        background: #172561;
+        border-radius: 30px;
+        transition: .35s;
+    }
+
+    .package-switch.multi .switch-bg {
+        transform: translateX(-100%);
+    }
+
+    .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .check-list li {
+        position: relative;
+        padding-right: 36px;
+        margin-bottom: 14px;
+        line-height: 1.8;
+    }
+
+    .check-list li::before {
+        content: "✓";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+
+        background: #172561;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    #posterSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #posterSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #posterSlider>li {
+        flex: 0 0 100%;
+    }
+
+    #commentSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #commentSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #commentSlider>li {
+        flex: 0 0 100%;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -20,57 +138,125 @@
         </div>
 
         <div class="header-bottom header-bottom-2 mt-4 pb-3">
-            <h2 class="fw-500 text-white">وبینار های طلایی آتروپین</h2>
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">لایو های تخصصی انتخاب رشته | 1405</h2>
         </div>
     </div>
 </header>
 {% endblock %}
 
 {% block content %}
-<div class="category-section section-t-space pt-4">
-    <div class="intro-plans mx-3">
-        <video class="intro-plans-video" id="first-player" controls>
-            <source src="{{ intro.video.url }}" type="video/mp4">
-        </video>
-        <div class="description">
-            {{ intro.content|safe }}
+<div class="top-instructors-section section-t-space  mt-3">
+    <div class="instructors-box">
+        <ul class="instructors-list px-15"
+            style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
+            <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
+                <a href="{{ live.stream_url }}" class="my-card" style="justify-content: space-between;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-image-edited">
+                            <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">
+                        </div>
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.title }}</h4>
+                            <h6>{{ live.start_datetime|time }}</h6>
+                        </div>
+                    </div>
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.status }}</h4>
+                            <h6>{{ live.start_date_shamsi }}</h6>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <div class="px-15">
+            <a href="{% url 'live_time_steps' %}" class="btn btn-primary mt-3" style="background-color: #172561;">برنامه زمان بندی لایوها</a>
         </div>
     </div>
 </div>
 
-<section class="section-t-space popular-course-section">
-    <div class="custom-container">
-        <div class="title">
-            <h4>وبینار ها رو از دست نده!</h4>
-        </div>
-        <div class="row g-4">
-            <div class="col-12">
-                {% for next_live in next_lives %}
-                <div class="popular-box mb-4">
-                    <div class="popular-image" style="height: auto !important;">
-                        <img src="{{ next_live.cover.url }}" class="img-fluid w-100" alt="">
-                    </div>
-                    <div class="popular-detail">
-                        <a href="my-course.html">
-                            <h5>{{ next_live.title }}</h5>
-                        </a>
-                        <div class="video-play">
-                            <span>
-                                <i class="ri-play-circle-line"></i>
-                                {{ next_live.description }}
-                            </span>
+<div class="package-switch">
+    <button id="singleBtn" class="active">خدمات تکی</button>
+    <button id="multiBtn">پکیج‌ها</button>
+    <div class="switch-bg"></div>
+</div>
+
+{% if single_service_packages %}
+<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                {% for single_service_package in single_service_packages %}
+                <div class="swiper-slide mt-2">
+                    <a href="" class="reading-list">
+                        <div class="reading-box p-4">
+                            <div class="reading-detail">
+                                <div class="reading-image"
+                                    style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
+                                    <i class="ri-inbox-line" style="font-size: 50px;"></i>
+                                </div>
+                                <div class="reading-name">
+                                    <h2 class="new-text-black">
+                                        {{ single_service_package.get_service_display }}
+                                    </h2>
+                                </div>
+                            </div>
+                            <h5 class="mt-1 new-text-black">{{ single_service_package.content|safe }}</h5>
+                            <button class="btn btn-danger mt-3" style="display: flex; justify-content: space-between;">
+                                <p class="mb-0">خرید</p>
+                                <p class="mb-0">{{ single_service_package.total_price }} ت</p>
+                            </button>
                         </div>
-                        <ul class="rating-box">
-                            <li>
-                                <ul class="rating">
-                                    <li>
-                                        <i class="ri-time-fill"></i>
-                                    </li>
-                                    <li class="new-text-black">{{ next_live.start_datetime_shamsi }}</li>
-                                </ul>
-                            </li>
-                            <li class="fw-500 new-text-black">ثبت نام</li>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{% if multi_service_packages %}
+<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                {% for multi_service_package in multi_service_packages %}
+                <div class="plan" {% if multi_service_package.get_type_display == "طلایی" %}
+                    style="background-color: #f4e4a6cd;"
+                    {% endif %}>
+                    <div class="description w-100">
+                        <h2 class="w-100" style="text-align: center;">پکیج
+                            <span {% if multi_service_package.get_type_display == "طلایی" %} 
+                            style="color: #D4AF37;" 
+                            {% endif %}>
+                                {{ multi_service_package.get_type_display }}
+                            </span>
+                        </h2>
+                        <h5 class="p-2 w-75"
+                            style="background-color: #1725611e; color: #172561; margin: auto !important; border-radius: 15px; text-align: center; margin-top: 15px !important;">
+                            {{ multi_service_package.total_price }} تومان
+                        </h5>
+
+                        <ul class="check-list w-100 mt-3">
+                            {% for service in multi_service_package.service_labels %}
+                            <li>{{ service }}</li>
+                            {% endfor %}
                         </ul>
+
+                        <button class="btn btn-danger mt-2">
+                            خرید پکیج
+                        </button>
                     </div>
                 </div>
                 {% endfor %}
@@ -78,11 +264,52 @@
         </div>
     </div>
 </section>
+{% else %}
+<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 {% endblock %}
 
 {% block script %}
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script>
-    const player = new Plyr('#first-player');
+    const singleBtn = document.getElementById("singleBtn");
+    const multiBtn = document.getElementById("multiBtn");
+
+    const single = document.getElementById("singlePackages");
+    const multi = document.getElementById("multiPackages");
+
+    const sw = document.querySelector(".package-switch");
+
+    multi.style.display = "none";
+
+    singleBtn.onclick = function () {
+
+        single.style.display = "block";
+        multi.style.display = "none";
+
+        singleBtn.classList.add("active");
+        multiBtn.classList.remove("active");
+
+        sw.classList.remove("multi");
+    }
+
+    multiBtn.onclick = function () {
+
+        single.style.display = "none";
+        multi.style.display = "block";
+
+        multiBtn.classList.add("active");
+        singleBtn.classList.remove("active");
+
+        sw.classList.add("multi");
+    }
 </script>
 {% endblock %}

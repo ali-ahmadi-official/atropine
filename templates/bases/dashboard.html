@@ -114,17 +114,41 @@
                 <ul class="header-content-right">
 
                     <!-- شروع::عنصر هدر -->
+                    <li class="header-element d-md-none d-block" style="display: flex !important; justify-content: center; align-items: center; margin-right: 8px;">
+                        <form action="{% url 'logout' %}" method="post" class="side-menu__item" id="logout-form" style="width: 30px;">
+                            {% csrf_token %}
+                            <div class="w-100" style="display: flex; justify-content: center; align-items: center; background-color: azure;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="side-menu__icon" viewBox="0 0 256 256"
+                                    onclick="document.getElementById('logout-form').submit();">
+                                    <rect width="16" height="16" fill="none" />
+                                    <path
+                                        d="M48,40H208a16,16,0,0,1,16,16V200a16,16,0,0,1-16,16H48a0,0,0,0,1,0,0V40A0,0,0,0,1,48,40Z"
+                                        opacity="0.2" />
+                                    <polyline points="112 40 48 40 48 216 112 216" fill="none" stroke="currentColor"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                    <line x1="112" y1="128" x2="224" y2="128" fill="none" stroke="currentColor"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                    <polyline points="184 88 224 128 184 168" fill="none" stroke="currentColor"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                </svg>
+                            </div>
+                        </form>
+                    </li>
                     <li class="header-element d-md-none d-block">
-                        <a href="javascript:void(0);" class="header-link" data-bs-toggle="modal"
-                            data-bs-target="#header-responsive-search">
+                        <a href="{% url 'main' %}" class="header-link">
                             <!-- شروع::پیوند آیکون هدر -->
                             <svg xmlns="http://www.w3.org/2000/svg" class="header-link-icon" viewBox="0 0 256 256">
                                 <rect width="256" height="256" fill="none" />
-                                <circle cx="112" cy="112" r="80" opacity="0.2" />
-                                <circle cx="112" cy="112" r="80" fill="none" stroke="currentColor"
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
-                                <line x1="168.57" y1="168.57" x2="224" y2="224" fill="none" stroke="currentColor"
-                                    stroke-linecap="round" stroke-linejoin="round" stroke-width="16" />
+                                <path d="M40 112L128 40L216 112" fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16" />
+                                <path d="M56 104V208H104V152H152V208H200V104" fill="none"
+                                    stroke="currentColor"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="16" />
                             </svg>
                             <!-- پایان::پیوند آیکون هدر -->
                         </a>
@@ -160,22 +184,6 @@
             </div>
         </div>
         <!-- پایان محتوای اصلی  -->
-        <div class="modal fade" id="header-responsive-search" tabindex="-1" aria-labelledby="header-responsive-search"
-            aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-body">
-                        <div class="input-group">
-                            <input type="text" class="form-control border-end-0" placeholder="Search Anything ..."
-                                aria-label="Search Anything ..." aria-describedby="button-addon2">
-                            <button class="btn btn-primary" type="button" id="button-addon2">
-                                <i class="bi bi-search"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     </div>
 

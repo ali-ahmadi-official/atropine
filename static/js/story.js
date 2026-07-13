@@ -1,5 +1,5 @@
 const stories = JSON.parse(
-    document.getElementById('stories-data').textContent
+    document.getElementById("stories-data").textContent
 );
 
 const IMAGE_DURATION = 15000;
@@ -12,6 +12,40 @@ const imageEl = document.getElementById("imageStory");
 const videoEl = document.getElementById("videoStory");
 const progressContainer = document.getElementById("progressContainer");
 const storyTitle = document.getElementById("storyTitle");
+
+const soundBtn = document.getElementById("soundBtn");
+
+let soundEnabled = false;
+
+// وضعیت اولیه
+videoEl.muted = true;
+videoEl.volume = 1;
+
+// دکمه صدا
+soundBtn.addEventListener("click", async (e) => {
+
+    // جلوگیری از رفتن به استوری بعدی
+    e.stopPropagation();
+
+    soundEnabled = !soundEnabled;
+
+    videoEl.muted = !soundEnabled;
+
+    if (soundEnabled) {
+        soundBtn.textContent = "🔊 صدا روشن";
+    } else {
+        soundBtn.textContent = "🔇 پخش صدا";
+    }
+
+    if (videoEl.style.display === "block") {
+        try {
+            await videoEl.play();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+});
 
 // ساخت نوارهای پیشرفت
 stories.forEach(() => {
@@ -64,8 +98,7 @@ function updateProgress(index, duration) {
         const elapsed = Date.now() - startTime;
         const percent = (elapsed / duration) * 100;
 
-        fills[index].style.width =
-            Math.min(percent, 100) + "%";
+        fills[index].style.width = Math.min(percent, 100) + "%";
 
     }, 30);
 
@@ -95,7 +128,6 @@ function showStory(index) {
 
     const story = stories[index];
 
-    // نمایش عنوان استوری
     storyTitle.textContent = story.name || "";
 
     if (story.type === "image") {
@@ -120,13 +152,19 @@ function showStory(index) {
         videoEl.src = story.src;
         videoEl.style.display = "block";
 
+        // وضعیت صدا حفظ شود
+        videoEl.muted = !soundEnabled;
+        videoEl.volume = 1;
+
         videoEl.onloadedmetadata = () => {
 
             const duration = videoEl.duration * 1000;
 
             updateProgress(index, duration);
 
-            videoEl.play();
+            videoEl.play().catch(err => {
+                console.log(err);
+            });
 
         };
 
@@ -144,17 +182,19 @@ function showStory(index) {
 document.querySelector(".story-container")
     .addEventListener("click", function (e) {
 
+        // اگر روی دکمه صدا کلیک شده، هیچ کاری نکن
+        if (e.target.closest("#soundBtn")) {
+            return;
+        }
+
         const clickX = e.clientX;
         const width = window.innerWidth;
 
-        // نیمه راست
         if (clickX > width / 2) {
 
             showStory(currentIndex + 1);
 
-        }
-        // نیمه چپ
-        else {
+        } else {
 
             if (currentIndex > 0) {
                 showStory(currentIndex - 1);

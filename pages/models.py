@@ -6,6 +6,8 @@ from .validators import validate_video
 SHOW_IN_CHOICES = (
     ("main", "صفحه خانه"),
     ("compass", "صفحه قطب نمای آتروپین"),
+    ("choice", "صفحه جلسات فردی انتخاب رشته"),
+    ("archives", "صفحه آرشیو لایو های سال های قبل"),
 )
 
 class News(models.Model):

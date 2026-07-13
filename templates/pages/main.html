@@ -213,7 +213,7 @@
             <div class="col-12" style="background-color: white;">
                 <div class="popular-box">
                     <div class="popular-detail">
-                        <a href="{{ next_live.cover.url }}">
+                        <a href="{{ next_live.stream_url }}">
                             <h4 class="mb-2">با وبینار بعدی آتروپین همراه شو</h4>
                         </a>
                         <h5 class="mb-1">
@@ -251,14 +251,14 @@
                 </div>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card">
+                <a href="{% url 'live_archives' %}" class="my-card">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <i class="ri-calendar-event-line" style="color: #ff3332; font-size: large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
                         <h3>آرشیو رویدادها</h3>
                     </div>
-                </div>
+                </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
                 <div class="my-card">
@@ -285,15 +285,15 @@
 </div>
 
 {% if posters %}
-<div class="top-instructors-section section-t-space mt-3">
-    <div class="instructors-box">
+<div class="category-section section-t-space pt-4">
+    <div class="intro-plans">
         <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}
-            <li class="custom-container" style="min-width: 100vw !important;">
+            <li class="custom-container w-100">
                 <div class="row g-4">
                     <div class="col-12 p-0">
                         <div class="popular-image w-100" style="height: auto !important;">
-                            <img src="{{ poster.cover.url }}" class="img-fluid w-100" alt="">
+                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
                         </div>
                     </div>
                 </div>
@@ -324,7 +324,7 @@
             }
 
             slider.scrollTo({
-                left: items[index].offsetLeft,
+                left: items[index].offsetLeft - 20,
                 behavior: "smooth"
             });
 

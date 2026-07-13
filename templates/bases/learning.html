@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" class="light">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -74,8 +74,8 @@
                     </a>
                 </li>
 
-                <li class="{% if '/plans/' in request.path %} active {% endif %}">
-                    <a href="{% url 'main' %}" class="mobile-box">
+                <li class="{% if 'live' in request.path %} active {% endif %}">
+                    <a href="{% url 'live_time_steps' %}" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-live-line"></i>
                         </div>
@@ -241,7 +241,7 @@
                     </li>
 
                     <li>
-                        <a href="{% url 'live_introduction' %}" class="menu-setting-box">
+                        <a href="{% url 'live_time_steps' %}" class="menu-setting-box">
                             <div class="setting-icon">
                                 <i class="ri-video-line"></i>
                             </div>

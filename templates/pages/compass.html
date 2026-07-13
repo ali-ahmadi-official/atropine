@@ -146,11 +146,6 @@
         /* اطمینان حاصل کنید که عرض li به درستی تنظیم شده باشد */
         /* اگر از `min-width: 75% !important;` استفاده کردید، ممکن است نیاز به تنظیمات بیشتری باشد */
     }
-
-    /* اگر از `.custom-container` برای padding استفاده می‌کنید، آن را هم در نظر بگیرید */
-    .custom-container {
-        padding: 0 !important; /* اطمینان از حذف padding اضافی */
-    }
 </style>
 {% endblock %}
 
@@ -221,15 +216,15 @@
 {% endif %}
 
 {% if posters %}
-<div class="top-instructors-section section-t-space mt-3">
-    <div class="instructors-box">
-        <ul class="instructors-list mx-3" id="posterSlider">
+<div class="category-section section-t-space pt-4">
+    <div class="intro-plans">
+        <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}
-            <li class="custom-container" style="min-width: 100vw !important;">
+            <li class="custom-container w-100">
                 <div class="row g-4">
                     <div class="col-12 p-0">
                         <div class="popular-image w-100" style="height: auto !important;">
-                            <img src="{{ poster.cover.url }}" class="img-fluid w-100" alt="">
+                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
                         </div>
                     </div>
                 </div>
@@ -251,7 +246,7 @@
             style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
             {% for live in lives %}
             <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
-                <div class="my-card" style="justify-content: space-between;">
+                <a href="{% url 'live_introduction' live.id %}" class="my-card" style="justify-content: space-between;">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <div class="instructors-image-edited">
                             <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">
@@ -267,7 +262,7 @@
                             <h6>{{ live.start_date_shamsi }}</h6>
                         </div>
                     </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>
@@ -279,42 +274,42 @@
     <div class="instructors-box">
         <div class="px-15" style="display: grid; grid-template-columns: repeat(2, 1fr);">
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                <a href="{% url 'live_archives' %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
                     <div style="display: flex; justify-content: center; align-items: center;">
-                        <i class="ri-mail-line" style="color: #172561; font-size: xx-large;"></i>
+                        <i class="ri-video-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h3>خبرنامه</h3>
+                        <h4 style="text-align: center;">آرشیو ویدیو</h4>
+                    </div>
+                </a>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-book-open-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h4 style="text-align: center;">پایگاه داده</h4>
                     </div>
                 </div>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                <a href="{% url 'choice_introduction' %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
                     <div style="display: flex; justify-content: center; align-items: center;">
-                        <i class="ri-calendar-event-line" style="color: #172561; font-size: xx-large;"></i>
+                        <i class="ri-message-3-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h3>آرشیو رویدادها</h3>
+                        <h4 style="text-align: center;">جلسات مشاوره فردی</h4>
                     </div>
-                </div>
+                </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                <div class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
                     <div style="display: flex; justify-content: center; align-items: center;">
-                        <i class="ri-article-line" style="color: #172561; font-size: xx-large;"></i>
+                        <i class="ri-menu-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h3>آتروفست ها</h3>
-                    </div>
-                </div>
-            </li>
-            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card" style="display: flex; flex-direction: column; background-color: #1725611e;">
-                    <div style="display: flex; justify-content: center; align-items: center;">
-                        <i class="ri-settings-3-line" style="color: #172561; font-size: xx-large;"></i>
-                    </div>
-                    <div class="instructors-detail my-card-title">
-                        <h3>گارگاه ها</h3>
+                        <h4 style="text-align: center;">تخمین رتبه قبولی</h4>
                     </div>
                 </div>
             </li>
@@ -361,6 +356,16 @@
         </div>
     </div>
 </section>
+{% else %}
+<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
+            </div>
+        </div>
+    </div>
+</section>
 {% endif %}
 
 {% if multi_service_packages %}
@@ -397,6 +402,16 @@
                     </div>
                 </div>
                 {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
             </div>
         </div>
     </div>
@@ -494,7 +509,7 @@
             }
 
             slider.scrollTo({
-                left: items[index].offsetLeft,
+                left: items[index].offsetLeft - 20,
                 behavior: "smooth"
             });
 

@@ -3,11 +3,10 @@
 {% load static %}
 
 {% block title %}
-انتخاب رشته با آتروپین
+آرشیو لایوها
 {% endblock %}
 
 {% block static %}
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 <style>
     .package-switch {
         position: relative;
@@ -139,63 +138,60 @@
         </div>
 
         <div class="header-bottom header-bottom-2 mt-4 pb-3">
-            <h2 class="fw-500 text-white w-100" style="text-align: center;">جلسات فردی انتخاب رشته</h2>
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">آرشیو لایوهای سال های قبل</h2>
         </div>
     </div>
 </header>
 {% endblock %}
 
 {% block content %}
-<div class="category-section section-t-space pt-4">
-    <div class="intro-plans">
-        {% if posters %}
-        <ul class="instructors-list" id="posterSlider">
-            {% for poster in posters %}
-            <li class="custom-container w-100">
-                <div class="row g-4">
-                    <div class="col-12 p-0">
-                        <div class="popular-image w-100" style="height: auto !important;">
-                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
+{% if lives %}
+<section class="w-100 d-flex" style="justify-content: center;">
+    <form method="get w-50" class="mt-3">
+        <div class="row">
+            <div class="col-md-4 col-lg-3 d-flex" style="justify-content: center; align-items: center; gap: 10px;">
+                <label for="year" style="font-size: larger; color: #172561;">سال:</label>
+                <select name="year"
+                        class="form-select w-100"
+                        onchange="this.form.submit()">
+
+                    <option value="">همه سال‌ها</option>
+
+                    {% for year in years %}
+                        <option value="{{ year }}"
+                            {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                            {{ year }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+    </form>
+</section>
+<div class="top-instructors-section section-t-space">
+    <div class="instructors-box">
+        <ul class="instructors-list px-15"
+            style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
+            {% for live in lives %}
+            <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
+                <a href="{% url 'live_introduction' live.id %}" class="my-card" style="justify-content: space-between;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-image-edited">
+                            <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">
+                        </div>
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.title }}</h4>
+                            <h6>{{ live.start_datetime|time }}</h6>
                         </div>
                     </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-        {% elif intro.video.url %}
-        <video class="intro-plans-video" id="first-player" controls>
-            <source src="{{ intro.video.url }}" type="video/mp4">
-        </video>
-        {% endif %}
-        <div class="description">
-            {{ intro.content|safe }}
-        </div>
-    </div>
-</div>
-
-{% if atropine_teams %}
-<div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
-    <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
-    </div>
-
-    <div class="instructors-box">
-        <ul class="instructors-list px-15">
-            {% for atropine_team in atropine_teams %}
-            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
-                    <div class="instructors-image-edited">
-                        {% if atropine_team.avatar %}
-                        <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
-                        {% else %}
-                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="atropine team avatar">
-                        {% endif %}
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <div class="instructors-detail my-card-title">
+                            <h4>{{ live.status }}</h4>
+                            <h6>{{ live.start_date_shamsi }}</h6>
+                        </div>
                     </div>
-                    <div class="instructors-detail my-card-title">
-                        <h5>{{ atropine_team.get_full_name }}</h5>
-                        <h6>{{ atropine_team.get_role_display }}</h6>
-                    </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>
@@ -303,38 +299,10 @@
     </div>
 </section>
 {% endif %}
+
 {% endblock %}
 
 {% block script %}
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script>
-    const player = new Plyr('#first-player');
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const slider = document.getElementById("posterSlider");
-        const items = slider.querySelectorAll("li");
-
-        let index = 0;
-
-        setInterval(() => {
-
-            index++;
-
-            if (index >= items.length) {
-                index = 0;
-            }
-
-            slider.scrollTo({
-                left: items[index].offsetLeft - 20,
-                behavior: "smooth"
-            });
-
-        }, 3000);
-
-    });
-</script>
 <script>
     const singleBtn = document.getElementById("singleBtn");
     const multiBtn = document.getElementById("multiBtn");
