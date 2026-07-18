@@ -181,7 +181,7 @@
                 <ul class="instructors-list px-15 pb-4">
                     {% for story in stories %}
                     <li>
-                        <a href="{% url 'story_show' story.id %}" class="instructors-contain">
+                        <a href="{% url 'story_show' story.id 'compass' %}" class="instructors-contain">
                             <div class="instructors-image" style="border: 3px solid #ff3332;">
                                 <img src="{{ story.cover.url }}" class="img-fluid" alt="story cover">
                             </div>
@@ -284,14 +284,14 @@
                 </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                <a href="{% url 'data_introduction' 1 %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <i class="ri-book-open-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
                         <h4 style="text-align: center;">پایگاه داده</h4>
                     </div>
-                </div>
+                </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
                 <a href="{% url 'choice_introduction' %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
@@ -317,106 +317,7 @@
     </div>
 </div>
 
-<div class="package-switch">
-    <button id="singleBtn" class="active">خدمات تکی</button>
-    <button id="multiBtn">پکیج‌ها</button>
-    <div class="switch-bg"></div>
-</div>
-
-{% if single_service_packages %}
-<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
-    <div class="">
-        <div class="swiper slider-1 px-15 reading-slider">
-            <div class="">
-                {% for single_service_package in single_service_packages %}
-                <div class="swiper-slide mt-2">
-                    <a href="" class="reading-list">
-                        <div class="reading-box p-4">
-                            <div class="reading-detail">
-                                <div class="reading-image"
-                                    style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
-                                    <i class="ri-inbox-line" style="font-size: 50px;"></i>
-                                </div>
-                                <div class="reading-name">
-                                    <h2 class="new-text-black">
-                                        {{ single_service_package.get_service_display }}
-                                    </h2>
-                                </div>
-                            </div>
-                            <h5 class="mt-1 new-text-black">{{ single_service_package.content|safe }}</h5>
-                            <button class="btn btn-danger mt-3" style="display: flex; justify-content: space-between;">
-                                <p class="mb-0">خرید</p>
-                                <p class="mb-0">{{ single_service_package.total_price }} ت</p>
-                            </button>
-                        </div>
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</section>
-{% else %}
-<section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
-    <div class="">
-        <div class="swiper slider-1 px-15 reading-slider">
-            <div class="">
-                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
-            </div>
-        </div>
-    </div>
-</section>
-{% endif %}
-
-{% if multi_service_packages %}
-<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
-    <div class="">
-        <div class="swiper slider-1 px-15 reading-slider">
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                {% for multi_service_package in multi_service_packages %}
-                <div class="plan" {% if multi_service_package.get_type_display == "طلایی" %}
-                    style="background-color: #f4e4a6cd;"
-                    {% endif %}>
-                    <div class="description w-100">
-                        <h2 class="w-100" style="text-align: center;">پکیج
-                            <span {% if multi_service_package.get_type_display == "طلایی" %} 
-                            style="color: #D4AF37;" 
-                            {% endif %}>
-                                {{ multi_service_package.get_type_display }}
-                            </span>
-                        </h2>
-                        <h5 class="p-2 w-75"
-                            style="background-color: #1725611e; color: #172561; margin: auto !important; border-radius: 15px; text-align: center; margin-top: 15px !important;">
-                            {{ multi_service_package.total_price }} تومان
-                        </h5>
-
-                        <ul class="check-list w-100 mt-3">
-                            {% for service in multi_service_package.service_labels %}
-                            <li>{{ service }}</li>
-                            {% endfor %}
-                        </ul>
-
-                        <button class="btn btn-danger mt-2">
-                            خرید پکیج
-                        </button>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</section>
-{% else %}
-<section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
-    <div class="">
-        <div class="swiper slider-1 px-15 reading-slider">
-            <div class="">
-                <h3 class="w-100" style="text-align: center;">موردی یافت نشد</h3>
-            </div>
-        </div>
-    </div>
-</section>
-{% endif %}
+{% include 'includes/packages.html' %}
 
 {% if atropine_teams %}
 <div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">

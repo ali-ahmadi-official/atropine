@@ -1,6 +1,6 @@
 from pages.models import (
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction,
-    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
+    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, DataIntroduction
 )
 
 class SuperAdminSidebarContextMixin:
@@ -13,5 +13,6 @@ class SuperAdminSidebarContextMixin:
             "ChoiceIntroductionCreated": ChoiceIntroduction.objects.first(),
             "LiveIntroductionCreated": LiveIntroduction.objects.first(),
             "AboutUsIntroductionCreated": AboutUsIntroduction.objects.first(),
+            "DataIntroductionCreated": DataIntroduction.objects.first(),
         })
         return context

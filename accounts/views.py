@@ -10,15 +10,17 @@ from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
     Story, Achievement, LiveEvent, Poster, Comment, FAQ,
-    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction
+    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, DataIntroduction,
+    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankBank, Rule
 )
 from payments.models import Package, Consultation, Payment, ServiceToStudent
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
 from .forms import (
     UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, ConsultantScheduleForm,
     PackageForm, AForm, RankForm, Personality60Form,
-    PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, ChoiceIntroductionForm, LiveIntroductionForm,
-    AboutUsIntroductionForm, CommentForm, FAQForm
+    PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, DataIntroductionForm,
+    ChoiceIntroductionForm, LiveIntroductionForm,
+    AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RuleForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -203,7 +205,7 @@ def login_view(request):
                 return redirect("consultant_dashboard")
 
             elif user.role == "student":
-                return redirect("student_dashboard")
+                return redirect("main")
 
             return redirect("main")
         else:
@@ -317,7 +319,7 @@ def otp_verify(request):
             return redirect("consultant_dashboard")
 
         elif user.role == "student":
-            return redirect("student_dashboard")
+            return redirect("main")
 
         return redirect("main")
 
@@ -356,13 +358,16 @@ def complete_profile(request):
             return redirect("consultant_dashboard")
 
         elif request.user.role == "student":
-            return redirect("student_dashboard")
+            return redirect("main")
 
         return redirect("main")
 
     return render(request, "accounts/complete_profile.html")
 
 class LogoutView(LogoutView):
+    next_page = reverse_lazy('login')
+
+class MainLogoutView(LogoutView):
     next_page = reverse_lazy('main')
 
 # region admin
@@ -375,6 +380,7 @@ def aside_super_admin_context():
         "ChoiceIntroductionCreated": ChoiceIntroduction.objects.first(),
         "LiveIntroductionCreated": LiveIntroduction.objects.first(),
         "AboutUsIntroductionCreated": AboutUsIntroduction.objects.first(),
+        "DataIntroductionCreated": DataIntroduction.objects.first(),
     }
 
 def admin_dashboard(request):
@@ -562,6 +568,18 @@ class PlansIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
+class DataIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = DataIntroduction
+    form_class = DataIntroductionForm
+    template_name = "accounts/intro/form.html"
+    success_url = reverse_lazy("admin_dashboard")
+
+class DataIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = DataIntroduction
+    form_class = DataIntroductionForm
+    template_name = "accounts/intro/form.html"
+    success_url = reverse_lazy("admin_dashboard")
+
 class CounselingIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
     model = CounselingIntroduction
     form_class = CounselingIntroductionForm
@@ -626,6 +644,72 @@ class AllPaymentListView(SuperAdminSidebarContextMixin, ListView):
     model = Payment
     template_name = "accounts/admins/payment_list.html"
     context_object_name = "payments"
+
+class MediaListView(SuperAdminSidebarContextMixin, ListView):
+    model = Media
+    template_name = "accounts/admins/media_list.html"
+    context_object_name = "medias"
+
+class MediaCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = Media
+    form_class = MediaForm
+    template_name = "accounts/admins/media_add.html"
+    success_url = reverse_lazy("media_list")
+
+class MediaUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = Media
+    form_class = MediaForm
+    template_name = "accounts/admins/media_edit.html"
+    success_url = reverse_lazy("media_list")
+
+class MediaDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = Media
+    template_name = 'accounts/admins/media_delete.html'
+    success_url = reverse_lazy('media_list')
+
+class RankBankListView(SuperAdminSidebarContextMixin, ListView):
+    model = RankBank
+    template_name = "accounts/admins/rank_bank_list.html"
+    context_object_name = "rank_banks"
+
+class RankBankCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = RankBank
+    form_class = RankBankForm
+    template_name = "accounts/admins/rank_bank_add.html"
+    success_url = reverse_lazy("rank_bank_list")
+
+class RankBankUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = RankBank
+    form_class = RankBankForm
+    template_name = "accounts/admins/rank_bank_edit.html"
+    success_url = reverse_lazy("rank_bank_list")
+
+class RankBankDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = RankBank
+    template_name = 'accounts/admins/rank_bank_delete.html'
+    success_url = reverse_lazy('rank_bank_list')
+
+class RuleListView(SuperAdminSidebarContextMixin, ListView):
+    model = Rule
+    template_name = "accounts/admins/rule_list.html"
+    context_object_name = "rules"
+
+class RuleCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = Rule
+    form_class = RuleForm
+    template_name = "accounts/admins/rule_add.html"
+    success_url = reverse_lazy("rule_list")
+
+class RuleUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = Rule
+    form_class = RuleForm
+    template_name = "accounts/admins/rule_edit.html"
+    success_url = reverse_lazy("rule_list")
+
+class RuleDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = Rule
+    template_name = 'accounts/admins/rule_delete.html'
+    success_url = reverse_lazy('rule_list')
 
 # endregion
 

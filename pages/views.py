@@ -8,9 +8,9 @@ from apps.models import ContentCategory
 from accounts.models import User, Rank, ConsultantSchedule, Student
 from payments.models import Package
 from .models import (
-    Story, LiveEvent, Achievement,
-    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction,
-    Poster, Comment, FAQ
+    Story, LiveEvent, Achievement, DataIntroduction,
+    PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction,
+    Poster, Comment, FAQ, Media, RankBank, Rule
 )
 
 def main(request):
@@ -112,8 +112,35 @@ def compass(request):
 
     return render(request, 'pages/compass.html', context)
 
-def story_show(request, id):
-    stories = Story.objects.filter(id__gte=id)
+def story_show(request, id, show):
+    stories = Story.objects.filter(id__gte=id, show_in__icontains=show)
+    story_data = []
+    video_extensions = {
+        '.mp4',
+        '.webm',
+        '.ogg',
+        '.mov',
+        '.m4v',
+        '.avi',
+        '.mkv'
+    }
+
+    for item in stories:
+        ext = os.path.splitext(item.content.name)[1].lower()
+        story_data.append({
+            "name": item.title,
+            "type": "video" if ext in video_extensions else "image",
+            "src": item.content.url
+        })
+
+    context = {
+        "stories": story_data
+    }
+
+    return render(request, "pages/story_show.html", context)
+
+def self_story_show(request, id):
+    stories = Story.objects.filter(id=id)
     story_data = []
     video_extensions = {
         '.mp4',
@@ -361,6 +388,212 @@ def live_archives(request):
     }
 
     return render(request, "pages/live_archives.html", context)
+
+def data_introduction(request, id):
+    data_intro = get_object_or_404(DataIntroduction, id=id)
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "data_intro": data_intro,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/data_introduction.html', context)
+
+def videos(request):
+    medias = Media.objects.filter(media_type="video")
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "ویدئوهای معرفی اختصاصی رشته ها",
+        "medias": medias,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/videos.html', context)
+
+def else_videos(request):
+    medias = Media.objects.filter(media_type="else_video")
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "سایر ویدئوها",
+        "medias": medias,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/videos.html', context)
+
+def voices(request):
+    medias = Media.objects.filter(media_type="voice")
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "ویس های بررسی رشته شهرها",
+        "medias": medias,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/voice.html', context)
+
+def else_voices(request):
+    medias = Media.objects.filter(media_type="else_voice")
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "سایر ویس ها",
+        "medias": medias,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/voice.html', context)
+
+def rank_bank(request):
+    ranks = RankBank.objects.all()
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "بانک رتبه قبولی",
+        "ranks": ranks,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/rank_bank.html', context)
+
+def rule(request):
+    rules = Rule.objects.all()
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "قوانین و آئین نامه ها",
+        "rules": rules,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/rule.html', context)
+
+def rule_introduction(request, id):
+    rule = get_object_or_404(Rule, id=id)
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "قوانین و آئین نامه ها",
+        "rule": rule,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/rule_introduction.html', context)
+
+def faq(request):
+    faqs = FAQ.objects.all()
+
+    packages = Package.objects.all()
+
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    context = {
+        "title": "پاسخ به پرسش های داوطلبین",
+        "faqs": faqs,
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+    return render(request, 'pages/faq.html', context)
 
 def about_us(request):
     return render(request, 'pages/about_us.html')

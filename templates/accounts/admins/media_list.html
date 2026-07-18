@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-لیست استوری ها
+لیست مدیا ها
 {% endblock %}
 
 {% block content %}
@@ -11,8 +11,8 @@
     <div class="card-header justify-content-between">
         <div class="card-title">
             <h4>
-                لیست استوری ها
-                <a href="{% url 'story_add' %}">
+                لیست مدیا ها
+                <a href="{% url 'media_add' %}">
                     <span class="btn btn-success-transparent">افزودن</span>
                 </a>
             </h4>
@@ -24,37 +24,49 @@
                 <th scope="col">شناسه</th>
                 <th scope="col">کاور</th>
                 <th scope="col">عنوان</th>
+                <th scope="col">نوع مدیا</th>
+                <th scope="col">رایگان؟</th>
                 <th scope="col">عملیات</th>
             </tr>
         </thead>
         <tbody>
-            {% for story in stories %}
+            {% for media in medias %}
             <tr>
                 <td>
-                    {{ story.id }}
+                    {{ media.id }}
                 </td>
                 <td>
+                    {% if media.cover %}
                     <div class="avatar avatar-sm me-۲ avatar-rounded">
-                        {% if story.cover %}
-                        <img src="{{ story.cover.url }}" alt="profile">
-                        {% endif %}
+                        <img src="{{ media.cover.url }}" alt="profile">
                     </div>
+                    {% else %}
+                    ----
+                    {% endif %}
                 </td>
                 <td>
-                    {{ story.title }}
+                    {{ media.title }}
+                </td>
+                <td>{{ media.get_media_type_display }}</td>
+                <td>
+                    {% if media.is_free %}
+                    بله
+                    {% else %}
+                    خیر
+                    {% endif %}
                 </td>
                 <td>
-                    <a href="{% url 'self_story_show' story.id %}" class="btn btn-icon btn-sm btn-info-transparent rounded-pill">
-                        <i class="ri-eye-2-line"></i>
+                    <a href="{% url 'media_edit' media.id %}" class="btn btn-icon btn-sm btn-success-transparent rounded-pill">
+                        <i class="ri-edit-2-line"></i>
                     </a>
-                    <a href="{% url 'story_delete' story.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                    <a href="{% url 'media_delete' media.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
                         <i class="ri-delete-bin-line"></i>
                     </a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" style="text-align: center;">
+                <td colspan="6" style="text-align: center;">
                     موردی یافت نشد.
                 </td>
             </tr>

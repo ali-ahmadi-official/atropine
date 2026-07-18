@@ -60,7 +60,7 @@
                 <ul class="instructors-list px-15 pb-4">
                     {% for story in stories %}
                     <li>
-                        <a href="{% url 'story_show' story.id %}" class="instructors-contain">
+                        <a href="{% url 'story_show' story.id 'main' %}" class="instructors-contain">
                             <div class="instructors-image" style="border: 3px solid #ff3332;">
                                 <img src="{{ story.cover.url }}" class="img-fluid" alt="story cover">
                             </div>
@@ -165,7 +165,7 @@
                                     <h2 class="new-text-black">منتورینگ آتروپین</h2>
                                 </div>
                             </div>
-                            <h3 class="mt-3 new-text-black">دپرتمان تخصصی مشاوره و هدایت تحصیلی</h3>
+                            <h3 class="mt-3 new-text-black">دپارتمان تخصصی مشاوره و هدایت تحصیلی</h3>
                             <h5 class="mt-1 new-text-black">دستیاری | پره انترنی | علوم پایه</h5>
                             <button class="btn btn-danger mt-3">کلیک کنید</button>
                         </div>

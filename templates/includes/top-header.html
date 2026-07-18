@@ -11,7 +11,13 @@
     </div>
 
     <div class="header-right">
-        <div class="notification-box">
+        <div class="notification-box" style="display: flex; justify-content: center; align-items: center; gap: 9px;">
+            {% if request.user.username %}
+            <form action="{% url 'logout' %}" method="post" class="side-menu__item" id="logout-form">
+                {% csrf_token %}
+                <i class="ri-logout-box-r-line" onclick="document.getElementById('logout-form').submit();" style="font-size: x-large; cursor: pointer;"></i>
+            </form>
+            {% endif %}
             <a class="new-text-black" data-bs-toggle="offcanvas" href="#sideMenu" role="button">
                 <i class="ri-menu-2-fill"></i>
             </a>

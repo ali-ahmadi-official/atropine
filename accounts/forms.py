@@ -4,9 +4,9 @@ from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from pages.models import (
     SHOW_IN_CHOICES,
-    News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction,
+    News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction, DataIntroduction,
     CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction,
-    Poster, Comment, FAQ
+    Poster, Comment, FAQ, Media, RankBank, Rule
 )
 from payments.models import Package
 from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
@@ -136,6 +136,13 @@ class ConsultantScheduleForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        show_in = cleaned_data.get("show_in", [])
+
+        if "archives" not in show_in:
+            show_in.append("archives")
+
+        cleaned_data["show_in"] = show_in
 
         try:
             jy, jm, jd = map(int, cleaned_data["date"].split("/"))
@@ -323,6 +330,11 @@ class PlansIntroductionForm(BaseModelForm):
         model = PlansIntroduction
         fields = "__all__"
 
+class DataIntroductionForm(BaseModelForm):
+    class Meta:
+        model = DataIntroduction
+        fields = "__all__"
+
 class CounselingIntroductionForm(BaseModelForm):
     class Meta:
         model = CounselingIntroduction
@@ -346,6 +358,21 @@ class LiveIntroductionForm(BaseModelForm):
 class AboutUsIntroductionForm(BaseModelForm):
     class Meta:
         model = AboutUsIntroduction
+        fields = "__all__"
+
+class MediaForm(BaseModelForm):
+    class Meta:
+        model = Media
+        fields = "__all__"
+
+class RankBankForm(BaseModelForm):
+    class Meta:
+        model = RankBank
+        fields = "__all__"
+
+class RuleForm(BaseModelForm):
+    class Meta:
+        model = Rule
         fields = "__all__"
 
 class PackageForm(BaseModelForm):

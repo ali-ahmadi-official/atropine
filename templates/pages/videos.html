@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-انتخاب رشته با آتروپین
+{{ title }}
 {% endblock %}
 
 {% block static %}
@@ -139,7 +139,7 @@
         </div>
 
         <div class="header-bottom header-bottom-2 mt-4 pb-3">
-            <h2 class="fw-500 text-white w-100" style="text-align: center;">جلسات فردی انتخاب رشته</h2>
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">{{ title }}</h2>
         </div>
     </div>
 </header>
@@ -148,60 +148,47 @@
 {% block content %}
 <div class="category-section section-t-space pt-4">
     <div class="intro-plans">
-        {% if posters %}
-        <ul class="instructors-list" id="posterSlider">
-            {% for poster in posters %}
-            <li class="custom-container w-100">
-                <div class="row g-4">
-                    <div class="col-12 p-0">
-                        <div class="popular-image w-100" style="height: auto !important;">
-                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
-                        </div>
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-        {% elif intro.video.url %}
         <video class="intro-plans-video" id="first-player" controls>
-            <source src="{{ intro.video.url }}" type="video/mp4">
+            <source id="video-source" src="" type="video/mp4">
         </video>
-        {% endif %}
+
         <div class="description">
-            {{ intro.content|safe }}
+            <h3 class="mb-3" id="video-title"></h3>
+            <p id="video-description"></p>
         </div>
     </div>
 </div>
 
-{% if atropine_teams %}
-<div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
-    <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
-    </div>
-
-    <div class="instructors-box">
-        <ul class="instructors-list px-15">
-            {% for atropine_team in atropine_teams %}
-            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
-                    <div class="instructors-image-edited">
-                        {% if atropine_team.avatar %}
-                        <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
-                        {% else %}
-                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="atropine team avatar">
-                        {% endif %}
-                    </div>
-                    <div class="instructors-detail my-card-title">
-                        <h5>{{ atropine_team.get_full_name }}</h5>
-                        <h6>{{ atropine_team.get_role_display }}</h6>
+<section class="section-t-space continue-reading-section pt-2">
+    <div class="custom-container">
+        <div class="row g-3">
+            {% for media in medias %}
+            <div class="col-12">
+                <div class="reading-list w-100">
+                    <div class="reading-box video-item" data-video="{{ media.content.url }}"
+                        data-title="{{ media.title }}" data-description="{{ media.description|safe }}">
+                        <div class="reading-detail">
+                            <div class="reading-image">
+                                {% if media.cover %}
+                                <img src="{{ media.cover.url }}" class="img-fluid" alt="">
+                                {% else %}
+                                <img src="{% static 'images/video.png' %}" class="img-fluid" alt="">
+                                {% endif %}
+                            </div>
+                            <div class="reading-name">
+                                <h4 class="mb-2">{{ media.title }}</h4>
+                                <p>
+                                    {{ media.description|truncatewords:15 }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </li>
+            </div>
             {% endfor %}
-        </ul>
+        </div>
     </div>
-</div>
-{% endif %}
+</section>
 
 {% include 'includes/packages.html' %}
 
@@ -211,29 +198,34 @@
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script>
     const player = new Plyr('#first-player');
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
 
-        const slider = document.getElementById("posterSlider");
-        const items = slider.querySelectorAll("li");
+    const video = document.getElementById('first-player');
+    const source = document.getElementById('video-source');
+    const title = document.getElementById('video-title');
+    const description = document.getElementById('video-description');
 
-        let index = 0;
+    document.querySelectorAll('.video-item').forEach(item => {
 
-        setInterval(() => {
+        item.addEventListener('click', function () {
 
-            index++;
+            const videoUrl = this.dataset.video;
+            const videoTitle = this.dataset.title;
+            const videoDescription = this.dataset.description;
 
-            if (index >= items.length) {
-                index = 0;
-            }
+            source.src = videoUrl;
 
-            slider.scrollTo({
-                left: items[index].offsetLeft - 20,
-                behavior: "smooth"
+            video.load();
+
+            player.play();
+
+            title.textContent = videoTitle;
+            description.textContent = videoDescription;
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
             });
-
-        }, 3000);
+        });
 
     });
 </script>

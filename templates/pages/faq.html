@@ -3,11 +3,10 @@
 {% load static %}
 
 {% block title %}
-انتخاب رشته با آتروپین
+{{ title }}
 {% endblock %}
 
 {% block static %}
-<link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 <style>
     .package-switch {
         position: relative;
@@ -139,104 +138,37 @@
         </div>
 
         <div class="header-bottom header-bottom-2 mt-4 pb-3">
-            <h2 class="fw-500 text-white w-100" style="text-align: center;">جلسات فردی انتخاب رشته</h2>
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">{{ title }}</h2>
         </div>
     </div>
 </header>
 {% endblock %}
 
 {% block content %}
-<div class="category-section section-t-space pt-4">
-    <div class="intro-plans">
-        {% if posters %}
-        <ul class="instructors-list" id="posterSlider">
-            {% for poster in posters %}
-            <li class="custom-container w-100">
-                <div class="row g-4">
-                    <div class="col-12 p-0">
-                        <div class="popular-image w-100" style="height: auto !important;">
-                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
-                        </div>
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-        {% elif intro.video.url %}
-        <video class="intro-plans-video" id="first-player" controls>
-            <source src="{{ intro.video.url }}" type="video/mp4">
-        </video>
-        {% endif %}
-        <div class="description">
-            {{ intro.content|safe }}
+
+<section class="container mt-5 py-3" style="background-color: white;">
+    <h3 class="text-center mb-4">سوالات متداول</h3>
+    <div class="accordion" id="faqAccordion">
+        {% for faq in faqs %}
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q{{ faq.id }}" style="text-align: right; gap: 10px;">
+                    {{ faq.question }}
+                </button>
+            </h2>
+            <div id="q{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">{{ faq.answer }}</div>
+            </div>
         </div>
+        {% endfor %}
     </div>
-</div>
-
-{% if atropine_teams %}
-<div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
-    <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
-    </div>
-
-    <div class="instructors-box">
-        <ul class="instructors-list px-15">
-            {% for atropine_team in atropine_teams %}
-            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
-                    <div class="instructors-image-edited">
-                        {% if atropine_team.avatar %}
-                        <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
-                        {% else %}
-                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="atropine team avatar">
-                        {% endif %}
-                    </div>
-                    <div class="instructors-detail my-card-title">
-                        <h5>{{ atropine_team.get_full_name }}</h5>
-                        <h6>{{ atropine_team.get_role_display }}</h6>
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-{% endif %}
+</section>
 
 {% include 'includes/packages.html' %}
 
 {% endblock %}
 
 {% block script %}
-<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-<script>
-    const player = new Plyr('#first-player');
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-
-        const slider = document.getElementById("posterSlider");
-        const items = slider.querySelectorAll("li");
-
-        let index = 0;
-
-        setInterval(() => {
-
-            index++;
-
-            if (index >= items.length) {
-                index = 0;
-            }
-
-            slider.scrollTo({
-                left: items[index].offsetLeft - 20,
-                behavior: "smooth"
-            });
-
-        }, 3000);
-
-    });
-</script>
 <script>
     const singleBtn = document.getElementById("singleBtn");
     const multiBtn = document.getElementById("multiBtn");

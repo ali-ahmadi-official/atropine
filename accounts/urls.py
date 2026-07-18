@@ -8,6 +8,7 @@ from .views import (
     otp_verify,
     complete_profile,
     LogoutView,
+    MainLogoutView,
 
     admin_dashboard,
     UserListView,
@@ -41,6 +42,8 @@ from .views import (
 
     PlansIntroductionCreateView,
     PlansIntroductionUpdateView,
+    DataIntroductionCreateView,
+    DataIntroductionUpdateView,
     CounselingIntroductionCreateView,
     CounselingIntroductionUpdateView,
     EstimationIntroductionCreateView,
@@ -52,6 +55,18 @@ from .views import (
     AboutUsIntroductionCreateView,
     AboutUsIntroductionUpdateView,
     AllPaymentListView,
+    MediaListView,
+    MediaCreateView,
+    MediaUpdateView,
+    MediaDeleteView,
+    RankBankListView,
+    RankBankCreateView,
+    RankBankUpdateView,
+    RankBankDeleteView,
+    RuleListView,
+    RuleCreateView,
+    RuleUpdateView,
+    RuleDeleteView,
 
     consultant_dashboard,
     ConsultantCreateView,
@@ -77,6 +92,7 @@ urlpatterns = [
     path("otp-verify/", otp_verify, name="otp-verify"),
     path("complete-profile/", complete_profile, name="complete-profile"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("main-logout/", MainLogoutView.as_view(), name="main_logout"),
 
     path("admins/dashboard/", admin_dashboard, name="admin_dashboard"),
 
@@ -119,6 +135,9 @@ urlpatterns = [
     path("admins/plans-introduction/create/", PlansIntroductionCreateView.as_view(), name="plans-introduction-create"),
     path("admins/plans-introduction/<int:pk>/edit/", PlansIntroductionUpdateView.as_view(),name="plans-introduction-update"),
 
+    path("admins/data-introduction/create/", DataIntroductionCreateView.as_view(), name="data-introduction-create"),
+    path("admins/data-introduction/<int:pk>/edit/", DataIntroductionUpdateView.as_view(),name="data-introduction-update"),
+
     path("admins/counseling-introduction/create/", CounselingIntroductionCreateView.as_view(), name="counseling-introduction-create"),
     path("admins/counseling-introduction/<int:pk>/edit/", CounselingIntroductionUpdateView.as_view(), name="counseling-introduction-update"),
 
@@ -135,6 +154,21 @@ urlpatterns = [
     path("admins/about-introduction/<int:pk>/edit/", AboutUsIntroductionUpdateView.as_view(), name="about-introduction-update"),
 
     path("admins/payments/", AllPaymentListView.as_view(), name="all_payment_list"),
+
+    path("admins/medias/", MediaListView.as_view(), name="media_list"),
+    path("admins/medias/add/", MediaCreateView.as_view(), name="media_add"),
+    path("admins/medias/<int:pk>/edit/", MediaUpdateView.as_view(), name="media_edit"),
+    path("admins/medias/<int:pk>/delete/", MediaDeleteView.as_view(), name="media_delete"),
+
+    path("admins/rank-banks/", RankBankListView.as_view(), name="rank_bank_list"),
+    path("admins/rank-banks/add/", RankBankCreateView.as_view(), name="rank_bank_add"),
+    path("admins/rank-banks/<int:pk>/edit/", RankBankUpdateView.as_view(), name="rank_bank_edit"),
+    path("admins/rank-banks/<int:pk>/delete/", RankBankDeleteView.as_view(), name="rank_bank_delete"),
+
+    path("admins/rules/", RuleListView.as_view(), name="rule_list"),
+    path("admins/rules/add/", RuleCreateView.as_view(), name="rule_add"),
+    path("admins/rules/<int:pk>/edit/", RuleUpdateView.as_view(), name="rule_edit"),
+    path("admins/rules/<int:pk>/delete/", RuleDeleteView.as_view(), name="rule_delete"),
 
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 
