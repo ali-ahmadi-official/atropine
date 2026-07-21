@@ -1,0 +1,61 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست پاسخ به پرسش های متداول داوطلب ها
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست پاسخ به پرسش های متداول داوطلب ها
+                <a href="{% url 'static_message_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">فرستنده</th>
+                <th scope="col">متن پیام</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for static_message in static_messages %}
+            <tr>
+                <td>
+                    {{ static_message.id }}
+                </td>
+                <td>
+                    {{ static_message.get_sender_display }}
+                </td>
+                <td>
+                    {{ static_message.text|truncatechars:30 }}
+                </td>
+                <td>
+                    <a href="{% url 'static_message_edit' static_message.id %}" class="btn btn-icon btn-sm btn-success-transparent rounded-pill">
+                        <i class="ri-edit-2-line"></i>
+                    </a>
+                    <a href="{% url 'static_message_delete' static_message.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

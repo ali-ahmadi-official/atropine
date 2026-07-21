@@ -126,6 +126,51 @@
         flex: 0 0 100%;
     }
 </style>
+<style>
+    .chat-box {
+        max-width: 700px;
+        margin: auto;
+        background: #f5f7fb;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,.08);
+    }
+
+    .static_message {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .static_message-left {
+        justify-content: flex-start;
+    }
+
+    .static_message-right {
+        justify-content: flex-end;
+    }
+
+    .bubble {
+        max-width: 70%;
+        padding: 12px 18px;
+        border-radius: 18px;
+        line-height: 1.7;
+        word-break: break-word;
+        font-size: 15px;
+    }
+
+    .admin {
+        background: #ffffff;
+        color: #333;
+        border-top-left-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,.08);
+    }
+
+    .user {
+        background: #172561;
+        color: #fff;
+        border-top-right-radius: 5px;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -146,21 +191,29 @@
 
 {% block content %}
 
-<section class="container mt-5 py-3" style="background-color: white;">
-    <h3 class="text-center mb-4">سوالات متداول</h3>
-    <div class="accordion" id="faqAccordion">
-        {% for faq in faqs %}
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#q{{ faq.id }}" style="text-align: right; gap: 10px;">
-                    {{ faq.question }}
-                </button>
-            </h2>
-            <div id="q{{ faq.id }}" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">{{ faq.answer }}</div>
-            </div>
-        </div>
+<section class="container mt-3 py-3" dir="ltr">
+    <div class="chat-box">
+
+        {% for static_message in static_messages %}
+
+            {% if static_message.sender == "1" %}
+                <!-- پیام ادمین -->
+                <div class="static_message static_message-left">
+                    <div class="bubble admin">
+                        {{ static_message.text }}
+                    </div>
+                </div>
+            {% else %}
+                <!-- پیام داوطلب -->
+                <div class="static_message static_message-right">
+                    <div class="bubble user" dir="rtl">
+                        {{ static_message.text }}
+                    </div>
+                </div>
+            {% endif %}
+
         {% endfor %}
+
     </div>
 </section>
 

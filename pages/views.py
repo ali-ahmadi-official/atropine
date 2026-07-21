@@ -8,9 +8,9 @@ from apps.models import ContentCategory
 from accounts.models import User, Rank, ConsultantSchedule, Student
 from payments.models import Package
 from .models import (
-    Story, LiveEvent, Achievement, DataIntroduction,
+    Story, LiveEvent, Achievement, DataIntroduction, AboutUsIntroduction,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction,
-    Poster, Comment, FAQ, Media, RankBank, Rule
+    Poster, Comment, FAQ, Media, RankBank, Rule, StaticMessage
 )
 
 def main(request):
@@ -94,9 +94,9 @@ def compass(request):
 
     atropine_teams = User.objects.exclude(role='student')
 
-    comments = Comment.objects.all()
+    comments = Comment.objects.all().order_by("-id")
     
-    faqs = FAQ.objects.all()
+    faqs = FAQ.objects.all().order_by("-id")
 
     context = {
         "stories": stories,
@@ -392,6 +392,8 @@ def live_archives(request):
 def data_introduction(request, id):
     data_intro = get_object_or_404(DataIntroduction, id=id)
 
+    posters = Poster.objects.filter(show_in__icontains="DataIntroduction")
+
     packages = Package.objects.all()
 
     single_service_packages = [
@@ -406,6 +408,7 @@ def data_introduction(request, id):
 
     context = {
         "data_intro": data_intro,
+        "posters": posters,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
@@ -572,8 +575,8 @@ def rule_introduction(request, id):
     }
     return render(request, 'pages/rule_introduction.html', context)
 
-def faq(request):
-    faqs = FAQ.objects.all()
+def static_message(request):
+    static_messages = StaticMessage.objects.all()
 
     packages = Package.objects.all()
 
@@ -589,14 +592,18 @@ def faq(request):
 
     context = {
         "title": "پاسخ به پرسش های داوطلبین",
-        "faqs": faqs,
+        "static_messages": static_messages,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
-    return render(request, 'pages/faq.html', context)
+    return render(request, 'pages/static_message.html', context)
 
 def about_us(request):
-    return render(request, 'pages/about_us.html')
+    intro = AboutUsIntroduction.objects.last()
+    posters = Poster.objects.filter(show_in__icontains="AboutUsIntroduction")
+
+
+    return render(request, 'pages/about_us.html', {"intro": intro, "posters": posters})
 
 def trust(request):
     return render(request, 'pages/trust.html')

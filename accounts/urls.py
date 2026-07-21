@@ -67,6 +67,10 @@ from .views import (
     RuleCreateView,
     RuleUpdateView,
     RuleDeleteView,
+    StaticMessageListView,
+    StaticMessageCreateView,
+    StaticMessageUpdateView,
+    StaticMessageDeleteView,
 
     consultant_dashboard,
     ConsultantCreateView,
@@ -169,6 +173,11 @@ urlpatterns = [
     path("admins/rules/add/", RuleCreateView.as_view(), name="rule_add"),
     path("admins/rules/<int:pk>/edit/", RuleUpdateView.as_view(), name="rule_edit"),
     path("admins/rules/<int:pk>/delete/", RuleDeleteView.as_view(), name="rule_delete"),
+
+    path("admins/static-messages/", StaticMessageListView.as_view(), name="static_message_list"),
+    path("admins/static-messages/add/", StaticMessageCreateView.as_view(), name="static_message_add"),
+    path("admins/static-messages/<int:pk>/edit/", StaticMessageUpdateView.as_view(), name="static_message_edit"),
+    path("admins/static-messages/<int:pk>/delete/", StaticMessageDeleteView.as_view(), name="static_message_delete"),
 
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 

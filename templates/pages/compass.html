@@ -178,7 +178,7 @@
         {% if stories %}
         <div class="top-instructors-section">
             <div class="instructors-box">
-                <ul class="instructors-list px-15 pb-4">
+                <ul class="instructors-list px-15 pb-4" style="justify-content: center;">
                     {% for story in stories %}
                     <li>
                         <a href="{% url 'story_show' story.id 'compass' %}" class="instructors-contain">
@@ -216,7 +216,7 @@
 {% endif %}
 
 {% if posters %}
-<div class="category-section section-t-space pt-4">
+<div class="category-section section-t-space pt-4" style="padding: 0 5vw;">
     <div class="intro-plans">
         <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}
@@ -273,23 +273,13 @@
 <div class="top-instructors-section section-t-space">
     <div class="instructors-box">
         <div class="px-15" style="display: grid; grid-template-columns: repeat(2, 1fr);">
-            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <a href="{% url 'live_archives' %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
-                    <div style="display: flex; justify-content: center; align-items: center;">
-                        <i class="ri-video-line" style="color: #172561; font-size: xx-large;"></i>
-                    </div>
-                    <div class="instructors-detail my-card-title">
-                        <h4 style="text-align: center;">آرشیو ویدیو</h4>
-                    </div>
-                </a>
-            </li>
-            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto; grid-column: 1 / span 2;">
                 <a href="{% url 'data_introduction' 1 %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <i class="ri-book-open-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h4 style="text-align: center;">پایگاه داده</h4>
+                        <h4 style="text-align: center;">پایگاه داده انتخاب رشته</h4>
                     </div>
                 </a>
             </li>
@@ -299,7 +289,7 @@
                         <i class="ri-message-3-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h4 style="text-align: center;">جلسات مشاوره فردی</h4>
+                        <h4 style="text-align: center;">جلسات مشاوره فردی انتخاب رشته</h4>
                     </div>
                 </a>
             </li>
@@ -309,9 +299,29 @@
                         <i class="ri-menu-line" style="color: #172561; font-size: xx-large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h4 style="text-align: center;">تخمین رتبه قبولی</h4>
+                        <h4 style="text-align: center;">سرویس تخمین رتبه قبولی</h4>
                     </div>
                 </div>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <div class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-menu-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h4 style="text-align: center;">سرویس تحلیل شخصیت داوطلب</h4>
+                    </div>
+                </div>
+            </li>
+            <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
+                <a href="{% url 'live_archives' %}" class="my-card h-100" style="display: flex; flex-direction: column; background-color: #1725611e;">
+                    <div style="display: flex; justify-content: center; align-items: center;">
+                        <i class="ri-video-line" style="color: #172561; font-size: xx-large;"></i>
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h4 style="text-align: center;">آرشیو وبینارهای انتخاب رشته</h4>
+                    </div>
+                </a>
             </li>
         </div>
     </div>
@@ -351,7 +361,7 @@
 
 {% if comments %}
 <div class="top-instructors-section section-t-space mt-3">
-    <h3 class="text-center mb-4">نظرات همراهان سال های پیش</h3>
+    <h2 class="mb-3" style="color: #172561; text-align: center;">پیام‌های همراهان آتروپین</h2>
     <div class="instructors-box">
         <ul class="instructors-list" id="commentSlider">
             {% for comment in comments %}
@@ -372,7 +382,7 @@
 
 {% if faqs %}
 <section class="container mt-5 py-3" style="background-color: white;">
-    <h3 class="text-center mb-4">سوالات متداول</h3>
+    <h2 class="mb-3" style="color: #172561; text-align: center;">سوالات متداول</h2>
     <div class="accordion" id="faqAccordion">
         {% for faq in faqs %}
         <div class="accordion-item">

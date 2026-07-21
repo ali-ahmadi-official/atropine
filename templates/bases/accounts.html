@@ -69,7 +69,7 @@
                     <h5>با محیط پنل آشنا شوید <br> و از خدمات رایگان استفاده کنید</h5>
                 </div>
                 <div>
-                    <p><span style="color: orange;"> + </span> استفاده از خدمات انتخاب رشته آتروپین </p>
+                    <p style="font-size: larger;"><span style="color: orange;"> + </span> استفاده از خدمات انتخاب رشته آتروپین </p>
                     {% if request.user.username %}
                     <form action="{% url 'main_logout' %}" method="post" class="side-menu__item" id="logout-form">
                         {% csrf_token %}

@@ -55,7 +55,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="about-detail">
-                    <p>{{ consultant.user_consultant.bio|linebreaks }}</p>
+                    <p>{{ consultant.user_consultant.bio|safe }}</p>
                 </div>
             </div>
         </div>

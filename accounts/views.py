@@ -11,7 +11,7 @@ from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
     Story, Achievement, LiveEvent, Poster, Comment, FAQ,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, DataIntroduction,
-    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankBank, Rule
+    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankBank, Rule, StaticMessage
 )
 from payments.models import Package, Consultation, Payment, ServiceToStudent
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
@@ -20,7 +20,7 @@ from .forms import (
     PackageForm, AForm, RankForm, Personality60Form,
     PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, DataIntroductionForm,
     ChoiceIntroductionForm, LiveIntroductionForm,
-    AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RuleForm
+    AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RuleForm, StaticMessageForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -157,10 +157,6 @@ def set_password(request):
 
         if password != password2:
             messages.error(request, "رمز عبور و تکرار آن یکسان نیستند.")
-            return redirect("set-password")
-
-        if len(password) < 8:
-            messages.error(request, "رمز عبور باید حداقل ۸ کاراکتر باشد.")
             return redirect("set-password")
 
         new_user = User.objects.create(
@@ -710,6 +706,28 @@ class RuleDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = Rule
     template_name = 'accounts/admins/rule_delete.html'
     success_url = reverse_lazy('rule_list')
+
+class StaticMessageListView(SuperAdminSidebarContextMixin, ListView):
+    model = StaticMessage
+    template_name = "accounts/admins/static_message_list.html"
+    context_object_name = "static_messages"
+
+class StaticMessageCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = StaticMessage
+    form_class = StaticMessageForm
+    template_name = "accounts/admins/static_message_add.html"
+    success_url = reverse_lazy("static_message_list")
+
+class StaticMessageUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = StaticMessage
+    form_class = StaticMessageForm
+    template_name = "accounts/admins/static_message_edit.html"
+    success_url = reverse_lazy("static_message_list")
+
+class StaticMessageDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+    model = StaticMessage
+    template_name = 'accounts/admins/static_message_delete.html'
+    success_url = reverse_lazy('static_message_list')
 
 # endregion
 

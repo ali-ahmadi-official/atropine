@@ -3,7 +3,7 @@ from .views import (
     main, compass, story_show, self_story_show, courses, plans, data_introduction,
     counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
     live_introduction, live_time_steps, live_archives,
-    videos, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, faq,
+    videos, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
     about_us, trust, achievement_list, atropine_team
 )
 
@@ -29,7 +29,7 @@ urlpatterns = [
     path('rank-bank/', rank_bank, name='rank_bank'),
     path('rule/', rule, name='rule'),
     path('rule-introduction/<int:id>/', rule_introduction, name='rule_introduction'),
-    path('faq/', faq, name='faq'),
+    path('static-message/', static_message, name='static_message'),
     path('about-us/', about_us, name='about_us'),
     path('trust/', trust, name='trust'),
     path('achievement-list/', achievement_list, name='achievement_list_show'),

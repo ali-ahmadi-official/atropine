@@ -3,10 +3,10 @@ from django import forms
 from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from pages.models import (
-    SHOW_IN_CHOICES,
+    LIVE_SHOW_IN_CHOICES, STORY_SHOW_IN_CHOICES, POSTER_SHOW_IN_CHOICES,
     News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction, DataIntroduction,
     CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction,
-    Poster, Comment, FAQ, Media, RankBank, Rule
+    Poster, Comment, FAQ, Media, RankBank, Rule, StaticMessage
 )
 from payments.models import Package
 from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
@@ -241,7 +241,7 @@ class LiveEventForm(BaseModelForm):
     show_in = forms.MultipleChoiceField(
         label="نمایش در صفحات",
         widget=forms.SelectMultiple(attrs={"class": "form-select select2"}),
-        choices=SHOW_IN_CHOICES,
+        choices=LIVE_SHOW_IN_CHOICES,
     )
 
     class Meta:
@@ -373,6 +373,11 @@ class RankBankForm(BaseModelForm):
 class RuleForm(BaseModelForm):
     class Meta:
         model = Rule
+        fields = "__all__"
+
+class StaticMessageForm(BaseModelForm):
+    class Meta:
+        model = StaticMessage
         fields = "__all__"
 
 class PackageForm(BaseModelForm):

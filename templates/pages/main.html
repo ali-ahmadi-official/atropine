@@ -57,7 +57,7 @@
         {% if stories %}
         <div class="top-instructors-section">
             <div class="instructors-box">
-                <ul class="instructors-list px-15 pb-4">
+                <ul class="instructors-list px-15 pb-4" style="justify-content: center;">
                     {% for story in stories %}
                     <li>
                         <a href="{% url 'story_show' story.id 'main' %}" class="instructors-contain">
@@ -109,64 +109,8 @@
                                     <h2 class="new-text-black">قطب نمای آتروپین</h2>
                                 </div>
                             </div>
-                            <h3 class="mt-3 new-text-black">دپرتمان تخصصی انتخاب رشته 1405</h3>
+                            <h3 class="mt-3 new-text-black">دپارتمان تخصصی انتخاب رشته 1405</h3>
                             <h5 class="mt-1 new-text-black">🏅 با هشت سال سابقه درخشان</h5>
-                            <button class="btn btn-danger mt-3">کلیک کنید</button>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-{% if achievements %}
-<div class="top-instructors-section section-t-space mt-3" style="background-color: white;">
-    <div class="title px-15">
-        <h4>افتخارات آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
-    </div>
-
-    <div class="instructors-box">
-        <ul class="instructors-list px-15">
-            {% for achievement in achievements %}
-            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
-                    <div class="instructors-image-edited">
-                        {% if achievement.cover %}
-                        <img src="{{ achievement.cover.url }}" class="img-fluid" alt="achievement avatar">
-                        {% else %}
-                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="achievement avatar">
-                        {% endif %}
-                    </div>
-                    <div class="instructors-detail my-card-title">
-                        <h5>{{ achievement.full_name }}</h5>
-                        <h6>{{ achievement.rank }}</h6>
-                    </div>
-                </div>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-{% endif %}
-
-<section class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
-    <div class="">
-        <div class="swiper slider-1 px-15 reading-slider">
-            <div class="">
-                <div class="swiper-slide">
-                    <a href="" class="reading-list">
-                        <div class="reading-box p-4">
-                            <div class="reading-detail">
-                                <div class="reading-image" style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
-                                    <i class="ri-message-2-line" style="font-size: 50px;"></i>
-                                </div>
-                                <div class="reading-name">
-                                    <h2 class="new-text-black">منتورینگ آتروپین</h2>
-                                </div>
-                            </div>
-                            <h3 class="mt-3 new-text-black">دپارتمان تخصصی مشاوره و هدایت تحصیلی</h3>
-                            <h5 class="mt-1 new-text-black">دستیاری | پره انترنی | علوم پایه</h5>
                             <button class="btn btn-danger mt-3">کلیک کنید</button>
                         </div>
                     </a>
@@ -197,6 +141,62 @@
                     <div class="instructors-detail my-card-title">
                         <h5>{{ atropine_team.get_full_name }}</h5>
                         <h6>{{ atropine_team.get_role_display }}</h6>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+<section class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
+    <div class="">
+        <div class="swiper slider-1 px-15 reading-slider">
+            <div class="">
+                <div class="swiper-slide">
+                    <a href="" class="reading-list">
+                        <div class="reading-box p-4">
+                            <div class="reading-detail">
+                                <div class="reading-image" style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
+                                    <i class="ri-message-2-line" style="font-size: 50px;"></i>
+                                </div>
+                                <div class="reading-name">
+                                    <h2 class="new-text-black">منتورینگ آتروپین</h2>
+                                </div>
+                            </div>
+                            <h3 class="mt-3 new-text-black">دپارتمان تخصصی مشاوره و هدایت تحصیلی</h3>
+                            <h5 class="mt-1 new-text-black">دستیاری | پره انترنی | علوم پایه</h5>
+                            <button class="btn btn-danger mt-3" disabled>کلیک کنید</button>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if achievements %}
+<div class="top-instructors-section section-t-space mt-3" style="background-color: white;">
+    <div class="title px-15">
+        <h4>افتخارات آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
+    </div>
+
+    <div class="instructors-box">
+        <ul class="instructors-list px-15">
+            {% for achievement in achievements %}
+            <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
+                <div class="my-card">
+                    <div class="instructors-image-edited">
+                        {% if achievement.cover %}
+                        <img src="{{ achievement.cover.url }}" class="img-fluid" alt="achievement avatar">
+                        {% else %}
+                        <img src="{% static 'images/user.jpg' %}" class="img-fluid" alt="achievement avatar">
+                        {% endif %}
+                    </div>
+                    <div class="instructors-detail my-card-title">
+                        <h5>{{ achievement.full_name }}</h5>
+                        <h6>{{ achievement.rank }}</h6>
                     </div>
                 </div>
             </li>
@@ -261,31 +261,31 @@
                 </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card">
+                <a href="https://atropine.ir/search/%D8%A2%D8%AA%D8%B1%D9%88%D9%81%D8%B3%D8%AA" class="my-card">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <i class="ri-article-line" style="color: #ff3332; font-size: large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h3>آتروفست ها</h3>
+                        <h3>آتروفست‌ها</h3>
                     </div>
-                </div>
+                </a>
             </li>
             <li class="p-2" style="box-shadow: 0 0 10px gainsboro; border-radius: 15px; width: auto;">
-                <div class="my-card">
+                <a href="https://atropine.ir/search/%DA%A9%D8%A7%D8%B1%DA%AF%D8%A7%D9%87" class="my-card">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <i class="ri-settings-3-line" style="color: #ff3332; font-size: large;"></i>
                     </div>
                     <div class="instructors-detail my-card-title">
-                        <h3>گارگاه ها</h3>
+                        <h3>کارگاه‌ها</h3>
                     </div>
-                </div>
+                </a>
             </li>
         </div>
     </div>
 </div>
 
 {% if posters %}
-<div class="category-section section-t-space pt-4">
+<div class="category-section section-t-space pt-4" style="padding: 0 5vw;">
     <div class="intro-plans">
         <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}

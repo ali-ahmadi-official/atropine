@@ -148,9 +148,25 @@
 {% block content %}
 <div class="category-section section-t-space pt-4">
     <div class="intro-plans">
+        {% if posters %}
+        <ul class="instructors-list" id="posterSlider">
+            {% for poster in posters %}
+            <li class="custom-container w-100">
+                <div class="row g-4">
+                    <div class="col-12 p-0">
+                        <div class="popular-image w-100" style="height: auto !important;">
+                            <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% elif data_intro.video.url %}
         <video class="intro-plans-video" id="first-player" controls>
             <source src="{{ data_intro.video.url }}" type="video/mp4">
         </video>
+        {% endif %}
         <div class="description">
             {{ data_intro.content|safe }}
         </div>
@@ -182,7 +198,7 @@
         style="color: #172561; border: 2px solid; border-color: #172561; background-color: #e9ecef; font-size: larger;">
         سایر ویس ها
     </a>
-    <a href="{% url 'faq' %}" class="btn mb-3" 
+    <a href="{% url 'static_message' %}" class="btn mb-3" 
         style="color: #172561; border: 2px solid; border-color: #172561; background-color: #e9ecef; font-size: larger;">
         پاسخ به پرسش های داوطلبین
     </a>

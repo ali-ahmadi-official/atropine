@@ -1,0 +1,23 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+ادیت پاسخ به پرسش های متداول داوطلب ها
+{% endblock %}
+
+{% block content %}
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ field.label }}</p>
+            {% include 'includes/error.html' with errors=field.errors %}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+{% endblock %}

@@ -3,10 +3,16 @@
 <div class="top-header top-header-edited">
     <div class="header-left">
         <a class="new-text-black" href="{% url 'main' %}">
-            <img src="{% static 'images/logo.jpg' %}" alt="آتروپین" width="30px" style="border-radius: 100%;">
+            <img src="{% static 'images/logo.jpg' %}" alt="دپارتمان مشاوره و منتورینگ آتروپین" width="30px" style="border-radius: 100%;">
         </a>
         <a href="{% url 'main' %}" class="header-logo">
-            <h3 class="new-text-black">آتروپین</h3>
+            <h3 class="new-text-black">
+                {% if "compass" in request.path %}
+                دپارتمان تخصصی انتخاب رشته آتروپین
+                {% else %}
+                دپارتمان مشاوره و منتورینگ آتروپین
+                {% endif %}
+            </h3>
         </a>
     </div>
 

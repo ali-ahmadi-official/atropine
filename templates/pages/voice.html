@@ -179,7 +179,7 @@
                             <div class="reading-name">
                                 <h4 class="mb-2">{{ media.title }}</h4>
                                 <p>
-                                    {{ media.description|truncatewords:15 }}
+                                    {{ media.description|striptags|truncatewords:15 }}
                                 </p>
                             </div>
                         </div>
@@ -220,7 +220,7 @@
             player.play();
 
             title.textContent = videoTitle;
-            description.textContent = videoDescription;
+            description.innerHTML = videoDescription;
 
             window.scrollTo({
                 top: 0,

@@ -3,10 +3,22 @@ from django_ckeditor_5.fields import CKEditor5Field
 from multiselectfield import MultiSelectField
 from .validators import validate_video
 
-SHOW_IN_CHOICES = (
+STORY_SHOW_IN_CHOICES = (
+    ("main", "صفحه خانه"),
+    ("compass", "صفحه قطب نمای آتروپین"),
+)
+
+POSTER_SHOW_IN_CHOICES = (
     ("main", "صفحه خانه"),
     ("compass", "صفحه قطب نمای آتروپین"),
     ("choice", "صفحه جلسات فردی انتخاب رشته"),
+    ("DataIntroduction", "صفحه معرفی پایگاه داده"),
+    ("AboutUsIntroduction", "صفحه درباره‌ما"),
+)
+
+LIVE_SHOW_IN_CHOICES = (
+    ("main", "صفحه خانه"),
+    ("compass", "صفحه قطب نمای آتروپین"),
     ("archives", "صفحه آرشیو لایو های سال های قبل"),
 )
 
@@ -59,7 +71,7 @@ class Story(models.Model):
 
     show_in = MultiSelectField(
         max_length=100,
-        choices=SHOW_IN_CHOICES,
+        choices=STORY_SHOW_IN_CHOICES,
         verbose_name="نمایش در صفحات"
     )
 
@@ -92,7 +104,9 @@ class LiveEvent(models.Model):
     )
 
     stream_url = models.URLField(
-        verbose_name="لینک پخش"
+        verbose_name="لینک پخش",
+        null=True,
+        blank=True
     )
 
     is_public = models.BooleanField(
@@ -102,7 +116,7 @@ class LiveEvent(models.Model):
 
     show_in = MultiSelectField(
         max_length=100,
-        choices=SHOW_IN_CHOICES,
+        choices=LIVE_SHOW_IN_CHOICES,
         verbose_name="نمایش در صفحات"
     )
 
@@ -129,36 +143,6 @@ class Achievement(models.Model):
     class Meta:
         verbose_name = "افتخار"
         verbose_name_plural = "افتخارات"
-
-# class Notification(models.Model):
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#         verbose_name="کاربر"
-#     )
-
-#     title = models.CharField(
-#         max_length=255,
-#         verbose_name="عنوان"
-#     )
-
-#     message = models.TextField(
-#         verbose_name="متن پیام"
-#     )
-
-#     is_read = models.BooleanField(
-#         default=False,
-#         verbose_name="خوانده شده"
-#     )
-
-#     created_at = models.DateTimeField(
-#         auto_now_add=True,
-#         verbose_name="تاریخ"
-#     )
-
-#     class Meta:
-#         verbose_name = "اعلان"
-#         verbose_name_plural = "اعلان ها"
 
 class Survey(models.Model):
     title = models.CharField(
@@ -190,7 +174,9 @@ class PlansIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -206,7 +192,9 @@ class DataIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -222,7 +210,9 @@ class CounselingIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -238,7 +228,9 @@ class EstimationIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -254,7 +246,9 @@ class ChoiceIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -270,7 +264,9 @@ class LiveIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/counseling/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -286,7 +282,9 @@ class AboutUsIntroduction(models.Model):
     video = models.FileField(
         upload_to="introductions/about_us/",
         validators=[validate_video],
-        verbose_name="ویدئو معرفی"
+        verbose_name="ویدئو معرفی",
+        null=True,
+        blank=True
     )
 
     content = CKEditor5Field(
@@ -306,7 +304,7 @@ class Poster(models.Model):
 
     show_in = MultiSelectField(
         max_length=100,
-        choices=SHOW_IN_CHOICES,
+        choices=POSTER_SHOW_IN_CHOICES,
         verbose_name="نمایش در صفحات"
     )
 
@@ -442,3 +440,24 @@ class Rule(models.Model):
     class Meta:
         verbose_name = "قانون"
         verbose_name_plural = "قوانین"
+
+class StaticMessage(models.Model):
+    SENDER_CHOICES = (
+        ("1", "ادمین"),
+        ("2", "داوطلب"),
+    )
+
+    sender = models.CharField(
+        max_length=1,
+        choices=SENDER_CHOICES,
+        verbose_name="ارسال کننده",
+    )
+
+    text = models.CharField(
+        max_length=600,
+        verbose_name="متن پیام"
+    )
+
+    class Meta:
+        verbose_name = "پیام ثابت"
+        verbose_name_plural = "پیام های ثابت"

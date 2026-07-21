@@ -49,7 +49,7 @@
 
 <body class="inter-body learning-color">
     <!-- Loader Box Start -->
-    <div class="min-loader-wrapper">
+    <div class="min-loader-wrapper" style="z-index: 30000;">
         <img src="{% static 'images/loader/chatting.gif' %}" class="img-fluid loader" alt="">
         <div class="loader-section chatting-color section-left"></div>
         <div class="loader-section chatting-color section-right"></div>
@@ -61,7 +61,7 @@
         {% endblock %}
 
         <!-- Mobile Section Start -->
-        <div class="mobile-style-1">
+        <div class="mobile-style-1" style="z-index: 20000;">
             <ul>
                 <li class="{% if '/' == request.path %} active {% endif %}">
                     <a href="{% url 'main' %}" class="mobile-box">
@@ -80,13 +80,13 @@
                             <i class="ri-live-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>وبینار ها</h5>
+                            <h5>وبینار‌ها</h5>
                         </div>
                     </a>
                 </li>
 
-                <li class="{% if '/dashboard/' in request.path %}active{% endif %}">
-                    <a href="" class="mobile-box">
+                <li class="">
+                    <a href="https://www.atropine.ir/" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-archive-line"></i>
                         </div>
@@ -96,13 +96,13 @@
                     </a>
                 </li>
 
-                <li class="{% if '/courses/' in request.path %} active {% endif %}">
-                    <a href="" class="mobile-box">
+                <li class="">
+                    <a href="https://azmoon.atropine.ir/" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-archive-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>آزمون ها</h5>
+                            <h5>آزمون‌ها</h5>
                         </div>
                     </a>
                 </li>
@@ -160,6 +160,7 @@
                     <h4>حساب کاربری</h4>
                 </div>
                 <ul class="menu-setting-list">
+                    {% if not request.user.username %}
                     <li>
                         <a href="{% url 'login' %}" class="menu-setting-box">
                             <div class="setting-icon">
@@ -182,8 +183,26 @@
                             </div>
                         </a>
                     </li>
-                </ul>
+                    {% else %}
+                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display:none;">
+                        {% csrf_token %}
+                    </form>
 
+                    <li>
+                        <a href="#" class="menu-setting-box"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <div class="setting-icon">
+                                <i class="ri-logout-box-r-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>خروج</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
                 <section class="section-t-space section-b-space">
                     <div class="divider"></div>
                 </section>
@@ -193,24 +212,12 @@
                 </div>
                 <ul class="menu-setting-list">
                     <li>
-                        <a href="{% url 'courses' %}" class="menu-setting-box">
-                            <div class="setting-icon">
-                                <i class="ri-book-open-line"></i>
-                            </div>
-                            <div class="setting-name">
-                                <h4>دوره های آموزشی</h4>
-                                <i class="ri-arrow-left-s-line"></i>
-                            </div>
-                        </a>
-                    </li>
-
-                    <li>
                         <a href="{% url 'counseling_introduction' %}" class="menu-setting-box">
                             <div class="setting-icon">
                                 <i class="ri-customer-service-2-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>مشاوره انتخاب رشته</h4>
+                                <h4>مشاوره فردی انتخاب رشته</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
@@ -222,19 +229,19 @@
                                 <i class="ri-line-chart-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>تخمین قبولی</h4>
+                                <h4>سامانه تخمین قبولی بر اساس رتبه</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
                     </li>
 
                     <li>
-                        <a href="{% url 'choice_introduction' %}" class="menu-setting-box">
+                        <a href="{% url 'main' %}" class="menu-setting-box">
                             <div class="setting-icon">
                                 <i class="ri-compass-3-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>انتخاب رشته بر اساس شخصیت</h4>
+                                <h4>سامانه تحلیل شخصیت داوطلب</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
@@ -246,7 +253,19 @@
                                 <i class="ri-video-line"></i>
                             </div>
                             <div class="setting-name">
-                                <h4>وبینار های طلایی</h4>
+                                <h4>وبینارهای انتخاب رشته آتروپین</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://www.atropine.ir/" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-global-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>وب سایت آتروپین (منابع و محصولات)</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>
@@ -279,6 +298,51 @@
                             </div>
                             <div class="setting-name">
                                 <h4>نماد اعتماد</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+                </ul>
+
+                <section class="section-t-space section-b-space">
+                    <div class="divider"></div>
+                </section>
+
+                <div class="title px-15">
+                    <h4>پشتیبانی</h4>
+                </div>
+                <ul class="menu-setting-list pb-4">
+                    <li>
+                        <a href="" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-customer-service-2-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>ارتباط درون برنامه</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://t.me/atropine_admin2" target="_blank" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-send-plane-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>ارتباط در تلگرام</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="https://ble.ir/atropine_admin" target="_blank" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-chat-3-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>ارتباط در بله</h4>
                                 <i class="ri-arrow-left-s-line"></i>
                             </div>
                         </a>

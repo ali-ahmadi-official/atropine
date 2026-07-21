@@ -252,6 +252,38 @@
                                 قوانین و آئین نامه ها
                             </a>
                         </li>
+                        <li class="slide">
+                            <a href="{% url 'static_message_list' %}" class="side-menu__item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 256 256"
+                                    fill="none" class="side-menu-doublemenu__icon">
+                                    <rect x="28" y="44" width="120" height="96" rx="28" fill="currentColor"
+                                        opacity="0.2" />
+                                    <rect x="108" y="116" width="120" height="96" rx="28" fill="currentColor"
+                                        opacity="0.2" />
+
+                                    <path
+                                        d="M68 68h40a24 24 0 0 1 24 24v20a24 24 0 0 1-24 24H84l-24 20v-20H68a24 24 0 0 1-24-24V92a24 24 0 0 1 24-24Z"
+                                        fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+
+                                    <path
+                                        d="M148 120h40a24 24 0 0 1 24 24v20a24 24 0 0 1-24 24h-8v20l-24-20h-8a24 24 0 0 1-24-24v-20a24 24 0 0 1 24-24Z"
+                                        fill="none" stroke="currentColor" stroke-width="16" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+
+                                    <path d="M88 92c0-11 8-18 20-18s20 7 20 18c0 8-5 13-12 17-5 3-8 6-8 11" fill="none"
+                                        stroke="currentColor" stroke-width="16" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                    <circle cx="108" cy="126" r="4" fill="currentColor" />
+
+                                    <path d="M168 144v28" fill="none" stroke="currentColor" stroke-width="16"
+                                        stroke-linecap="round" />
+                                    <path d="M154 158h28" fill="none" stroke="currentColor" stroke-width="16"
+                                        stroke-linecap="round" />
+                                </svg>
+                                پاسخ به پرسش متداول
+                            </a>
+                        </li>
                         {% if not PlansIntroductionCreated %}
                         <li class="slide">
                             <a href="{% url 'plans-introduction-create' %}" class="side-menu__item">
