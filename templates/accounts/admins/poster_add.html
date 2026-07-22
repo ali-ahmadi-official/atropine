@@ -23,6 +23,11 @@
             {{ form.cover }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.stream_url.label }}</p>
+            {% include 'includes/error.html' with errors=form.stream_url.errors %}
+            {{ form.stream_url }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.show_in.label }}</p>
             {% include 'includes/error.html' with errors=form.show_in.errors %}
             {{ form.show_in }}

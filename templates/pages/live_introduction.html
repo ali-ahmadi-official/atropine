@@ -150,7 +150,17 @@
         <ul class="instructors-list px-15"
             style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
             <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
-                <a href="{{ live.stream_url }}" class="my-card" style="justify-content: space-between;">
+                <a
+                {% if live.stream_url %}
+                href="{{ live.stream_url }}"
+                {% elif live.aparat_url %}
+                href="{{ live.aparat_url }}"
+                {% elif live.video_url %}
+                href="{{ live.video_url }}"
+                {% else %}
+                href="#"
+                {% endif %}
+                class="my-card" style="justify-content: space-between;">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <div class="instructors-image-edited">
                             <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">

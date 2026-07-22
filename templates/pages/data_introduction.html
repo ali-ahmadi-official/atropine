@@ -152,13 +152,19 @@
         <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}
             <li class="custom-container w-100">
-                <div class="row g-4">
+                <a
+                {% if poster.stream_url %}
+                href="{{ live.stream_url }}"
+                {% else %}
+                href="#"
+                {% endif %}
+                class="row g-4">
                     <div class="col-12 p-0">
                         <div class="popular-image w-100" style="height: auto !important;">
                             <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
                         </div>
                     </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>

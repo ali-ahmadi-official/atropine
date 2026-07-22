@@ -16,7 +16,7 @@ from pages.models import (
 from payments.models import Package, Consultation, Payment, ServiceToStudent
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
 from .forms import (
-    UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, ConsultantScheduleForm,
+    UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, CreateConsultantForm, ConsultantScheduleForm,
     PackageForm, AForm, RankForm, Personality60Form,
     PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, DataIntroductionForm,
     ChoiceIntroductionForm, LiveIntroductionForm,
@@ -501,14 +501,21 @@ class LiveEventListView(SuperAdminSidebarContextMixin, ListView):
         live_events = LiveEvent.objects.all()
 
         for live_event in live_events:
-            if live_event:
-                live_event.start_datetime_shamsi = jdatetime.date.fromgregorian(
-                    date=live_event.start_datetime
-                ).strftime('%Y/%m/%d')
+            live_event.start_datetime_shamsi = (
+                jdatetime.date.fromgregorian(
+                    date=live_event.start_datetime.date()
+                ).strftime("%Y/%m/%d")
+                if live_event.start_datetime
+                else ""
+            )
 
-                live_event.end_datetime_shamsi = jdatetime.date.fromgregorian(
-                    date=live_event.end_datetime
-                ).strftime('%Y/%m/%d')
+            live_event.end_datetime_shamsi = (
+                jdatetime.date.fromgregorian(
+                    date=live_event.end_datetime.date()
+                ).strftime("%Y/%m/%d")
+                if live_event.end_datetime
+                else ""
+            )
         
         context["live_events"] = live_events
         return context
@@ -728,6 +735,23 @@ class StaticMessageDeleteView(SuperAdminSidebarContextMixin, DeleteView):
     model = StaticMessage
     template_name = 'accounts/admins/static_message_delete.html'
     success_url = reverse_lazy('static_message_list')
+
+class ConsultantListView(SuperAdminSidebarContextMixin, ListView):
+    model = Consultant
+    template_name = "accounts/admins/consultant_list.html"
+    context_object_name = "consultants"
+
+class AdminConsultantCreateView(SuperAdminSidebarContextMixin, CreateView):
+    model = Consultant
+    form_class = CreateConsultantForm
+    template_name = "accounts/admins/consultant_add.html"
+    success_url = reverse_lazy("consultant_list")
+
+class AdminConsultantUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+    model = Consultant
+    form_class = ConsultantForm
+    template_name = "accounts/admins/consultant_edit.html"
+    success_url = reverse_lazy("consultant_list")
 
 # endregion
 

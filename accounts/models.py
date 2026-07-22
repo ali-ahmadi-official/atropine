@@ -23,6 +23,9 @@ class User(AbstractUser):
         verbose_name = "کاربر"
         verbose_name_plural = "کاربران"
 
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.get_role_display()})"
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_student", verbose_name="کاربر")
     a_completed = models.BooleanField(default=False)

@@ -96,17 +96,38 @@ class LiveEvent(models.Model):
     )
 
     start_datetime = models.DateTimeField(
-        verbose_name="زمان شروع"
+        verbose_name="زمان شروع",
+        null=True,
+        blank=True
     )
 
     end_datetime = models.DateTimeField(
-        verbose_name="زمان پایان"
+        verbose_name="زمان پایان",
+        null=True,
+        blank=True
     )
 
     stream_url = models.URLField(
         verbose_name="لینک پخش",
         null=True,
         blank=True
+    )
+
+    aparat_url = models.URLField(
+        verbose_name="لینک آپارات",
+        null=True,
+        blank=True
+    )
+
+    video_url = models.URLField(
+        verbose_name="لینک ویدئو",
+        null=True,
+        blank=True
+    )
+
+    year = models.CharField(
+        max_length=4,
+        verbose_name="سال شمسی برگزاری"
     )
 
     is_public = models.BooleanField(
@@ -374,6 +395,16 @@ class Media(models.Model):
         max_length=100,
         choices=MEDIA_TYPE_CHOICES,
         verbose_name="نوع مدیا"
+    )
+
+    year = models.CharField(
+        max_length=4,
+        verbose_name="سال شمسی برگزاری"
+    )
+
+    category = models.CharField(
+        max_length=200,
+        verbose_name="دسته بندی"
     )
 
     is_free = models.BooleanField(

@@ -71,6 +71,9 @@ from .views import (
     StaticMessageCreateView,
     StaticMessageUpdateView,
     StaticMessageDeleteView,
+    ConsultantListView,
+    AdminConsultantCreateView,
+    AdminConsultantUpdateView,
 
     consultant_dashboard,
     ConsultantCreateView,
@@ -178,6 +181,10 @@ urlpatterns = [
     path("admins/static-messages/add/", StaticMessageCreateView.as_view(), name="static_message_add"),
     path("admins/static-messages/<int:pk>/edit/", StaticMessageUpdateView.as_view(), name="static_message_edit"),
     path("admins/static-messages/<int:pk>/delete/", StaticMessageDeleteView.as_view(), name="static_message_delete"),
+
+    path("admins/consultants/", ConsultantListView.as_view(), name="consultant_list"),
+    path("admins/consultants/add/", AdminConsultantCreateView.as_view(), name="admin_consultant_add"),
+    path("admins/consultants/<int:pk>/edit/", AdminConsultantUpdateView.as_view(), name="admin_consultant_edit"),
 
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 

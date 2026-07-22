@@ -25,6 +25,8 @@
                 <th scope="col">کاور</th>
                 <th scope="col">عنوان</th>
                 <th scope="col">نوع مدیا</th>
+                <th scope="col">سال</th>
+                <th scope="col">دسته بندی</th>
                 <th scope="col">رایگان؟</th>
                 <th scope="col">عملیات</th>
             </tr>
@@ -48,6 +50,8 @@
                     {{ media.title }}
                 </td>
                 <td>{{ media.get_media_type_display }}</td>
+                <td>{{ media.year }}</td>
+                <td>{{ media.category }}</td>
                 <td>
                     {% if media.is_free %}
                     بله
@@ -66,7 +70,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" style="text-align: center;">
+                <td colspan="8" style="text-align: center;">
                     موردی یافت نشد.
                 </td>
             </tr>

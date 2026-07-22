@@ -284,41 +284,6 @@
                                 پاسخ به پرسش متداول
                             </a>
                         </li>
-                        {% if not PlansIntroductionCreated %}
-                        <li class="slide">
-                            <a href="{% url 'plans-introduction-create' %}" class="side-menu__item">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
-                                    class="side-menu-doublemenu__icon">
-                                    <rect width="256" height="256" fill="none"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" opacity="0.2"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" fill="none"
-                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="16"></rect>
-                                    <line x1="128" y1="100" x2="128" y2="160" fill="none" stroke="currentColor"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
-                                    <circle cx="128" cy="72" r="12" fill="currentColor"></circle>
-                                </svg>
-                                معرفی پلن ها
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="slide">
-                            <a href="{% url 'plans-introduction-update' 1 %}" class="side-menu__item">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
-                                    class="side-menu-doublemenu__icon">
-                                    <rect width="256" height="256" fill="none"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" opacity="0.2"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" fill="none"
-                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="16"></rect>
-                                    <line x1="128" y1="100" x2="128" y2="160" fill="none" stroke="currentColor"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
-                                    <circle cx="128" cy="72" r="12" fill="currentColor"></circle>
-                                </svg>
-                                معرفی پلن ها
-                            </a>
-                        </li>
-                        {% endif %}
                         {% if not DataIntroductionCreated %}
                         <li class="slide">
                             <a href="{% url 'data-introduction-create' %}" class="side-menu__item">
@@ -459,41 +424,6 @@
                             </a>
                         </li>
                         {% endif %}
-                        {% if not LiveIntroductionCreated %}
-                        <li class="slide">
-                            <a href="{% url 'live-introduction-create' %}" class="side-menu__item">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
-                                    class="side-menu-doublemenu__icon">
-                                    <rect width="256" height="256" fill="none"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" opacity="0.2"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" fill="none"
-                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="16"></rect>
-                                    <line x1="128" y1="100" x2="128" y2="160" fill="none" stroke="currentColor"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
-                                    <circle cx="128" cy="72" r="12" fill="currentColor"></circle>
-                                </svg>
-                                معرفی وبینار ها
-                            </a>
-                        </li>
-                        {% else %}
-                        <li class="slide">
-                            <a href="{% url 'live-introduction-update' 1 %}" class="side-menu__item">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
-                                    class="side-menu-doublemenu__icon">
-                                    <rect width="256" height="256" fill="none"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" opacity="0.2"></rect>
-                                    <rect x="40" y="40" width="176" height="176" rx="16" fill="none"
-                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="16"></rect>
-                                    <line x1="128" y1="100" x2="128" y2="160" fill="none" stroke="currentColor"
-                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
-                                    <circle cx="128" cy="72" r="12" fill="currentColor"></circle>
-                                </svg>
-                                معرفی وبینار ها
-                            </a>
-                        </li>
-                        {% endif %}
                         {% if not AboutUsIntroductionCreated %}
                         <li class="slide">
                             <a href="{% url 'about-introduction-create' %}" class="side-menu__item">
@@ -527,6 +457,22 @@
                             </a>
                         </li>
                         {% endif %}
+                        <li class="slide">
+                            <a href="{% url 'consultant_list' %}" class="side-menu__item">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"
+                                    class="side-menu-doublemenu__icon">
+                                    <rect width="256" height="256" fill="none"></rect>
+                                    <rect x="40" y="40" width="176" height="176" rx="16" opacity="0.2"></rect>
+                                    <rect x="40" y="40" width="176" height="176" rx="16" fill="none"
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="16"></rect>
+                                    <line x1="128" y1="100" x2="128" y2="160" fill="none" stroke="currentColor"
+                                        stroke-linecap="round" stroke-linejoin="round" stroke-width="16"></line>
+                                    <circle cx="128" cy="72" r="12" fill="currentColor"></circle>
+                                </svg>
+                                معرفی مشاور
+                            </a>
+                        </li>
                     </ul>
                 </li>
             </ul>

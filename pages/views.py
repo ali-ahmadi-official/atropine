@@ -30,9 +30,12 @@ def main(request):
     ).first()
 
     if next_live:
-        next_live.start_datetime_shamsi = jdatetime.datetime.fromgregorian(
-            datetime=next_live.start_datetime
-        ).strftime('%Y/%m/%d %H:%M')
+        if next_live.start_datetime:
+            next_live.start_datetime_shamsi = jdatetime.datetime.fromgregorian(
+                datetime=next_live.start_datetime
+            ).strftime("%Y/%m/%d %H:%M")
+        else:
+            next_live.start_datetime_shamsi = ""
 
     all_categories = list(ContentCategory.objects.all())
     chunk_size = 10
@@ -40,7 +43,7 @@ def main(request):
 
     achievements = Achievement.objects.all()
 
-    atropine_teams = User.objects.exclude(role='student')
+    atropine_teams = User.objects.filter(role='consultant')
 
     posters = Poster.objects.filter(show_in__icontains="main")
 
@@ -74,11 +77,15 @@ def compass(request):
     )
 
     for live in lives:
-        live.start_date_shamsi = jdatetime.date.fromgregorian(
-            date=live.start_datetime
-        ).strftime('%Y/%m/%d')
+        if live.start_datetime:
+            live.start_date_shamsi = jdatetime.date.fromgregorian(
+                date=live.start_datetime.date()
+            ).strftime("%Y/%m/%d")
 
-        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+        else:
+            live.start_date_shamsi = ""
+            live.status = "-"
 
     packages = Package.objects.all()
 
@@ -92,7 +99,7 @@ def compass(request):
         if len(p.service) != 1
     ]
 
-    atropine_teams = User.objects.exclude(role='student')
+    atropine_teams = User.objects.filter(role='consultant')
 
     comments = Comment.objects.all().order_by("-id")
     
@@ -237,7 +244,7 @@ def choice_introduction(request):
 
     posters = Poster.objects.filter(show_in__icontains="choice")
 
-    atropine_teams = User.objects.exclude(role='student')
+    atropine_teams = User.objects.filter(role='consultant')
 
     packages = Package.objects.all()
 
@@ -265,10 +272,15 @@ def live_introduction(request, id):
 
     now = timezone.now()
 
-    live.start_date_shamsi = jdatetime.date.fromgregorian(
-        date=live.start_datetime
-    ).strftime('%Y/%m/%d')
-    live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+    if live.start_datetime:
+        live.start_date_shamsi = jdatetime.date.fromgregorian(
+            date=live.start_datetime.date()
+        ).strftime("%Y/%m/%d")
+
+        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+    else:
+        live.start_date_shamsi = ""
+        live.status = "-"
 
     packages = Package.objects.all()
 
@@ -297,11 +309,15 @@ def live_time_steps(request):
     )
 
     for live in lives:
-        live.start_date_shamsi = jdatetime.date.fromgregorian(
-            date=live.start_datetime
-        ).strftime('%Y/%m/%d')
+        if live.start_datetime:
+            live.start_date_shamsi = jdatetime.date.fromgregorian(
+                date=live.start_datetime.date()
+            ).strftime("%Y/%m/%d")
 
-        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+        else:
+            live.start_date_shamsi = ""
+            live.status = "-"
 
     packages = Package.objects.all()
 
@@ -330,42 +346,26 @@ def live_archives(request):
         is_public=True,
     )
 
-    # استخراج سال‌های شمسی
-    shamsi_years = sorted({
-        jdatetime.date.fromgregorian(
-            date=live.start_datetime.date()
-        ).year
-        for live in lives
-    }, reverse=True)
+    shamsi_years = sorted(
+        lives.values_list("year", flat=True).distinct(),
+        reverse=True,
+    )
 
     selected_year = request.GET.get("year")
 
-    # فیلتر بر اساس سال شمسی
     if selected_year:
-        selected_year = int(selected_year)
-
-        start = jdatetime.date(selected_year, 1, 1).togregorian()
-        end = jdatetime.date(selected_year + 1, 1, 1).togregorian()
-
-        start_datetime = timezone.make_aware(
-            datetime.combine(start, time.min)
-        )
-
-        end_datetime = timezone.make_aware(
-            datetime.combine(end, time.min)
-        )
-
-        lives = lives.filter(
-            start_datetime__gte=start_datetime,
-            start_datetime__lt=end_datetime,
-        )
+        lives = lives.filter(year=selected_year)
 
     for live in lives:
-        live.start_date_shamsi = jdatetime.date.fromgregorian(
-            date=live.start_datetime.date()
-        ).strftime("%Y/%m/%d")
+        if live.start_datetime:
+            live.start_date_shamsi = jdatetime.date.fromgregorian(
+                date=live.start_datetime.date()
+            ).strftime("%Y/%m/%d")
 
-        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+        else:
+            live.start_date_shamsi = ""
+            live.status = "-"
 
     packages = Package.objects.all()
 
@@ -417,6 +417,25 @@ def data_introduction(request, id):
 def videos(request):
     medias = Media.objects.filter(media_type="video")
 
+    shamsi_years = sorted(
+        medias.values_list("year", flat=True).distinct(),
+        reverse=True,
+    )
+    categories = sorted(
+        lives.exclude(category="")
+            .values_list("category", flat=True)
+            .distinct()
+    )
+
+    selected_year = request.GET.get("year")
+    selected_category = request.GET.get("category")
+
+    if selected_year:
+        medias = medias.filter(year=selected_year)
+
+    if selected_category:
+        lives = lives.filter(category=selected_category)
+
     packages = Package.objects.all()
 
     single_service_packages = [
@@ -431,6 +450,8 @@ def videos(request):
 
     context = {
         "title": "ویدئوهای معرفی اختصاصی رشته ها",
+        "shamsi_years": shamsi_years,
+        "categories": categories,
         "medias": medias,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -614,6 +635,6 @@ def achievement_list(request):
     return render(request, 'pages/achievement_list.html', {"achievements": achievements})
 
 def atropine_team(request):
-    atropine_teams = User.objects.exclude(role='student')
+    atropine_teams = User.objects.filter(role='consultant')
 
     return render(request, 'pages/atropine_team.html', {"atropine_teams": atropine_teams})

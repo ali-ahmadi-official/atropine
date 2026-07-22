@@ -88,6 +88,11 @@ class ConsultantForm(BaseModelForm):
         model = Consultant
         exclude = ("user",)
 
+class CreateConsultantForm(BaseModelForm):
+    class Meta:
+        model = Consultant
+        fields = "__all__"
+
 class ConsultantScheduleForm(BaseModelForm):
     date = forms.CharField(
         label="تاریخ",
@@ -218,24 +223,24 @@ class FAQForm(BaseModelForm):
 class LiveEventForm(BaseModelForm):
     start_date = forms.CharField(
         label="تاریخ شروع",
-        required=True
+        required=False,
     )
 
     start_time = forms.TimeField(
         label="ساعت شروع",
         widget=forms.TimeInput(attrs={"type": "time"}),
-        required=True
+        required=False,
     )
 
     end_date = forms.CharField(
         label="تاریخ پایان",
-        required=True
+        required=False,
     )
 
     end_time = forms.TimeField(
         label="ساعت پایان",
         widget=forms.TimeInput(attrs={"type": "time"}),
-        required=True
+        required=False,
     )
 
     show_in = forms.MultipleChoiceField(
@@ -252,61 +257,101 @@ class LiveEventForm(BaseModelForm):
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
-            start = jdatetime.datetime.fromgregorian(datetime=self.instance.start_datetime)
-            end = jdatetime.datetime.fromgregorian(datetime=self.instance.end_datetime)
+            if self.instance.start_datetime:
+                start = jdatetime.datetime.fromgregorian(
+                    datetime=self.instance.start_datetime
+                )
+                self.fields["start_date"].initial = start.strftime("%Y/%m/%d")
+                self.fields["start_time"].initial = start.strftime("%H:%M")
 
-            self.fields["start_date"].initial = start.strftime("%Y/%m/%d")
-            self.fields["start_time"].initial = start.strftime("%H:%M")
-
-            self.fields["end_date"].initial = end.strftime("%Y/%m/%d")
-            self.fields["end_time"].initial = end.strftime("%H:%M")
+            if self.instance.end_datetime:
+                end = jdatetime.datetime.fromgregorian(
+                    datetime=self.instance.end_datetime
+                )
+                self.fields["end_date"].initial = end.strftime("%Y/%m/%d")
+                self.fields["end_time"].initial = end.strftime("%H:%M")
 
     def clean(self):
         cleaned_data = super().clean()
 
+        start_date = cleaned_data.get("start_date")
+        start_time = cleaned_data.get("start_time")
+        end_date = cleaned_data.get("end_date")
+        end_time = cleaned_data.get("end_time")
+
+        # تاریخ و ساعت شروع باید با هم وارد شوند
+        if bool(start_date) != bool(start_time):
+            raise forms.ValidationError(
+                "تاریخ و ساعت شروع باید هر دو وارد شوند یا هر دو خالی باشند."
+            )
+
+        # تاریخ و ساعت پایان باید با هم وارد شوند
+        if bool(end_date) != bool(end_time):
+            raise forms.ValidationError(
+                "تاریخ و ساعت پایان باید هر دو وارد شوند یا هر دو خالی باشند."
+            )
+
         try:
             # شروع
-            jy, jm, jd = map(int, cleaned_data["start_date"].split("/"))
-            start_jalali = jdatetime.datetime(
-                jy,
-                jm,
-                jd,
-                cleaned_data["start_time"].hour,
-                cleaned_data["start_time"].minute,
-            )
-            start = start_jalali.togregorian()
-            start = timezone.make_aware(start, timezone.get_current_timezone())
-            cleaned_data["start_datetime"] = start
+            if start_date and start_time:
+                jy, jm, jd = map(int, start_date.split("/"))
+                start = jdatetime.datetime(
+                    jy,
+                    jm,
+                    jd,
+                    start_time.hour,
+                    start_time.minute,
+                ).togregorian()
+
+                cleaned_data["start_datetime"] = timezone.make_aware(
+                    start,
+                    timezone.get_current_timezone(),
+                )
+            else:
+                cleaned_data["start_datetime"] = None
 
             # پایان
-            jy, jm, jd = map(int, cleaned_data["end_date"].split("/"))
-            end_jalali = jdatetime.datetime(
-                jy,
-                jm,
-                jd,
-                cleaned_data["end_time"].hour,
-                cleaned_data["end_time"].minute,
+            if end_date and end_time:
+                jy, jm, jd = map(int, end_date.split("/"))
+                end = jdatetime.datetime(
+                    jy,
+                    jm,
+                    jd,
+                    end_time.hour,
+                    end_time.minute,
+                ).togregorian()
+
+                cleaned_data["end_datetime"] = timezone.make_aware(
+                    end,
+                    timezone.get_current_timezone(),
+                )
+            else:
+                cleaned_data["end_datetime"] = None
+
+        except (ValueError, TypeError):
+            raise forms.ValidationError("فرمت تاریخ یا ساعت صحیح نیست.")
+
+        # اگر هر دو مقدار وجود داشتند، ترتیب زمانی بررسی شود
+        if (
+            cleaned_data["start_datetime"]
+            and cleaned_data["end_datetime"]
+            and cleaned_data["start_datetime"] >= cleaned_data["end_datetime"]
+        ):
+            raise forms.ValidationError(
+                "زمان پایان باید بعد از زمان شروع باشد."
             )
-            end = end_jalali.togregorian()
-            end = timezone.make_aware(end, timezone.get_current_timezone())
-            cleaned_data["end_datetime"] = end
-
-            if cleaned_data["start_datetime"] >= cleaned_data["end_datetime"]:
-                raise forms.ValidationError("زمان پایان باید بعد از زمان شروع باشد.")
-
-        except Exception:
-            raise forms.ValidationError("فرمت تاریخ صحیح نیست.")
 
         return cleaned_data
 
     def save(self, commit=True):
         instance = super().save(commit=False)
 
-        instance.start_datetime = self.cleaned_data["start_datetime"]
-        instance.end_datetime = self.cleaned_data["end_datetime"]
+        instance.start_datetime = self.cleaned_data.get("start_datetime")
+        instance.end_datetime = self.cleaned_data.get("end_datetime")
 
         if commit:
             instance.save()
+            self.save_m2m()
 
         return instance
 

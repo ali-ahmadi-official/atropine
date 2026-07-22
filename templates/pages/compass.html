@@ -178,7 +178,7 @@
         {% if stories %}
         <div class="top-instructors-section">
             <div class="instructors-box">
-                <ul class="instructors-list px-15 pb-4" style="justify-content: center;">
+                <ul class="instructors-list px-15 pb-4 d-flex justify-content-lg-center">
                     {% for story in stories %}
                     <li>
                         <a href="{% url 'story_show' story.id 'compass' %}" class="instructors-contain">
@@ -202,8 +202,17 @@
 {% block content %}
 {% if a_live_is_active %}
 <div class="section-t-space">
-    <a class="blog-btn border-btn vebinar-notif" href="{{ a_live_is_active.stream_url }}"
-        style="justify-content: space-between; align-items: center; box-shadow: none;">
+    <a class="blog-btn border-btn vebinar-notif"
+    {% if a_live_is_active.stream_url %}
+    href="{{ a_live_is_active.stream_url }}"
+    {% elif a_live_is_active.aparat_url %}
+    href="{{ a_live_is_active.aparat_url }}"
+    {% elif a_live_is_active.video_url %}
+    href="{{ a_live_is_active.video_url }}"
+    {% else %}
+    href="#"
+    {% endif %}
+    style="justify-content: space-between; align-items: center; box-shadow: none;">
         <div style="display: flex; justify-content: center; align-items: center;">
             <img src="{% static 'images/R.png' %}" alt="red logo" width="15px" class="red-circle">
             <h3>
@@ -221,13 +230,19 @@
         <ul class="instructors-list" id="posterSlider">
             {% for poster in posters %}
             <li class="custom-container w-100">
-                <div class="row g-4">
+                <a 
+                {% if poster.stream_url %}
+                href="{{ live.stream_url }}"
+                {% else %}
+                href="#"
+                {% endif %}
+                class="row g-4">
                     <div class="col-12 p-0">
                         <div class="popular-image w-100" style="height: auto !important;">
                             <img src="{{ poster.cover.url }}" class="img-fluid" alt="poster">
                         </div>
                     </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>
@@ -332,14 +347,14 @@
 {% if atropine_teams %}
 <div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
     <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
+        <h4>تیم علمی آتروپین <a href="{% url 'counseling_introduction' %}" class="see-all">مشاهده همه</a></h4>
     </div>
 
     <div class="instructors-box">
         <ul class="instructors-list px-15">
             {% for atropine_team in atropine_teams %}
             <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
+                <a href="{% url 'consultant_show' atropine_team.user_consultant.id %}" class="my-card">
                     <div class="instructors-image-edited">
                         {% if atropine_team.avatar %}
                         <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
@@ -351,7 +366,7 @@
                         <h5>{{ atropine_team.get_full_name }}</h5>
                         <h6>{{ atropine_team.get_role_display }}</h6>
                     </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>
