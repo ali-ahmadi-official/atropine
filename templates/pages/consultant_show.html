@@ -6,6 +6,40 @@
 صفحه مشاور
 {% endblock %}
 
+{% block static %}
+<style>
+        .schedule-table{
+        background:#fff;
+        border-radius:12px;
+        overflow:hidden;
+        box-shadow:0 8px 25px rgba(0,0,0,.08);
+    }
+
+    .schedule-table thead th{
+        background:#0d6efd;
+        color:#fff;
+        font-weight:600;
+        text-align:center;
+        vertical-align:middle;
+        min-width:120px;
+    }
+
+    .schedule-table td{
+        height:80px;
+        vertical-align:middle;
+        padding:8px;
+    }
+
+    .schedule-table tbody tr:nth-child(even){
+        background:#fafafa;
+    }
+
+    .schedule-table tbody tr:hover{
+        background:#f3f8ff;
+    }
+</style>
+{% endblock %}
+
 {% block header %}
 <header class="main-header learning-header">
     <div class="custom-container">
@@ -65,64 +99,169 @@
 <section class="section-t-space feature-course-section popular-course-section">
     <div class="custom-container">
         <div class="title mb-1">
-            <h4 class="mb-3">نوبت های فعال</h4>
+            <h4 class="mb-3">نوبت های مشاوره فردی</h4>
         </div>
 
-        <div class="card shadow border-0">
+        <div class="container mt-4">
 
-            <div class="card-body">
+            {% if weeks %}
 
-                {% if schedules %}
+            <div class="d-flex justify-content-between align-items-center mb-3" style="gap: 25px;">
+
+                <button id="prevWeek" class="btn btn-outline-primary">
+                    هفته قبل
+                </button>
+
+                <!-- <h5 id="weekTitle" class="mb-0"></h5> -->
+
+                <button id="nextWeek" class="btn btn-outline-primary">
+                    هفته بعد
+                </button>
+
+            </div>
+
+
+            {% for week in weeks %}
+
+            <div class="week-table {% if not week.is_current %}d-none{% endif %}" data-index="{{ forloop.counter0 }}"
+                data-title="هفته {{ week.title }}">
 
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle text-center">
+
+                    <table class="table table-bordered table-hover align-middle text-center schedule-table">
+
                         <thead class="table-light">
+
                             <tr>
-                                <th>#</th>
-                                <th>تاریخ</th>
-                                <th>شروع</th>
-                                <th>پایان</th>
-                                <th>وضعیت</th>
-                                <th>عملیات</th>
+
+                                {% for day in week.days %}
+                                <th>
+                                    {{ day.name }}
+                                    <br>
+                                    <small>{{ day.date_shamsi }}</small>
+                                </th>
+                                {% endfor %}
+
                             </tr>
+
                         </thead>
 
                         <tbody>
-                            {% for schedule in schedules %}
+
+                            {% for row in week.rows %}
+
                             <tr>
-                                <td>{{ forloop.counter }}</td>
-                                <td>{{ schedule.date_shamsi }}</td>
-                                <td>{{ schedule.start_time|time:"H:i" }}</td>
-                                <td>{{ schedule.end_time|time:"H:i" }}</td>
-                                <td>
-                                    <span class="badge bg-success">
-                                        آزاد
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{% url 'reserve_consultation' schedule.id %}" class="btn btn-primary btn-sm" style="background-color: #172561 !important;">
+
+                                {% for slot in row %}
+
+                                <td style="height:65px">
+
+                                    {% if slot %}
+
+                                    {% if slot.is_available %}
+
+                                    <a href="{% url 'reserve_consultation' slot.id %}"
+                                        class="btn btn-success btn-sm w-100">
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
                                         رزرو
+
                                     </a>
+
+                                    {% else %}
+
+                                    <button class="btn btn-secondary btn-sm w-100" disabled>
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
+                                        رزرو شده
+
+                                    </button>
+
+                                    {% endif %}
+
+                                    {% endif %}
+
                                 </td>
+
+                                {% endfor %}
+
                             </tr>
+
                             {% endfor %}
+
                         </tbody>
 
                     </table>
+
                 </div>
-
-                {% else %}
-
-                <div class="alert alert-warning text-center">
-                    <h5 class="mb-0">
-                        در حال حاضر نوبت آزادی برای این مشاور وجود ندارد.
-                    </h5>
-                </div>
-
-                {% endif %}
 
             </div>
+
+            {% endfor %}
+
+            {% endif %}
+
         </div>
     </div>
 </section>
+
+<script>
+    const tables = document.querySelectorAll(".week-table");
+
+    let current = 0;
+
+    tables.forEach((table, index) => {
+
+        if (!table.classList.contains("d-none"))
+            current = index;
+
+    });
+
+    function showWeek(index) {
+
+        tables.forEach(t => t.classList.add("d-none"));
+
+        tables[index].classList.remove("d-none");
+
+        document.getElementById("weekTitle").innerHTML =
+            tables[index].dataset.title;
+
+    }
+
+    showWeek(current);
+
+    document.getElementById("nextWeek").onclick = function () {
+
+        if (current < tables.length - 1) {
+
+            current++;
+
+            showWeek(current);
+
+        }
+
+    }
+
+    document.getElementById("prevWeek").onclick = function () {
+
+        if (current > 0) {
+
+            current--;
+
+            showWeek(current);
+
+        }
+
+    }
+</script>
 {% endblock %}

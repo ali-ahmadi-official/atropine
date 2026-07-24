@@ -16,9 +16,6 @@ def send_sms(mobile, code):
     try:
         response = requests.post(URL, json=data)
 
-        print("Status Code:", response.status_code)
-        print("Response:", response.text)
-
         response.raise_for_status()
 
         return {

@@ -1,5 +1,7 @@
 import os
 import jdatetime
+from collections import defaultdict
+from datetime import timedelta, datetime
 from decimal import Decimal
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
@@ -206,31 +208,153 @@ def counseling_introduction(request):
     }
     return render(request, 'pages/counseling_introduction.html', context)
 
+from collections import defaultdict
+from datetime import timedelta
+
+import jdatetime
+from django.shortcuts import get_object_or_404, render
+from django.utils import timezone
+
+
 def consultant_show(request, id):
-    consultant = get_object_or_404(User, role='consultant', id=id)
-    
 
+    consultant = get_object_or_404(
+        User,
+        role="consultant",
+        id=id
+    )
+
+    schedules = (
+        ConsultantSchedule.objects.filter(
+            consultant__user=consultant
+        )
+        .order_by("date", "start_time")
+    )
+
+    # ------------------ شروع هفته جاری (شنبه) ------------------
+
+    today = timezone.localdate()
     now = timezone.localtime()
+    current_week_start = today - timedelta(days=(today.weekday() + 2) % 7)
 
-    schedules = ConsultantSchedule.objects.filter(
-        consultant__user=consultant,
-        is_reserved=False
-    ).filter(
-        Q(date__gt=now.date()) |
-        Q(date=now.date(), end_time__gte=now.time())
-    ).order_by("date", "start_time")
+    # ------------------ گروه بندی هفته ها ------------------
+
+    week_dict = defaultdict(list)
 
     for schedule in schedules:
-        if schedule:
-            schedule.date_shamsi = jdatetime.date.fromgregorian(
-                date=schedule.date
-            ).strftime('%Y/%m/%d')
+
+        week_start = schedule.date - timedelta(
+            days=(schedule.date.weekday() + 2) % 7
+        )
+
+        week_dict[week_start].append(schedule)
+
+    future_weeks = sorted(
+        [w for w in week_dict.keys() if w >= current_week_start]
+    )
+
+    past_weeks = sorted(
+        [w for w in week_dict.keys() if w < current_week_start]
+    )
+
+    ordered_weeks = future_weeks + past_weeks
+
+    day_names = [
+        "شنبه",
+        "یکشنبه",
+        "دوشنبه",
+        "سه شنبه",
+        "چهارشنبه",
+        "پنجشنبه",
+        "جمعه",
+    ]
+
+    weeks = []
+
+    for week_start in ordered_weeks:
+
+        # نوبت‌های هر روز
+        days = []
+
+        for i in range(7):
+
+            day_date = week_start + timedelta(days=i)
+
+            slots = sorted(
+                [
+                    s
+                    for s in week_dict[week_start]
+                    if s.date == day_date
+                ],
+                key=lambda x: x.start_time
+            )
+
+            days.append({
+                "name": day_names[i],
+                "date": day_date,
+                "date_shamsi": jdatetime.date.fromgregorian(
+                    date=day_date
+                ).strftime("%Y/%m/%d"),
+                "slots": slots,
+            })
+
+        # ساخت ماتریس جدول
+        rows = []
+
+        for row in range(15):
+
+            row_data = []
+
+            for day in days:
+
+                if row < len(day["slots"]):
+
+                    slot = day["slots"][row]
+
+                    slot_datetime = timezone.make_aware(
+                        datetime.combine(slot.date, slot.start_time)
+                    )
+
+                    slot.is_available = (
+                        (not slot.is_reserved) and
+                        (slot_datetime > now)
+                    )
+
+                    row_data.append(slot)
+
+                else:
+
+                    row_data.append(None)
+
+            rows.append(row_data)
+
+        weeks.append({
+
+            "title": jdatetime.date.fromgregorian(
+                date=week_start
+            ).strftime("%Y/%m/%d"),
+
+            "is_current": week_start == current_week_start,
+
+            "days": days,
+
+            "rows": rows,
+
+        })
 
     context = {
-        'consultant': consultant,
-        'schedules': schedules,
+
+        "consultant": consultant,
+
+        "weeks": weeks,
+
     }
-    return render(request, 'pages/consultant_show.html', context)
+
+    return render(
+        request,
+        "pages/consultant_show.html",
+        context,
+    )
 
 def estimation_introduction(request):
     intro = EstimationIntroduction.objects.last()

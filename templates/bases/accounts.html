@@ -59,29 +59,13 @@
 
     <!-- Log In Form Start -->
     <section class="learning-auth">
-        <div class="learning-header new-auth px-15">
+        <div class="learning-header new-auth px-15" style="padding-bottom: 25px;">
             <div class="home-contain welcome">
                 <img src="{% static 'images/logo-2.png' %}" alt="welcome" width="150" class="mb-2">
                 <h4 style="font-weight: bold;">دپارتمان مشاوره و منتورینگ آتروپین</h4>
             </div>
-            <div class="login-float">
-                <div class="pb-3 mb-3" style="border-bottom: 1px solid gray; text-align: center;">
-                    <h5>با محیط پنل آشنا شوید <br> و از خدمات رایگان استفاده کنید</h5>
-                </div>
-                <div>
-                    <p style="font-size: larger;"><span style="color: orange;"> + </span> استفاده از خدمات انتخاب رشته آتروپین </p>
-                    {% if request.user.username %}
-                    <form action="{% url 'main_logout' %}" method="post" class="side-menu__item" id="logout-form">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger mb-1">ورود به پنل بدون اشتراک</button>
-                    </form>
-                    {% else %}
-                    <a href="{% url 'main' %}" class="btn btn-danger mb-1">ورود به پنل بدون اشتراک</a>
-                    {% endif %}
-                </div>
-            </div>
         </div>
-        <div class="custom-container" style="margin-top: 60px;">
+        <div class="custom-container">
             <div class="row">
                 <div class="col-12">
                     {% block form %}
