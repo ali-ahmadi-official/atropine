@@ -49,6 +49,16 @@
             <input type="time" name="end_time" class="form-control" value="{{ form.end_time.value|default:'' }}">
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.year.label }}</p>
+            {% include 'includes/error.html' with errors=form.year.errors %}
+            {{ form.year }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.category.label }}</p>
+            {% include 'includes/error.html' with errors=form.category.errors %}
+            {{ form.category }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.stream_url.label }}</p>
             {% include 'includes/error.html' with errors=form.stream_url.errors %}
             {{ form.stream_url }}
@@ -62,6 +72,11 @@
             <p class="mt-2 text-muted">{{ form.video_url.label }}</p>
             {% include 'includes/error.html' with errors=form.video_url.errors %}
             {{ form.video_url }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.video.label }}</p>
+            {% include 'includes/error.html' with errors=form.video.errors %}
+            {{ form.video }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.is_public.label }}</p>

@@ -65,27 +65,64 @@
 <section class="section-t-space feature-course-section popular-course-section">
     <div class="custom-container">
         <div class="title mb-1">
-            <h4>نوبت های فعال</h4>
+            <h4 class="mb-3">نوبت های فعال</h4>
         </div>
-        <ul class="feature-course-list">
-            {% for schedule in schedules %}
-            <li>
-                <div class="feature-box">
-                    <a href="" class="feature-image">
-                        <img src="{% static 'images/services/3.png' %}" class="img-fluid" alt="">
-                    </a>
-                    <div class="feature-detail">
-                        <a href="">
-                            <h6>نوبت از {{ consultant.get_full_name }}</h6>
-                        </a>
-                        <ul class="rate-course">
-                            <li><i class="ri-time-fill"></i>{{ schedule.date_shamsi }} - {{ schedule.start_time }}</li>
-                        </ul>
-                    </div>
+
+        <div class="card shadow border-0">
+
+            <div class="card-body">
+
+                {% if schedules %}
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>#</th>
+                                <th>تاریخ</th>
+                                <th>شروع</th>
+                                <th>پایان</th>
+                                <th>وضعیت</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for schedule in schedules %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ schedule.date_shamsi }}</td>
+                                <td>{{ schedule.start_time|time:"H:i" }}</td>
+                                <td>{{ schedule.end_time|time:"H:i" }}</td>
+                                <td>
+                                    <span class="badge bg-success">
+                                        آزاد
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'reserve_consultation' schedule.id %}" class="btn btn-primary btn-sm" style="background-color: #172561 !important;">
+                                        رزرو
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table>
                 </div>
-            </li>
-            {% endfor %}
-        </ul>
+
+                {% else %}
+
+                <div class="alert alert-warning text-center">
+                    <h5 class="mb-0">
+                        در حال حاضر نوبت آزادی برای این مشاور وجود ندارد.
+                    </h5>
+                </div>
+
+                {% endif %}
+
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

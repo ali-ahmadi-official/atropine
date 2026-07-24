@@ -155,4 +155,4 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-ZARINPAL_MERCHANT_ID = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+ZARINPAL_MERCHANT_ID = "d540a587-2eb4-4ed5-8396-e695c769fd79"

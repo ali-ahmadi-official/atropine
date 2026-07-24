@@ -24,6 +24,11 @@
             {% include 'includes/error.html' with errors=form.end_time.errors %}
             {{ form.end_time }}
         </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_reserved.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_reserved.errors %}
+            {{ form.is_reserved }}
+        </div>
         <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
     </form>
 </div>

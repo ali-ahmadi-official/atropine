@@ -130,6 +130,19 @@ class LiveEvent(models.Model):
         verbose_name="سال شمسی برگزاری"
     )
 
+    category = models.CharField(
+        max_length=200,
+        verbose_name="دسته بندی"
+    )
+
+    video = models.FileField(
+        upload_to="lives/",
+        validators=[validate_video],
+        verbose_name="ویدئو",
+        null=True,
+        blank=True
+    )
+
     is_public = models.BooleanField(
         default=True,
         verbose_name="نمایش عمومی"
@@ -445,6 +458,11 @@ class RankBank(models.Model):
         verbose_name="توضیحات",
         null=True,
         blank=True
+    )
+
+    is_free = models.BooleanField(
+        default=False,
+        verbose_name="رایگان"
     )
 
     class Meta:

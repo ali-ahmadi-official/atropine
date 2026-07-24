@@ -12,9 +12,6 @@
         <div class="card-title">
             <h4>
                 لیست نوبت های مشاوره
-                <a href="{% url 'schedule_add' %}">
-                    <span class="btn btn-success-transparent">افزودن</span>
-                </a>
             </h4>
         </div>
     </div>
@@ -54,14 +51,14 @@
                 </td>
                 <td>
                     {% if schedule.request %}
-                    <a href="{% url 'show_my_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
+                    <a href="{% url 'show_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
                     {% else %}
                     <span class="badge bg-warning-transparent">----</span>
                     {% endif %}
                 </td>
                 <td>
                     {% if schedule.request == None %}
-                    <a href="{% url 'schedule_delete' schedule.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                    <a href="{% url 'admin_schedule_delete' schedule.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
                         <i class="ri-delete-bin-line"></i>
                     </a>
                     {% endif %}

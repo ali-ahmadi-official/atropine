@@ -1,0 +1,66 @@
+{% extends 'bases/accounts.html' %}
+
+{% load static %}
+
+{% block title %}
+تایید کد
+{% endblock %}
+
+{% block form %}
+<form class="form-style-1 mt-35" method="post">
+    {% csrf_token %}
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }} color-white">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="mb-4">
+        <label for="code" class="form-label">کد تایید</label>
+        <input type="text" name="code" id="code" class="form-control"
+            placeholder="کد ارسال شده به {{ mobile }} را وارد کنید" required autofocus>
+    </div>
+
+    <div class="w100 d-flex justify-content-center">
+        <span class="new-color-black" id="timer"></span>
+    </div>
+
+    <button class="btn btn-danger mt-4">
+        تایید و ادامه
+    </button>
+
+</form>
+
+<script>
+
+    const created = new Date("{{ otp.created_at|date:'c' }}").getTime();
+    const expire = created + (2 * 60 * 1000);
+
+    function updateTimer() {
+
+        const now = new Date().getTime();
+        let diff = expire - now;
+
+        if (diff <= 0) {
+
+            document.getElementById("timer").innerHTML =
+                "زمان اعتبار کد به پایان رسیده است.";
+
+            return;
+        }
+
+        const minute = Math.floor(diff / 60000);
+        const second = Math.floor((diff % 60000) / 1000);
+
+        document.getElementById("timer").innerHTML =
+            minute + ":" + ("0" + second).slice(-2);
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+
+</script>
+{% endblock %}

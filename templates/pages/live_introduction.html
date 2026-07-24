@@ -157,6 +157,8 @@
                 href="{{ live.aparat_url }}"
                 {% elif live.video_url %}
                 href="{{ live.video_url }}"
+                {% elif live.video %}
+                href="{{ live.video.url }}"
                 {% else %}
                 href="#"
                 {% endif %}

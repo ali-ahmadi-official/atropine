@@ -149,7 +149,7 @@
 <section class="w-100 d-flex" style="justify-content: center;">
     <form method="get w-50" class="mt-3">
         <div class="row">
-            <div class="col-md-4 col-lg-3 d-flex" style="justify-content: center; align-items: center; gap: 10px;">
+            <div class="col-md-4 col-lg-3 d-flex w-100" style="justify-content: center; align-items: center; gap: 10px; flex-direction: column;">
                 <label for="year" style="font-size: larger; color: #172561;">سال:</label>
                 <select name="year"
                         class="form-select w-100"
@@ -161,6 +161,21 @@
                         <option value="{{ year }}"
                             {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
                             {{ year }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+                <label for="category" style="font-size: larger; color: #172561;">دسته بندی:</label>
+                <select name="category"
+                        class="form-select w-100"
+                        onchange="this.form.submit()">
+
+                    <option value="">همه دسته بندی‌ها</option>
+
+                    {% for category in categories %}
+                        <option value="{{ category }}"
+                            {% if selected_category == category|stringformat:"s" %}selected{% endif %}>
+                            {{ category }}
                         </option>
                     {% endfor %}
 

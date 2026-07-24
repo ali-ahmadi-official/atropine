@@ -84,6 +84,13 @@ class PackageRequest(models.Model):
         verbose_name="پلن"
     )
 
+    final_price = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0,
+        verbose_name="مبلغ نهایی"
+    )
+
     paid = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -94,11 +101,11 @@ class PackageRequest(models.Model):
 
 class Consultation(models.Model):
 
-    request = models.OneToOneField(
-        PackageRequest,
-        on_delete=models.CASCADE,
-        related_name="request_consultation",
-        verbose_name="درخواست پلن"
+    service = models.OneToOneField(
+        ServiceToStudent,
+        on_delete=models.PROTECT,
+        related_name="consultation",
+        verbose_name="خدمت خریداری شده"
     )
 
     schedule = models.ForeignKey(

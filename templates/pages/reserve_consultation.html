@@ -1,0 +1,391 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+رزرو مشاوره فردی
+{% endblock %}
+
+{% block static %}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+    
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+    .package-switch {
+        position: relative;
+        display: flex;
+        width: 320px;
+        margin: 20px auto;
+        margin-bottom: 0;
+        background: #e9ecef;
+        border-radius: 40px;
+        overflow: hidden;
+        height: 52px;
+    }
+
+    .package-switch button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        z-index: 2;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #172561;
+        transition: .3s;
+    }
+
+    .package-switch button.active {
+        color: #fff;
+    }
+
+    .switch-bg {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: calc(50% - 4px);
+        height: 44px;
+        background: #172561;
+        border-radius: 30px;
+        transition: .35s;
+    }
+
+    .package-switch.multi .switch-bg {
+        transform: translateX(-100%);
+    }
+
+    .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .check-list li {
+        position: relative;
+        padding-right: 36px;
+        margin-bottom: 14px;
+        line-height: 1.8;
+    }
+
+    .check-list li::before {
+        content: "✓";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+
+        background: #172561;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    #posterSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #posterSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #posterSlider>li {
+        flex: 0 0 100%;
+    }
+
+    #commentSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #commentSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #commentSlider>li {
+        flex: 0 0 100%;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">رزرو مشاوره فردی</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-primary text-white" style="background-color: #172561 !important;">
+                    <h4 class="mb-0">
+                        رزرو جلسه مشاوره
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- فقط داوطلب -->
+
+                    {% if student_required %}
+
+                        <div class="alert alert-danger text-center">
+
+                            <h5>فقط داوطلبان امکان رزرو مشاوره را دارند.</h5>
+
+                        </div>
+
+                    <!-- خدمت خریداری نشده -->
+
+                    {% elif service_required %}
+
+                        <div class="alert alert-warning">
+
+                            <h5>
+                                برای رزرو این جلسه ابتدا باید سرویس
+                                <strong>{{ service_name }}</strong>
+                                را خریداری کنید.
+                            </h5>
+
+                            <a href="{% url 'choice_introduction' %}" class="btn btn-primary mt-3" style="background-color: #172561 !important;">
+                                مشاهده خدمات
+                            </a>
+
+                        </div>
+
+                    <!-- فرم رتبه -->
+
+                    {% elif show_rank_form %}
+
+                        <h4 class="mb-4">
+                            فرم اطلاعات رتبه
+                        </h4>
+
+                        <form method="post" enctype="multipart/form-data">
+
+                            {% csrf_token %}
+
+                            <input type="hidden" name="step" value="rank">
+
+                            {{ rank_form.as_p }}
+
+                            <button class="btn btn-success mt-3">
+                                ثبت و ادامه
+                            </button>
+
+                        </form>
+
+                    <!-- فرم AB -->
+
+                    {% elif show_ab_form %}
+
+                        <h4 class="mb-4">
+                            فرم اطلاعات سطح A
+                        </h4>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input type="hidden" name="step" value="ab">
+
+                            {{ ab_form.as_p }}
+
+                            <button class="btn btn-success mt-3">
+                                ثبت و ادامه
+                            </button>
+
+                        </form>
+
+                    <!-- فرم شخصیت -->
+
+                    {% elif show_personality_form %}
+
+                        <h4 class="mb-4">
+                            فرم تحلیل شخصیت
+                        </h4>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input type="hidden" name="step" value="personality">
+
+                            {{ personality_form.as_p }}
+
+                            <button class="btn btn-success mt-3">
+                                ثبت و ادامه
+                            </button>
+
+                        </form>
+
+                    <!-- تایید رزرو -->
+
+                    {% elif ready_to_reserve %}
+
+                        <div class="alert alert-success">
+
+                            <h5>
+                                تمام مراحل با موفقیت تکمیل شده است.
+                            </h5>
+
+                            <hr>
+
+                            <p>
+                                <strong>مشاور:</strong>
+                                {{ consultant.get_full_name }}
+                            </p>
+
+                            <p>
+                                <strong>تاریخ:</strong>
+                                {{ schedule.date_shamsi }}
+                            </p>
+
+                            <p>
+                                <strong>ساعت:</strong>
+                                {{ schedule.start_time }}
+                                تا
+                                {{ schedule.end_time }}
+                            </p>
+
+                            <div class="alert alert-warning mt-4">
+
+                                با ثبت این درخواست، خدمت خریداری‌شده مصرف خواهد شد و نوبت برای شما رزرو می‌شود.
+
+                            </div>
+
+                            <form method="post">
+
+                                {% csrf_token %}
+
+                                <input type="hidden" name="step" value="confirm">
+
+                                <button class="btn btn-success mb-3">
+                                    تایید و ثبت رزرو
+                                </button>
+
+                                <a href="{% url 'consultant_show' consultant.id %}"
+                                   class="btn btn-secondary">
+                                    انصراف
+                                </a>
+
+                            </form>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const marital = document.getElementById("id_marital");
+        const marriedFields = document.getElementById("married-fields");
+
+        function toggleMarriedFields() {
+            if (marital.value === "2") {
+                marriedFields.style.display = "";
+            } else {
+                marriedFields.style.display = "none";
+
+                document.getElementById("id_wife_condition").value = "";
+                document.getElementById("id_child").value = "";
+            }
+        }
+
+        toggleMarriedFields();
+
+        marital.addEventListener("change", toggleMarriedFields);
+
+    });
+</script>
+<script>
+    $('#id_better_activity').select2({
+        width: '100%',
+        placeholder: 'موارد را انتخاب کنید'
+    });
+    $('#id_favorite_activity').select2({
+        width: '100%',
+        placeholder: 'موارد را انتخاب کنید'
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const slider = document.getElementById("posterSlider");
+        const items = slider.querySelectorAll("li");
+
+        let index = 0;
+
+        setInterval(() => {
+
+            index++;
+
+            if (index >= items.length) {
+                index = 0;
+            }
+
+            slider.scrollTo({
+                left: items[index].offsetLeft - 20,
+                behavior: "smooth"
+            });
+
+        }, 3000);
+
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,153 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+تاریخچه رزرو من
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">تاریخچه رزرو من</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white" style="background-color: #172561 !important;">
+            <h4 class="mb-0">
+                جلسات مشاوره من
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            {% if student_required %}
+
+                <div class="alert alert-danger">
+                    فقط داوطلبان می‌توانند این صفحه را مشاهده کنند.
+                </div>
+
+            {% elif consultations %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover align-middle">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>مشاور</th>
+
+                                <th>تاریخ</th>
+
+                                <th>ساعت</th>
+
+                                <th>نوع جلسه</th>
+
+                                <th>وضعیت</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for consultation in consultations %}
+
+                            <tr>
+
+                                <td>
+
+                                    {{ consultation.consultant.get_full_name }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ consultation.date_shamsi }}
+
+                                </td>
+
+                                <td>
+
+                                    {{ consultation.schedule.start_time }}
+                                    -
+                                    {{ consultation.schedule.end_time }}
+
+                                </td>
+
+                                <td>
+
+                                    {% if consultation.service.service == "1" %}
+
+                                        جلسه فردی با دکتر نایب زاده
+
+                                    {% else %}
+
+                                        جلسه فردی با مشاور
+
+                                    {% endif %}
+
+                                </td>
+
+                                <td>
+
+                                    {% if consultation.schedule.date >= today %}
+
+                                        <span class="badge bg-success">
+                                            رزرو شده
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            برگزار شده
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    هنوز هیچ جلسه‌ای رزرو نکرده‌اید.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

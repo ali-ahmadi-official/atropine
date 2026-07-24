@@ -168,7 +168,7 @@
             </li>
             {% endfor %}
         </ul>
-        {% elif intro.video.url %}
+        {% elif intro.video %}
         <video class="intro-plans-video" id="first-player" controls>
             <source src="{{ intro.video.url }}" type="video/mp4">
         </video>
@@ -182,14 +182,14 @@
 {% if atropine_teams %}
 <div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
     <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
+        <h4>تیم علمی آتروپین <a href="{% url 'counseling_introduction' %}" class="see-all">مشاهده همه</a></h4>
     </div>
 
     <div class="instructors-box">
         <ul class="instructors-list px-15">
             {% for atropine_team in atropine_teams %}
             <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <div class="my-card">
+                <a href="{% url 'consultant_show' atropine_team.id %}" class="my-card">
                     <div class="instructors-image-edited">
                         {% if atropine_team.avatar %}
                         <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">
@@ -201,7 +201,7 @@
                         <h5>{{ atropine_team.get_full_name }}</h5>
                         <h6>{{ atropine_team.get_role_display }}</h6>
                     </div>
-                </div>
+                </a>
             </li>
             {% endfor %}
         </ul>

@@ -19,6 +19,27 @@
     <title>استوری ها</title>
 
     <link rel="stylesheet" href="{% static 'css/story.css' %}">
+    <style>
+        .story-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+        }
+
+        #backBtn {
+            background: rgba(0,0,0,.5);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #backBtn:hover {
+            background: rgba(0,0,0,.7);
+        }
+    </style>
 </head>
 
 <body>
@@ -32,6 +53,7 @@
 
         <div class="story-top">
             <button id="soundBtn">🔇 پخش صدا</button>
+            <button id="backBtn">✖ خروج</button>
         </div>
 
         <img id="imageStory" class="story-media" style="display:none;">
@@ -50,6 +72,15 @@
                 .catch((err) => console.log('Service Worker failed:', err));
             });
         }
+    </script>
+    <script>
+        document.getElementById("backBtn").addEventListener("click", () => {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = "/";
+            }
+        });
     </script>
 </body>
 

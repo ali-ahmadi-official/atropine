@@ -11,7 +11,7 @@
             <div class="">
                 {% for single_service_package in single_service_packages %}
                 <div class="swiper-slide mt-2">
-                    <a href="" class="reading-list">
+                    <div class="reading-list">
                         <div class="reading-box p-4">
                             <div class="reading-detail">
                                 <div class="reading-image"
@@ -25,12 +25,13 @@
                                 </div>
                             </div>
                             <h5 class="mt-1 new-text-black">{{ single_service_package.content|safe }}</h5>
-                            <button class="btn btn-danger mt-3" style="display: flex; justify-content: space-between;">
-                                <p class="mb-0">خرید</p>
-                                <p class="mb-0">{{ single_service_package.total_price }} ت</p>
-                            </button>
+                            <a href="{% url 'payment_view' single_service_package.id %}"
+                            class="btn btn-danger mt-3 d-flex justify-content-between">
+                                <span>خرید</span>
+                                <span>{{ single_service_package.total_price }} ت</span>
+                            </a>
                         </div>
-                    </a>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -83,9 +84,9 @@
                             {% endfor %}
                         </ul>
 
-                        <button class="btn btn-danger mt-2">
+                        <a href="{% url 'payment_view' multi_service_package.id %}" class="btn btn-danger mt-2">
                             خرید پکیج
-                        </button>
+                        </a>
                     </div>
                 </div>
                 {% endfor %}

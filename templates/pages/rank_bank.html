@@ -189,6 +189,12 @@
     </div>
 </section>
 
+{% if not is_paid %}
+<h2 class="w-100 py-4" style="text-align: center; color: #172561;">
+    👇خرید پایگاه داده برای مشاهده همه رتبه های قبولی👇
+</h2>
+{% endif %}
+
 {% include 'includes/packages.html' %}
 
 {% endblock %}

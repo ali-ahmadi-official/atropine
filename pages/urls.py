@@ -4,12 +4,12 @@ from .views import (
     counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
     live_introduction, live_time_steps, live_archives,
     videos, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
-    about_us, trust, achievement_list, atropine_team
+    about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations
 )
 
 urlpatterns = [
-    path('', main, name='main'),
-    path('compass/', compass, name='compass'),
+    path('', compass, name='main'),
+    path('compass/', main, name='compass'),
     path('story-show/<int:id>/<slug:show>/', story_show, name='story_show'),
     path('self-story-show/<int:id>/', self_story_show, name='self_story_show'),
     path('courses/', courses, name='courses'),
@@ -34,4 +34,8 @@ urlpatterns = [
     path('trust/', trust, name='trust'),
     path('achievement-list/', achievement_list, name='achievement_list_show'),
     path('atropine-team/', atropine_team, name='atropine_team'),
+    path('payment-view/<int:package_id>/', payment_view, name='payment_view'),
+    path('payment-list/', payment_list, name='payment_list'),
+    path('reserve-consultation/<int:schedule_id>/', reserve_consultation, name='reserve_consultation'),
+    path('student_consultations/', student_consultations, name='student_consultations'),
 ]

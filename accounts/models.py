@@ -65,6 +65,11 @@ class ConsultantSchedule(models.Model):
         verbose_name="ساعت پایان"
     )
 
+    is_reserved = models.BooleanField(
+        default=False,
+        verbose_name="رزرو شده؟"
+    )
+
     class Meta:
         verbose_name = "برنامه حضور مشاور"
         verbose_name_plural = "برنامه های حضور مشاور"

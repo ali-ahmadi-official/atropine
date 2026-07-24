@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from pages.models import (
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction,
     ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, DataIntroduction
@@ -16,3 +17,13 @@ class SuperAdminSidebarContextMixin:
             "DataIntroductionCreated": DataIntroduction.objects.first(),
         })
         return context
+
+class RoleRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
+    allowed_roles = []
+
+    def test_func(self):
+        return (
+            self.request.user.is_authenticated and
+            self.request.user.role in self.allowed_roles and
+            not self.request.user.is_suspended
+        )

@@ -1,0 +1,222 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+اطلاعات {{ user.get_full_name }}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5" dir="rtl">
+
+    <!-- اطلاعات کاربر -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">اطلاعات داوطلب</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped table-bordered table-hover">
+
+                <tbody>
+
+                    <tr>
+                        <th width="30%">نام</th>
+                        <td>{{ user.first_name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>نام خانوادگی</th>
+                        <td>{{ user.last_name }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>شماره موبایل</th>
+                        <td>{{ user.mobile }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>نام کاربری</th>
+                        <td>{{ user.username }}</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+
+    <!-- فرم رتبه -->
+    {% if rank_fields %}
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">فرم رتبه</h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped table-bordered table-hover">
+
+                <tbody>
+
+                {% for field in rank_fields %}
+
+                    <tr>
+
+                        <th width="35%">
+                            {{ field.label }}
+                        </th>
+
+                        <td>
+
+                            {% if field.value %}
+
+                                {% if ".jpg" in field.value|stringformat:"s" or ".png" in field.value|stringformat:"s" or ".jpeg" in field.value|stringformat:"s" %}
+
+                                    <a href="{{ field.value.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                        مشاهده تصویر
+                                    </a>
+
+                                {% else %}
+
+                                    {{ field.value }}
+
+                                {% endif %}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- فرم AB -->
+    {% if ab_fields %}
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header bg-warning">
+            <h4 class="mb-0">
+                فرم A و B
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped table-bordered table-hover">
+
+                <tbody>
+
+                {% for field in ab_fields %}
+
+                    <tr>
+
+                        <th width="35%">
+                            {{ field.label }}
+                        </th>
+
+                        <td>
+
+                            {% if field.value %}
+
+                                {{ field.value }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- فرم شخصیت -->
+    {% if personality_fields %}
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">
+                فرم شخصیت
+            </h4>
+        </div>
+
+        <div class="card-body">
+
+            <table class="table table-striped table-bordered table-hover">
+
+                <tbody>
+
+                {% for field in personality_fields %}
+
+                    <tr>
+
+                        <th width="60%">
+                            {{ field.label }}
+                        </th>
+
+                        <td width="40%">
+
+                            {% if field.value %}
+
+                                {{ field.value }}
+
+                            {% else %}
+
+                                -
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

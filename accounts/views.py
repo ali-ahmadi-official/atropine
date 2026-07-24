@@ -1,12 +1,13 @@
 import re
 import jdatetime
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
     Story, Achievement, LiveEvent, Poster, Comment, FAQ,
@@ -31,7 +32,7 @@ from .validity.field_capacity import FIELD
 from .validity.university_capacity import UNIVERSITY
 from .validity.underutilized_capacity import UNDERUTILIZED
 from .validity.calculator import AdmissionPredictor
-from .mixins import SuperAdminSidebarContextMixin
+from .mixins import SuperAdminSidebarContextMixin, RoleRequiredMixin
 
 def validate_mobile(mobile):
     mobile = mobile.strip()
@@ -50,192 +51,37 @@ def validate_mobile(mobile):
 
     return True, mobile
 
-def register(request):
+def mobile_login(request):
+
     if request.method == "POST":
 
         mobile = request.POST.get("mobile", "").strip()
 
         if not mobile:
             messages.error(request, "شماره موبایل را وارد کنید.")
-            return redirect("register")
-        
-        is_valid, mobile = validate_mobile(mobile)
-
-        if not is_valid:
-            messages.error(request, "شماره موبایل معتبر نیست.")
-            return redirect("register")
-
-        if User.objects.filter(mobile=mobile).exists():
-            messages.error(request, "این شماره موبایل قبلاً ثبت شده است.")
-            return redirect("register")
-
-        last_otp = OTP.objects.filter(
-            mobile=mobile,
-            is_used=False
-        ).last()
-
-        if last_otp and last_otp.is_valid():
-            messages.warning(
-                request,
-                "کد قبلاً ارسال شده است. لطفاً تا پایان زمان اعتبار صبر کنید."
-            )
-            request.session["register_mobile"] = mobile
-            return redirect("verify-register")
-
-        code = generate_code()
-
-        OTP.objects.create(
-            mobile=mobile,
-            code=code
-        )
-
-        send_sms(mobile, code)
-
-        request.session["register_mobile"] = mobile
-
-        return redirect("verify-register")
-
-    return render(request, "accounts/register.html")
-
-def verify_register(request):
-
-    mobile = request.session.get("register_mobile")
-
-    if not mobile:
-        return redirect("register")
-
-    if request.method == "POST":
-
-        code = request.POST.get("code", "").strip()
-
-        otp = OTP.objects.filter(
-            mobile=mobile,
-            code=code,
-            is_used=False
-        ).last()
-
-        if otp is None:
-            messages.error(request, "کد وارد شده صحیح نیست.")
-            return redirect("verify-register")
-
-        if not otp.is_valid():
-            messages.error(request, "زمان اعتبار کد به پایان رسیده است.")
-            return redirect("register")
-
-        otp.is_used = True
-        otp.save()
-
-        request.session["verified_mobile"] = mobile
-
-        return redirect("set-password")
-
-    otp = OTP.objects.filter(
-        mobile=mobile,
-        is_used=False
-    ).last()
-
-    return render(request,
-        "accounts/verify_register.html",
-        {
-            "otp": otp,
-            'mobile': mobile
-        }
-    )
-
-def set_password(request):
-
-    mobile = request.session.get("verified_mobile")
-
-    if not mobile:
-        return redirect("register")
-
-    if request.method == "POST":
-
-        password = request.POST.get("password")
-
-        password2 = request.POST.get("password2")
-
-        if password != password2:
-            messages.error(request, "رمز عبور و تکرار آن یکسان نیستند.")
-            return redirect("set-password")
-
-        new_user = User.objects.create(
-            username=mobile,
-            mobile=mobile,
-            password=make_password(password),
-            role="student"
-        )
-
-        Student.objects.create(user=new_user)
-
-        request.session.flush()
-
-        return redirect("login")
-
-    return render(request, "accounts/set_password.html")
-
-def login_view(request):
-
-    if request.method=="POST":
-
-        username=request.POST["username"]
-        password=request.POST["password"]
-
-        user=authenticate(
-            username=username,
-            password=password
-        )
-
-        if user:
-            login(request,user)
-            if not user.first_name or not user.last_name:
-                return redirect("complete-profile")
-            
-            if user.role == "super_admin":
-                return redirect("admin_dashboard")
-
-            elif user.role == "supervisor":
-                return redirect("supervisor_dashboard")
-
-            elif user.role == "consultant":
-                return redirect("consultant_dashboard")
-
-            elif user.role == "student":
-                return redirect("main")
-
-            return redirect("main")
-        else:
-            messages.error(request, "نام کاربری یا رمز عبور صحیح نیست.")
             return redirect("login")
 
-    return render(request,"accounts/login.html")
-
-def otp_login(request):
-
-    if request.method == "POST":
-
-        mobile = request.POST.get("mobile", "").strip()
-
-        if not mobile:
-            messages.error(request, "شماره موبایل را وارد کنید.")
-            return redirect("otp-login")
-        
         is_valid, mobile = validate_mobile(mobile)
-
+        
         if not is_valid:
             messages.error(request, "شماره موبایل معتبر نیست.")
-            return redirect("otp-login")
+            return redirect("login")
+
+        request.session["auth_mobile"] = mobile
 
         try:
-            user = User.objects.get(mobile=mobile)
+            user = User.objects.get(username=mobile)
+        except User.DoesNotExist:
+            user = None
+
+        if user:
 
             if user.is_suspended:
                 messages.error(request, "حساب کاربری شما تعلیق شده است.")
-                return redirect("otp-login")
+                request.session.pop("auth_mobile", None)
+                return redirect("login")
 
-        except User.DoesNotExist:
-            messages.error(request, "کاربری با این شماره موبایل وجود ندارد.")
-            return redirect("otp-login")
+            return redirect("password-login")
 
         last_otp = OTP.objects.filter(
             mobile=mobile,
@@ -243,12 +89,11 @@ def otp_login(request):
         ).last()
 
         if last_otp and last_otp.is_valid():
-            request.session["otp_mobile"] = mobile
             messages.warning(
                 request,
-                "کد قبلاً ارسال شده است."
+                "کد قبلاً ارسال شده است. لطفاً همان کد را وارد کنید."
             )
-            return redirect("otp-verify")
+            return redirect("verify-otp")
 
         code = generate_code()
 
@@ -259,52 +104,39 @@ def otp_login(request):
 
         send_sms(mobile, code)
 
-        request.session["otp_mobile"] = mobile
+        return redirect("verify-otp")
 
-        return redirect("otp-verify")
+    return render(request, "accounts/mobile_login.html")
 
-    return render(request, "accounts/otp_login.html")
+def password_login(request):
 
-def otp_verify(request):
-
-    mobile = request.session.get("otp_mobile")
+    mobile = request.session.get("auth_mobile")
 
     if not mobile:
-        return redirect("otp-login")
+        return redirect("login")
 
-    otp = OTP.objects.filter(
-        mobile=mobile,
-        is_used=False
-    ).last()
+    user = User.objects.filter(mobile=mobile).first()
 
-    if otp is None:
-        messages.error(request, "ابتدا درخواست کد ورود بدهید.")
-        return redirect("otp-login")
+    if user is None:
+        return redirect("login")
 
     if request.method == "POST":
 
-        code = request.POST.get("code", "").strip()
+        password = request.POST.get("password", "").strip()
 
-        if code != code:
-            messages.error(request, "کد وارد شده صحیح نیست.")
-            return redirect("otp-verify")
+        user = authenticate(
+            username=mobile,
+            password=password
+        )
 
-        if not otp.is_valid():
-            messages.error(request, "زمان اعتبار کد به پایان رسیده است.")
-            return redirect("otp-login")
-
-        otp.is_used = True
-        otp.save()
-
-        user = User.objects.get(mobile=mobile)
+        if user is None:
+            messages.error(request, "رمز عبور صحیح نیست.")
+            return redirect("password-login")
 
         login(request, user)
 
-        request.session.pop("otp_mobile", None)
+        request.session.pop("auth_mobile", None)
 
-        if not user.first_name or not user.last_name:
-            return redirect("complete-profile")
-        
         if user.role == "super_admin":
             return redirect("admin_dashboard")
 
@@ -321,44 +153,81 @@ def otp_verify(request):
 
     return render(
         request,
-        "accounts/otp_verify.html",
+        "accounts/password_login.html",
+        {
+            "mobile": mobile
+        }
+    )
+
+def verify_otp(request):
+
+    mobile = request.session.get("auth_mobile")
+
+    if not mobile:
+        return redirect("login")
+
+    otp = OTP.objects.filter(
+        mobile=mobile,
+        is_used=False
+    ).last()
+
+    if otp is None:
+        messages.error(request, "ابتدا درخواست کد تأیید بدهید.")
+        return redirect("login")
+
+    if request.method == "POST":
+
+        code = request.POST.get("code", "").strip()
+
+        if otp.code != code:
+            messages.error(request, "کد وارد شده صحیح نیست.")
+            return redirect("verify-otp")
+
+        if not otp.is_valid():
+            messages.error(request, "زمان اعتبار کد به پایان رسیده است.")
+            return redirect("login")
+
+        otp.is_used = True
+        otp.save()
+
+        user = User.objects.create(
+            username=mobile,
+            mobile=mobile,
+            password=make_password(code),
+            role="student"
+        )
+
+        user = authenticate(
+            username=mobile,
+            password=code
+        )
+
+        login(request, user)
+
+        request.session.pop("auth_mobile", None)
+
+        if user.role == "super_admin":
+            return redirect("admin_dashboard")
+
+        elif user.role == "supervisor":
+            return redirect("supervisor_dashboard")
+
+        elif user.role == "consultant":
+            return redirect("consultant_dashboard")
+
+        elif user.role == "student":
+            return redirect("main")
+
+        return redirect("main")
+
+    return render(
+        request,
+        "accounts/verify_otp.html",
         {
             "otp": otp,
             "mobile": mobile,
         }
     )
-
-@login_required
-def complete_profile(request):
-
-    if request.method == "POST":
-
-        first_name = request.POST.get("first_name", "").strip()
-        last_name = request.POST.get("last_name", "").strip()
-
-        if not first_name or not last_name:
-            messages.error(request, "نام و نام خانوادگی الزامی است.")
-            return redirect("complete-profile")
-
-        request.user.first_name = first_name
-        request.user.last_name = last_name
-        request.user.save()
-
-        if request.user.role == "super_admin":
-            return redirect("admin_dashboard")
-
-        elif request.user.role == "supervisor":
-            return redirect("supervisor_dashboard")
-
-        elif request.user.role == "consultant":
-            return redirect("consultant_dashboard")
-
-        elif request.user.role == "student":
-            return redirect("main")
-
-        return redirect("main")
-
-    return render(request, "accounts/complete_profile.html")
 
 class LogoutView(LogoutView):
     next_page = reverse_lazy('login')
@@ -379,119 +248,141 @@ def aside_super_admin_context():
         "DataIntroductionCreated": DataIntroduction.objects.first(),
     }
 
+@login_required
 def admin_dashboard(request):
     aside = aside_super_admin_context()
     return render(request, "accounts/admins/dashboard.html", aside)
 
-class UserListView(SuperAdminSidebarContextMixin, ListView):
+class UserListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = User
     template_name = "accounts/admins/user_list.html"
     context_object_name = "users"
 
-class UserCreateView(SuperAdminSidebarContextMixin, CreateView):
+class UserCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = User
     form_class = UserCreationForm
     template_name = "accounts/admins/user_add.html"
     success_url = reverse_lazy("user_list")
 
-class UserUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class UserUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = User
     form_class = UserForm
     template_name = "accounts/admins/user_edit.html"
     success_url = reverse_lazy("user_list")
 
-class UserDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class UserDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = User
     template_name = 'accounts/admins/user_delete.html'
     success_url = reverse_lazy('user_list')
 
-class StoryListView(SuperAdminSidebarContextMixin, ListView):
+class StoryListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Story
     template_name = "accounts/admins/story_list.html"
     context_object_name = "stories"
 
-class StoryCreateView(SuperAdminSidebarContextMixin, CreateView):
+class StoryCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Story
     form_class = StoryForm
     template_name = "accounts/admins/story_add.html"
     success_url = reverse_lazy("story_list")
 
-class StoryDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class StoryDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Story
     template_name = 'accounts/admins/story_delete.html'
     success_url = reverse_lazy('story_list')
 
-class PosterListView(SuperAdminSidebarContextMixin, ListView):
+class PosterListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Poster
     template_name = "accounts/admins/poster_list.html"
     context_object_name = "posters"
 
-class PosterCreateView(SuperAdminSidebarContextMixin, CreateView):
+class PosterCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Poster
     form_class = PosterForm
     template_name = "accounts/admins/poster_add.html"
     success_url = reverse_lazy("poster_list")
 
-class PosterDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class PosterDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Poster
     template_name = 'accounts/admins/poster_delete.html'
     success_url = reverse_lazy('poster_list')
 
-class CommentListView(SuperAdminSidebarContextMixin, ListView):
+class CommentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Comment
     template_name = "accounts/admins/comment_list.html"
     context_object_name = "comments"
 
-class CommentCreateView(SuperAdminSidebarContextMixin, CreateView):
+class CommentCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Comment
     form_class = CommentForm
     template_name = "accounts/admins/comment_add.html"
     success_url = reverse_lazy("comment_list")
 
-class CommentDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class CommentDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Comment
     template_name = 'accounts/admins/comment_delete.html'
     success_url = reverse_lazy('comment_list')
 
-class FAQListView(SuperAdminSidebarContextMixin, ListView):
+class FAQListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = FAQ
     template_name = "accounts/admins/faq_list.html"
     context_object_name = "faqs"
 
-class FAQCreateView(SuperAdminSidebarContextMixin, CreateView):
+class FAQCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = FAQ
     form_class = FAQForm
     template_name = "accounts/admins/faq_add.html"
     success_url = reverse_lazy("faq_list")
 
-class FAQDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class FAQDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = FAQ
     template_name = 'accounts/admins/faq_delete.html'
     success_url = reverse_lazy('faq_list')
 
-class AchievementListView(SuperAdminSidebarContextMixin, ListView):
+class AchievementListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Achievement
     template_name = "accounts/admins/achievement_list.html"
     context_object_name = "achievements"
 
-class AchievementCreateView(SuperAdminSidebarContextMixin, CreateView):
+class AchievementCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Achievement
     form_class = AchievementForm
     template_name = "accounts/admins/achievement_add.html"
     success_url = reverse_lazy("achievement_list")
 
-class AchievementUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class AchievementUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = Achievement
     form_class = AchievementForm
     template_name = "accounts/admins/achievement_edit.html"
     success_url = reverse_lazy("achievement_list")
 
-class AchievementDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class AchievementDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Achievement
     template_name = 'accounts/admins/achievement_delete.html'
     success_url = reverse_lazy('achievement_list')
 
-class LiveEventListView(SuperAdminSidebarContextMixin, ListView):
+class LiveEventListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = LiveEvent
     template_name = "accounts/admins/live_event_list.html"
     context_object_name = "live_events"
@@ -520,238 +411,402 @@ class LiveEventListView(SuperAdminSidebarContextMixin, ListView):
         context["live_events"] = live_events
         return context
 
-class LiveEventCreateView(SuperAdminSidebarContextMixin, CreateView):
+class LiveEventCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = LiveEvent
     form_class = LiveEventForm
     template_name = "accounts/admins/live_event_add.html"
     success_url = reverse_lazy("live_event_list")
 
-class LiveEventUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class LiveEventUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = LiveEvent
     form_class = LiveEventForm
     template_name = "accounts/admins/live_event_edit.html"
     success_url = reverse_lazy("live_event_list")
 
-class LiveEventDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class LiveEventDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = LiveEvent
     template_name = 'accounts/admins/live_event_delete.html'
     success_url = reverse_lazy('live_event_list')
 
-class PackageListView(SuperAdminSidebarContextMixin, ListView):
+class PackageListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Package
     template_name = "accounts/admins/package_list.html"
     context_object_name = "packages"
 
-class PackageCreateView(SuperAdminSidebarContextMixin, CreateView):
+class PackageCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Package
     form_class = PackageForm
     template_name = "accounts/admins/package_add.html"
     success_url = reverse_lazy("package_list")
 
-class PackageUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class PackageUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = Package
     form_class = PackageForm
     template_name = "accounts/admins/package_edit.html"
     success_url = reverse_lazy("package_list")
 
-class PackageDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class PackageDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Package
     template_name = 'accounts/admins/package_delete.html'
     success_url = reverse_lazy('package_list')
 
-class PlansIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class PlansIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = PlansIntroduction
     form_class = PlansIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class PlansIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class PlansIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = PlansIntroduction
     form_class = PlansIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class DataIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class DataIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = DataIntroduction
     form_class = DataIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class DataIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class DataIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = DataIntroduction
     form_class = DataIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class CounselingIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class CounselingIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = CounselingIntroduction
     form_class = CounselingIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class CounselingIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class CounselingIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = CounselingIntroduction
     form_class = CounselingIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class EstimationIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class EstimationIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = EstimationIntroduction
     form_class = EstimationIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class EstimationIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class EstimationIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = EstimationIntroduction
     form_class = EstimationIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class ChoiceIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class ChoiceIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = ChoiceIntroduction
     form_class = ChoiceIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class ChoiceIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class ChoiceIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = ChoiceIntroduction
     form_class = ChoiceIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class LiveIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class LiveIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = LiveIntroduction
     form_class = LiveIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class LiveIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class LiveIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = LiveIntroduction
     form_class = LiveIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class AboutUsIntroductionCreateView(SuperAdminSidebarContextMixin, CreateView):
+class AboutUsIntroductionCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = AboutUsIntroduction
     form_class = AboutUsIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class AboutUsIntroductionUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class AboutUsIntroductionUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = AboutUsIntroduction
     form_class = AboutUsIntroductionForm
     template_name = "accounts/intro/form.html"
     success_url = reverse_lazy("admin_dashboard")
 
-class AllPaymentListView(SuperAdminSidebarContextMixin, ListView):
+class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Payment
     template_name = "accounts/admins/payment_list.html"
     context_object_name = "payments"
 
-class MediaListView(SuperAdminSidebarContextMixin, ListView):
+class MediaListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Media
     template_name = "accounts/admins/media_list.html"
     context_object_name = "medias"
 
-class MediaCreateView(SuperAdminSidebarContextMixin, CreateView):
+class MediaCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Media
     form_class = MediaForm
     template_name = "accounts/admins/media_add.html"
     success_url = reverse_lazy("media_list")
 
-class MediaUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class MediaUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = Media
     form_class = MediaForm
     template_name = "accounts/admins/media_edit.html"
     success_url = reverse_lazy("media_list")
 
-class MediaDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class MediaDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Media
     template_name = 'accounts/admins/media_delete.html'
     success_url = reverse_lazy('media_list')
 
-class RankBankListView(SuperAdminSidebarContextMixin, ListView):
+class RankBankListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = RankBank
     template_name = "accounts/admins/rank_bank_list.html"
     context_object_name = "rank_banks"
 
-class RankBankCreateView(SuperAdminSidebarContextMixin, CreateView):
+class RankBankCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = RankBank
     form_class = RankBankForm
     template_name = "accounts/admins/rank_bank_add.html"
     success_url = reverse_lazy("rank_bank_list")
 
-class RankBankUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class RankBankUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = RankBank
     form_class = RankBankForm
     template_name = "accounts/admins/rank_bank_edit.html"
     success_url = reverse_lazy("rank_bank_list")
 
-class RankBankDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class RankBankDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = RankBank
     template_name = 'accounts/admins/rank_bank_delete.html'
     success_url = reverse_lazy('rank_bank_list')
 
-class RuleListView(SuperAdminSidebarContextMixin, ListView):
+class RuleListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Rule
     template_name = "accounts/admins/rule_list.html"
     context_object_name = "rules"
 
-class RuleCreateView(SuperAdminSidebarContextMixin, CreateView):
+class RuleCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Rule
     form_class = RuleForm
     template_name = "accounts/admins/rule_add.html"
     success_url = reverse_lazy("rule_list")
 
-class RuleUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class RuleUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = Rule
     form_class = RuleForm
     template_name = "accounts/admins/rule_edit.html"
     success_url = reverse_lazy("rule_list")
 
-class RuleDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class RuleDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = Rule
     template_name = 'accounts/admins/rule_delete.html'
     success_url = reverse_lazy('rule_list')
 
-class StaticMessageListView(SuperAdminSidebarContextMixin, ListView):
+class StaticMessageListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = StaticMessage
     template_name = "accounts/admins/static_message_list.html"
     context_object_name = "static_messages"
 
-class StaticMessageCreateView(SuperAdminSidebarContextMixin, CreateView):
+class StaticMessageCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = StaticMessage
     form_class = StaticMessageForm
     template_name = "accounts/admins/static_message_add.html"
     success_url = reverse_lazy("static_message_list")
 
-class StaticMessageUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class StaticMessageUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = StaticMessage
     form_class = StaticMessageForm
     template_name = "accounts/admins/static_message_edit.html"
     success_url = reverse_lazy("static_message_list")
 
-class StaticMessageDeleteView(SuperAdminSidebarContextMixin, DeleteView):
+class StaticMessageDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
     model = StaticMessage
     template_name = 'accounts/admins/static_message_delete.html'
     success_url = reverse_lazy('static_message_list')
 
-class ConsultantListView(SuperAdminSidebarContextMixin, ListView):
+class ConsultantListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
     model = Consultant
     template_name = "accounts/admins/consultant_list.html"
     context_object_name = "consultants"
 
-class AdminConsultantCreateView(SuperAdminSidebarContextMixin, CreateView):
+class AdminConsultantCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
     model = Consultant
     form_class = CreateConsultantForm
     template_name = "accounts/admins/consultant_add.html"
     success_url = reverse_lazy("consultant_list")
 
-class AdminConsultantUpdateView(SuperAdminSidebarContextMixin, UpdateView):
+class AdminConsultantUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
     model = Consultant
     form_class = ConsultantForm
     template_name = "accounts/admins/consultant_edit.html"
     success_url = reverse_lazy("consultant_list")
+
+class AdminConsultantScheduleListView(ListView):
+    model = ConsultantSchedule
+    template_name = "accounts/admins/schedule_list.html"
+    context_object_name = "schedules"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        schedules = ConsultantSchedule.objects.all()
+
+        for schedule in schedules:
+
+            consultation = Consultation.objects.filter(
+                schedule=schedule
+            ).select_related("service__student__user").first()
+
+            schedule.request = consultation
+
+            schedule.date_shamsi = jdatetime.date.fromgregorian(
+                date=schedule.date
+            ).strftime("%Y/%m/%d")
+
+        context["schedules"] = schedules
+        return context
+
+class AdminConsultantScheduleDeleteView(DeleteView):
+    model = ConsultantSchedule
+    template_name = 'accounts/admins/schedule_delete.html'
+    success_url = reverse_lazy('schedule_list')
+
+def show_student(request, id):
+
+    user = get_object_or_404(User, id=id)
+
+    context = {
+        "user": user,
+    }
+
+    student = getattr(user, "user_student", None)
+
+    if student:
+
+        # ---------- Rank ----------
+        if hasattr(student, "student_rank"):
+
+            rank_fields = []
+
+            for field in student.student_rank._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_rank, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_rank,
+                        f"get_{field.name}_display"
+                    )()
+
+                rank_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["rank_fields"] = rank_fields
+
+        # ---------- AB ----------
+        if hasattr(student, "student_AB"):
+
+            ab_fields = []
+
+            for field in student.student_AB._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_AB, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_AB,
+                        f"get_{field.name}_display"
+                    )()
+
+                ab_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["ab_fields"] = ab_fields
+
+        # ---------- Personality ----------
+        if hasattr(student, "student_personality_60"):
+
+            personality_fields = []
+
+            for field in student.student_personality_60._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_personality_60, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_personality_60,
+                        f"get_{field.name}_display"
+                    )()
+
+                personality_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["personality_fields"] = personality_fields
+
+    return render(
+        request,
+        "accounts/consultants/show_my_student.html",
+        context
+    )
 
 # endregion
 
@@ -783,20 +838,23 @@ class ConsultantScheduleListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        schedules = ConsultantSchedule.objects.filter(consultant=self.request.user.user_consultant)
+
+        schedules = ConsultantSchedule.objects.filter(
+            consultant=self.request.user.user_consultant
+        )
 
         for schedule in schedules:
-            consultation = Consultation.objects.filter(schedule=schedule)
-            schedule.request = None
 
-            if schedule:
-                schedule.date_shamsi = jdatetime.date.fromgregorian(
-                    date=schedule.date
-                ).strftime('%Y/%m/%d')
+            consultation = Consultation.objects.filter(
+                schedule=schedule
+            ).select_related("service__student__user").first()
 
-                if consultation:
-                    schedule.request = consultation.request
-        
+            schedule.request = consultation
+
+            schedule.date_shamsi = jdatetime.date.fromgregorian(
+                date=schedule.date
+            ).strftime("%Y/%m/%d")
+
         context["schedules"] = schedules
         return context
 
@@ -825,6 +883,99 @@ class MyStudentListView(ListView):
             student_packege_requests__request_consultation__schedule__consultant=self.request.user.user_consultant
         ).distinct()
         return queryset
+
+def show_my_student(request, id):
+
+    user = get_object_or_404(User, id=id)
+
+    context = {
+        "user": user,
+    }
+
+    student = getattr(user, "user_student", None)
+
+    if student:
+
+        # ---------- Rank ----------
+        if hasattr(student, "student_rank"):
+
+            rank_fields = []
+
+            for field in student.student_rank._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_rank, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_rank,
+                        f"get_{field.name}_display"
+                    )()
+
+                rank_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["rank_fields"] = rank_fields
+
+        # ---------- AB ----------
+        if hasattr(student, "student_AB"):
+
+            ab_fields = []
+
+            for field in student.student_AB._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_AB, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_AB,
+                        f"get_{field.name}_display"
+                    )()
+
+                ab_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["ab_fields"] = ab_fields
+
+        # ---------- Personality ----------
+        if hasattr(student, "student_personality_60"):
+
+            personality_fields = []
+
+            for field in student.student_personality_60._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_personality_60, field.name)
+
+                if hasattr(field, "choices") and field.choices:
+                    value = getattr(
+                        student.student_personality_60,
+                        f"get_{field.name}_display"
+                    )()
+
+                personality_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["personality_fields"] = personality_fields
+
+    return render(
+        request,
+        "accounts/consultants/show_my_student.html",
+        context
+    )
 
 # endregion
 

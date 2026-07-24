@@ -1,35 +1,30 @@
 import requests
 import random
 
+URL = "https://console.melipayamak.com/api/send/simple/ee4033b63f624bf1bc9edbce94d5ff19"
+
 def generate_code():
     return str(random.randint(100000, 999999))
 
-URL = "https://console.melipayamak.com/api/send/simple/ee4033b63f624bf1bc9edbce94d5ff19"
-
-def send_sms(mobile, text):
-    url = URL
-
-    payload = {
+def send_sms(mobile, code):
+    data = {
         "from": "50004001586578",
         "to": mobile,
-        "text": text
+        "text": f"دپارتمان مشاوره و منتورینگ آتروپین\n\nکد ورود شما: {code}\n\nاین کد را در اختیار دیگران قرار ندهید."
     }
 
     try:
-        response = requests.post(url, json=payload)
+        response = requests.post(URL, json=data)
 
         print("Status Code:", response.status_code)
-        print("Response:")
-        print(response.text)
+        print("Response:", response.text)
 
-        return response.json()
+        response.raise_for_status()
 
-    except Exception as e:
-        print("Error:", e)
+        return {
+            "code": code,
+            "result": response.json()
+        }
 
-
-# import requests
-
-# data = {'to': '09938285221'}
-# response = requests.post('https://console.melipayamak.com/api/send/otp/ee4033b63f624bf1bc9edbce94d5ff19', json=data)
-# print(response.json())
+    except Exception:
+        return None

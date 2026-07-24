@@ -6,13 +6,13 @@
             <img src="{% static 'images/logo.jpg' %}" alt="دپارتمان مشاوره و منتورینگ آتروپین" width="30px" style="border-radius: 100%;">
         </a>
         <a href="{% url 'main' %}" class="header-logo">
-            <h3 class="new-text-black">
+            <h5 class="new-text-black">
                 {% if "compass" in request.path %}
                 دپارتمان تخصصی انتخاب رشته آتروپین
                 {% else %}
                 دپارتمان مشاوره و منتورینگ آتروپین
                 {% endif %}
-            </h3>
+            </h5>
         </a>
     </div>
 

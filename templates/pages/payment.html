@@ -1,0 +1,481 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+صفحه پرداخت
+{% endblock %}
+
+{% block static %}
+<style>
+    .package-switch {
+        position: relative;
+        display: flex;
+        width: 320px;
+        margin: 20px auto;
+        margin-bottom: 0;
+        background: #e9ecef;
+        border-radius: 40px;
+        overflow: hidden;
+        height: 52px;
+    }
+
+    .package-switch button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        z-index: 2;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #172561;
+        transition: .3s;
+    }
+
+    .package-switch button.active {
+        color: #fff;
+    }
+
+    .switch-bg {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: calc(50% - 4px);
+        height: 44px;
+        background: #172561;
+        border-radius: 30px;
+        transition: .35s;
+    }
+
+    .package-switch.multi .switch-bg {
+        transform: translateX(-100%);
+    }
+
+    .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .check-list li {
+        position: relative;
+        padding-right: 36px;
+        margin-bottom: 14px;
+        line-height: 1.8;
+    }
+
+    .check-list li::before {
+        content: "✓";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+
+        background: #172561;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    #posterSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #posterSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #posterSlider>li {
+        flex: 0 0 100%;
+    }
+
+    #commentSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #commentSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #commentSlider>li {
+        flex: 0 0 100%;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">صفحه پرداخت</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="card shadow">
+
+                <div class="card-header bg-primary text-white" style="background-color: #172561 !important;">
+                    <h4 class="mb-0">
+                        خرید سرویس
+                        {% for service in package.service_labels %}
+                            {{ service }}{% if not forloop.last %}، {% endif %}
+                        {% endfor %}
+                    </h4>
+                </div>
+
+                <div class="card-body">
+
+                    <!-- ========================= -->
+                    <!-- مرحله اول : لاگین -->
+                    <!-- ========================= -->
+
+                    {% if need_login %}
+
+                        <div class="alert alert-warning">
+
+                            <h5 class="mb-3">
+                                برای ادامه ابتدا وارد حساب کاربری شوید.
+                            </h5>
+
+                            <a href="{{ login_url }}"
+                               class="btn btn-primary" style="background-color: #172561 !important;">
+
+                                ورود به حساب کاربری
+
+                            </a>
+
+                        </div>
+
+                    <!-- ========================= -->
+                    <!-- مرحله دوم : تکمیل اطلاعات -->
+                    <!-- ========================= -->
+
+                    {% elif profile_form %}
+
+                        <div class="alert alert-info">
+
+                            لطفاً قبل از پرداخت اطلاعات زیر را تکمیل کنید.
+
+                        </div>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    نام
+
+                                </label>
+
+                                {{ profile_form.first_name }}
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    نام خانوادگی
+
+                                </label>
+
+                                {{ profile_form.last_name }}
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+
+                                    شماره موبایل
+
+                                </label>
+
+                                {{ profile_form.mobile }}
+
+                            </div>
+
+                            <button
+                                class="btn btn-success w-100">
+
+                                ذخیره و ادامه
+
+                            </button>
+
+                        </form>
+
+                    <!-- ========================= -->
+                    <!-- مرحله سوم : فاکتور -->
+                    <!-- ========================= -->
+
+                    {% elif only_student %}
+
+                        <div class="alert alert-danger">
+
+                            فقط کاربران با حساب کاربری <strong>داوطلب</strong> امکان خرید پکیج را دارند.
+
+                        </div>
+                    
+                    {% else %}
+
+                        <h5 class="mb-3">
+
+                            خدمات داخل پکیج
+
+                        </h5>
+
+                        <ul class="list-group mb-4">
+
+                            {% for service in package.service_labels %}
+
+                                <li class="list-group-item d-flex justify-content-between">
+
+                                    {{ service }}
+
+                                </li>
+
+                            {% endfor %}
+
+                        </ul>
+
+                        {% if duplicate_services %}
+
+                            <div class="alert alert-warning">
+
+                                <h6 class="mb-2">
+
+                                    خدماتی که قبلاً خریداری کرده‌اید
+
+                                </h6>
+
+                                <ul class="mb-0">
+
+                                    {% for service in duplicate_service_labels %}
+
+                                        <li>
+                                            {{ service }}
+                                        </li>
+
+                                    {% endfor %}
+
+                                </ul>
+
+                            </div>
+
+                        {% endif %}
+
+                        <table class="table table-bordered align-middle">
+
+                            <tbody>
+
+                                <tr>
+
+                                    <th width="50%">
+
+                                        قیمت اولیه پکیج
+
+                                    </th>
+
+                                    <td>
+
+                                        {{ package.total_price }} تومان
+
+                                    </td>
+
+                                </tr>
+
+                                <tr>
+
+                                    <th>
+
+                                        مجموع کسر خدمات خریداری‌شده
+
+                                    </th>
+
+                                    <td class="text-danger">
+
+                                        - {{ discount }} تومان
+
+                                    </td>
+
+                                </tr>
+
+                                <tr class="table-success">
+
+                                    <th>
+
+                                        مبلغ نهایی قابل پرداخت
+
+                                    </th>
+
+                                    <th>
+
+                                        {{ final_price }} تومان
+
+                                    </th>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                        {% if can_pay %}
+
+                            <a href="{{ payment_url }}"
+                               class="btn btn-success btn-lg w-100">
+
+                                پرداخت آنلاین
+
+                            </a>
+
+                        {% else %}
+
+                            <div class="alert alert-success text-center">
+
+                                <h5>
+
+                                    این پکیج برای شما رایگان است.
+
+                                </h5>
+
+                                <p class="mb-3">
+
+                                    مبلغ این سفارش به طور کامل از خریدهای قبلی شما کسر شده است.
+
+                                </p>
+
+                                <a href="{% url 'main' %}"
+                                   class="btn btn-primary" style="background-color: #172561 !important;">
+
+                                    بازگشت
+
+                                </a>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<h2 class="w-100 py-4" style="text-align: center; color: #172561;">
+    سایر خدمات و پکیج‌ها
+</h2>
+
+{% include 'includes/packages.html' %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const slider = document.getElementById("posterSlider");
+        const items = slider.querySelectorAll("li");
+
+        let index = 0;
+
+        setInterval(() => {
+
+            index++;
+
+            if (index >= items.length) {
+                index = 0;
+            }
+
+            slider.scrollTo({
+                left: items[index].offsetLeft - 20,
+                behavior: "smooth"
+            });
+
+        }, 3000);
+
+    });
+</script>
+<script>
+    const singleBtn = document.getElementById("singleBtn");
+    const multiBtn = document.getElementById("multiBtn");
+
+    const single = document.getElementById("singlePackages");
+    const multi = document.getElementById("multiPackages");
+
+    const sw = document.querySelector(".package-switch");
+
+    multi.style.display = "none";
+
+    singleBtn.onclick = function () {
+
+        single.style.display = "block";
+        multi.style.display = "none";
+
+        singleBtn.classList.add("active");
+        multiBtn.classList.remove("active");
+
+        sw.classList.remove("multi");
+    }
+
+    multiBtn.onclick = function () {
+
+        single.style.display = "none";
+        multi.style.display = "block";
+
+        multiBtn.classList.add("active");
+        singleBtn.classList.remove("active");
+
+        sw.classList.add("multi");
+    }
+</script>
+{% endblock %}

@@ -1,12 +1,8 @@
 from django.urls import path
 from .views import (
-    register,
-    verify_register,
-    set_password,
-    login_view,
-    otp_login,
-    otp_verify,
-    complete_profile,
+    mobile_login,
+    password_login,
+    verify_otp,
     LogoutView,
     MainLogoutView,
 
@@ -74,6 +70,9 @@ from .views import (
     ConsultantListView,
     AdminConsultantCreateView,
     AdminConsultantUpdateView,
+    AdminConsultantScheduleListView,
+    AdminConsultantScheduleDeleteView,
+    show_student,
 
     consultant_dashboard,
     ConsultantCreateView,
@@ -82,6 +81,7 @@ from .views import (
     ConsultantScheduleCreateView,
     ConsultantScheduleDeleteView,
     MyStudentListView,
+    show_my_student,
 
     student_dashboard,
     PaymentListView,
@@ -91,13 +91,9 @@ from .views import (
 )
 
 urlpatterns = [
-    path("register/", register, name="register"),
-    path("verify-register/", verify_register, name="verify-register"),
-    path("set-password/", set_password, name="set-password"),
-    path("login/", login_view, name="login"),
-    path("otp-login/", otp_login, name="otp-login"),
-    path("otp-verify/", otp_verify, name="otp-verify"),
-    path("complete-profile/", complete_profile, name="complete-profile"),
+    path("", mobile_login, name="login"),
+    path("login/", password_login, name="password-login"),
+    path("verify/", verify_otp, name="verify-otp"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("main-logout/", MainLogoutView.as_view(), name="main_logout"),
 
@@ -186,6 +182,10 @@ urlpatterns = [
     path("admins/consultants/add/", AdminConsultantCreateView.as_view(), name="admin_consultant_add"),
     path("admins/consultants/<int:pk>/edit/", AdminConsultantUpdateView.as_view(), name="admin_consultant_edit"),
 
+    path("admins/schedules/", AdminConsultantScheduleListView.as_view(), name="admin_schedule_list"),
+    path("admins/schedules/<int:pk>/delete/", AdminConsultantScheduleDeleteView.as_view(), name="admin_schedule_delete"),
+    path("admins/show-student/<int:id>/", show_student, name="show_student"),
+
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 
     path("consultants/consultant/add/", ConsultantCreateView.as_view(), name="consultant_add"),
@@ -196,11 +196,12 @@ urlpatterns = [
     path("consultants/schedules/<int:pk>/delete/", ConsultantScheduleDeleteView.as_view(), name="schedule_delete"),
 
     path("consultants/my-students/", MyStudentListView.as_view(), name="my_student_list"),
+    path("consultants/my-student/<int:id>/", show_my_student, name="show_my_student"),
 
-    path("students/dashboard/", student_dashboard, name="student_dashboard"),
+    # path("students/dashboard/", student_dashboard, name="student_dashboard"),
 
-    path("students/payments/", PaymentListView.as_view(), name="payment_list"),
-    path("students/personality/", personality60, name="personality60"),
-    path("students/rank/", rank_form, name="rank_form"),
-    path("students/validity/", validity, name="validity"),
+    # path("students/payments/", PaymentListView.as_view(), name="payment_list"),
+    # path("students/personality/", personality60, name="personality60"),
+    # path("students/rank/", rank_form, name="rank_form"),
+    # path("students/validity/", validity, name="validity"),
 ]

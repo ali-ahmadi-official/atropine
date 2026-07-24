@@ -39,6 +39,8 @@
             <div class="customer-name justify-content-center">
                 {% if request.user.first_name %}
                 <h2>سلام {{ request.user.first_name }} <img src="{% static 'images/learning/hand.png' %}" alt=""> <br> ما در کنارت هستیم ...</h2>
+                {% elif request.user.mobile %}
+                <h2>سلام {{ request.user.mobile }} <img src="{% static 'images/learning/hand.png' %}" alt=""> <br> ما در کنارت هستیم ...</h2>
                 {% else %}
                 <h2>تمام مسیر، در کنار شما هستیم ...</h2>
                 {% endif %}
@@ -132,14 +134,14 @@
 {% if atropine_teams %}
 <div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
     <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="" class="see-all">مشاهده همه</a></h4>
+        <h4>تیم علمی آتروپین <a href="{% url 'counseling_introduction' %}" class="see-all">مشاهده همه</a></h4>
     </div>
 
     <div class="instructors-box">
         <ul class="instructors-list px-15">
             {% for atropine_team in atropine_teams %}
             <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
-                <a href="{% url 'consultant_show' atropine_team.user_consultant.id %}" class="my-card">
+                <a href="{% url 'consultant_show' atropine_team.id %}" class="my-card">
                     <div class="instructors-image-edited">
                         {% if atropine_team.avatar %}
                         <img src="{{ atropine_team.avatar.url }}" class="img-fluid" alt="atropine team avatar">

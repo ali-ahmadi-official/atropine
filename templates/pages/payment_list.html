@@ -1,0 +1,511 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+تاریخچه پرداخت
+{% endblock %}
+
+{% block static %}
+<style>
+    .package-switch {
+        position: relative;
+        display: flex;
+        width: 320px;
+        margin: 20px auto;
+        margin-bottom: 0;
+        background: #e9ecef;
+        border-radius: 40px;
+        overflow: hidden;
+        height: 52px;
+    }
+
+    .package-switch button {
+        flex: 1;
+        border: none;
+        background: transparent;
+        z-index: 2;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        color: #172561;
+        transition: .3s;
+    }
+
+    .package-switch button.active {
+        color: #fff;
+    }
+
+    .switch-bg {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        width: calc(50% - 4px);
+        height: 44px;
+        background: #172561;
+        border-radius: 30px;
+        transition: .35s;
+    }
+
+    .package-switch.multi .switch-bg {
+        transform: translateX(-100%);
+    }
+
+    .check-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .check-list li {
+        position: relative;
+        padding-right: 36px;
+        margin-bottom: 14px;
+        line-height: 1.8;
+    }
+
+    .check-list li::before {
+        content: "✓";
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+
+        background: #172561;
+        color: #fff;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    #posterSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #posterSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #posterSlider>li {
+        flex: 0 0 100%;
+    }
+
+    #commentSlider {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    #commentSlider::-webkit-scrollbar {
+        display: none;
+    }
+
+    #commentSlider>li {
+        flex: 0 0 100%;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">تاریخچه پرداخت</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+
+    <!-- نتیجه آخرین پرداخت -->
+
+    {% if last_payment %}
+
+    <div class="card shadow mb-4">
+
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+                آخرین نتیجه پرداخت
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+
+            {% if last_payment.status == "SUCCESS" %}
+
+                <div class="alert alert-success">
+
+                    پرداخت با موفقیت انجام شد.
+
+                    <br>
+
+                    کد پیگیری:
+
+                    {{ last_payment.ref_id }}
+
+                </div>
+
+
+            {% elif last_payment.status == "FAILED" %}
+
+                <div class="alert alert-danger">
+
+                    پرداخت ناموفق بود.
+
+                </div>
+
+
+            {% elif last_payment.status == "CANCELED" %}
+
+                <div class="alert alert-warning">
+
+                    پرداخت توسط شما لغو شد.
+
+                </div>
+
+
+            {% else %}
+
+                <div class="alert alert-info">
+
+                    وضعیت پرداخت در انتظار بررسی است.
+
+                </div>
+
+            {% endif %}
+
+
+
+            <p>
+                کد پکیج:
+
+                {{ last_payment.order.package.id }}
+
+            </p>
+
+
+            <p>
+                مبلغ:
+
+                {{ last_payment.amount }}
+
+                تومان
+            </p>
+
+
+        </div>
+
+
+    </div>
+
+    {% endif %}
+
+
+
+
+
+    <!-- لیست پرداخت ها -->
+
+
+    <div class="card shadow">
+
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                تاریخچه پرداخت‌ها
+
+            </h5>
+
+        </div>
+
+
+
+        <div class="card-body">
+
+
+            {% if payments %}
+
+
+            <div class="table-responsive">
+
+
+                <table class="table table-bordered text-center">
+
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                پکیج
+                            </th>
+
+                            <th>
+                                مبلغ
+                            </th>
+
+                            <th>
+                                وضعیت
+                            </th>
+
+                            <th>
+                                تاریخ
+                            </th>
+
+                            <th>
+                                کد پیگیری
+                            </th>
+
+                        </tr>
+
+
+                    </thead>
+
+
+
+                    <tbody>
+
+
+                    {% for payment in payments %}
+
+
+                        <tr>
+
+
+                            <td>
+
+                                خرید خدمات
+
+                                {% for service in payment.order.package.service_labels %}
+
+                                    {{ service }}
+
+                                    {% if not forloop.last %}
+                                    ،
+                                    {% endif %}
+
+                                {% endfor %}
+
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ payment.amount }}
+
+                                تومان
+
+                            </td>
+
+
+
+                            <td>
+
+
+                                {% if payment.status == "SUCCESS" %}
+
+                                    <span class="badge bg-success">
+
+                                        موفق
+
+                                    </span>
+
+
+                                {% elif payment.status == "FAILED" %}
+
+                                    <span class="badge bg-danger">
+
+                                        ناموفق
+
+                                    </span>
+
+
+                                {% elif payment.status == "CANCELED" %}
+
+                                    <span class="badge bg-warning">
+
+                                        لغو شده
+
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="badge bg-secondary">
+
+                                        در انتظار
+
+                                    </span>
+
+
+                                {% endif %}
+
+
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ payment.created_at|date:"Y/m/d H:i" }}
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ payment.ref_id|default:"-" }}
+
+                            </td>
+
+
+                        </tr>
+
+
+
+                    {% endfor %}
+
+
+                    </tbody>
+
+
+                </table>
+
+
+            </div>
+
+
+
+            {% else %}
+
+
+                <div class="alert alert-info text-center">
+
+                    هنوز پرداختی انجام نداده‌اید.
+
+                </div>
+
+
+            {% endif %}
+
+
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+<h2 class="w-100 py-4" style="text-align: center; color: #172561;">
+    سایر خدمات و پکیج‌ها
+</h2>
+
+{% include 'includes/packages.html' %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+        const slider = document.getElementById("posterSlider");
+        const items = slider.querySelectorAll("li");
+
+        let index = 0;
+
+        setInterval(() => {
+
+            index++;
+
+            if (index >= items.length) {
+                index = 0;
+            }
+
+            slider.scrollTo({
+                left: items[index].offsetLeft - 20,
+                behavior: "smooth"
+            });
+
+        }, 3000);
+
+    });
+</script>
+<script>
+    const singleBtn = document.getElementById("singleBtn");
+    const multiBtn = document.getElementById("multiBtn");
+
+    const single = document.getElementById("singlePackages");
+    const multi = document.getElementById("multiPackages");
+
+    const sw = document.querySelector(".package-switch");
+
+    multi.style.display = "none";
+
+    singleBtn.onclick = function () {
+
+        single.style.display = "block";
+        multi.style.display = "none";
+
+        singleBtn.classList.add("active");
+        multiBtn.classList.remove("active");
+
+        sw.classList.remove("multi");
+    }
+
+    multiBtn.onclick = function () {
+
+        single.style.display = "none";
+        multi.style.display = "block";
+
+        multiBtn.classList.add("active");
+        singleBtn.classList.remove("active");
+
+        sw.classList.add("multi");
+    }
+</script>
+{% endblock %}
