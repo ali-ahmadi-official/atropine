@@ -145,6 +145,32 @@
 {% endblock %}
 
 {% block content %}
+<section class="w-100 d-flex justify-content-center">
+    <form method="get" class="mt-3 w-50">
+        <div class="row">
+            <div class="col-12">
+                <label class="form-label" style="font-size: larger; color: #172561;">
+                    رشته قبولی
+                </label>
+
+                <select name="field"
+                        class="form-select"
+                        onchange="this.form.submit()">
+
+                    <option value="">همه رشته‌ها</option>
+
+                    {% for field in rank_fields %}
+                        <option value="{{ field.id }}"
+                            {% if selected_field == field.id|stringformat:"s" %}selected{% endif %}>
+                            {{ field.field }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+        </div>
+    </form>
+</section>
 
 <section class="section-t-space continue-reading-section pt-2">
     <div class="custom-container">
@@ -169,7 +195,7 @@
                                 <tr>
                                     <td>{{ rank.rank }}</td>
                                     <td>{{ rank.get_quota_display }}</td>
-                                    <td>{{ rank.field }}</td>
+                                    <td>{{ rank.field.field }}</td>
                                     <td>{{ rank.description }}</td>
                                 </tr>
                                 {% empty %}
@@ -190,9 +216,16 @@
 </section>
 
 {% if not is_paid %}
-<h2 class="w-100 py-4" style="text-align: center; color: #172561;">
+<h3 class="w-100 py-4" style="text-align: center; color: #172561;">
     👇خرید پایگاه داده برای مشاهده همه رتبه های قبولی👇
-</h2>
+</h3>
+{% if database_package %}
+<div class="w-100 d-flex" style="justify-content: center;">
+    <a href="{% url 'payment_view' database_package.id %}" class="btn btn-primary rounded-pill px-4 w-75" style="background-color: #172561;">
+        خرید پایگاه داده
+    </a>
+</div>
+{% endif %}
 {% endif %}
 
 {% include 'includes/packages.html' %}

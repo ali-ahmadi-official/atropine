@@ -7,6 +7,48 @@
 {% endblock %}
 
 {% block content %}
+<div class="card mb-4" dir="rtl">
+    <div class="card-header">
+        <h5 class="mb-0">
+            رشته‌های قبولی
+            <a href="{% url 'rank_field_add' %}">
+                <span class="btn btn-success-transparent">افزودن</span>
+            </a>
+        </h5>
+    </div>
+
+    <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+            {% for field in rank_fields %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        {{ field.field }}
+
+                        {% if field.is_free %}
+                            <span class="badge bg-success rounded-pill">
+                                رایگان
+                            </span>
+                        {% else %}
+                            <span class="badge bg-secondary rounded-pill">
+                                غیر رایگان
+                            </span>
+                        {% endif %}
+
+                    </span>
+
+                    <a href="{% url 'rank_field_edit' field.id %}">
+                        <span class="badge bg-info rounded-pill">ویرایش</span>
+                    </a>
+                </li>
+            {% empty %}
+                <li class="list-group-item text-center text-muted py-4">
+                    رشته‌ای ثبت نشده است.
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
 <div class="table-responsive" dir="rtl">
     <div class="card-header justify-content-between">
         <div class="card-title">
@@ -39,7 +81,15 @@
                     {{ rank_bank.rank }}
                 </td>
                 <td>{{ rank_bank.get_quota_display }}</td>
-                <td>{{ rank_bank.field }}</td>
+                <td>
+                    {{ rank_bank.field.field }}
+
+                    {% if rank_bank.field.is_free %}
+                        <span class="badge bg-success">رایگان</span>
+                    {% else %}
+                        <span class="badge bg-secondary">غیر رایگان</span>
+                    {% endif %}
+                </td>
                 <td>{{ rank_bank.description }}</td>
                 <td>
                     <a href="{% url 'rank_bank_edit' rank_bank.id %}" class="btn btn-icon btn-sm btn-success-transparent rounded-pill">

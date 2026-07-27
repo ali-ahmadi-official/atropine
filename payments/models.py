@@ -1,7 +1,8 @@
 from django.db import models
+from django.utils import timezone
 from multiselectfield import MultiSelectField
 from django_ckeditor_5.fields import CKEditor5Field
-from accounts.models import Student, ConsultantSchedule
+from accounts.models import User, Student, ConsultantSchedule
 
 class ServiceToStudent(models.Model):
     service = models.CharField(
@@ -60,6 +61,9 @@ class Package(models.Model):
         verbose_name="قیمت به تومان"
     )
 
+    def __str__(self):
+        return f"پکیج با خدمات: {'، '.join(self.service_labels())}"
+
     def service_labels(self):
         choices = dict(self.SERVICE_CHOICES)
         return [choices[s] for s in self.service]
@@ -68,8 +72,142 @@ class Package(models.Model):
         verbose_name = "پلن"
         verbose_name_plural = "پلن ها"
 
-class PackageRequest(models.Model):
+class DiscountCode(models.Model):
+    TYPE_CHOICES = (
+        ("percent", "درصدی"),
+        ("fixed", "مبلغ ثابت"),
+    )
 
+    code = models.CharField(
+        max_length=30,
+        unique=True,
+        verbose_name="کد"
+    )
+
+    type = models.CharField(
+        max_length=10,
+        choices=TYPE_CHOICES,
+        verbose_name="نوع تخفیف"
+    )
+
+    value = models.PositiveIntegerField(
+        verbose_name="مقدار تخفیف"
+    )
+
+    max_discount = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="سقف تخفیف"
+    )
+
+    packages = models.ManyToManyField(
+        Package,
+        blank=True,
+        verbose_name="پلن‌های مجاز"
+    )
+
+    users = models.ManyToManyField(
+        User,
+        blank=True,
+        verbose_name="کاربران مجاز"
+    )
+
+    start_at = models.DateTimeField()
+
+    end_at = models.DateTimeField()
+
+    usage_limit = models.PositiveIntegerField(
+        default=0,
+        help_text="0 یعنی نامحدود"
+    )
+
+    usage_count = models.PositiveIntegerField(
+        default=0
+    )
+
+    per_user_limit = models.PositiveIntegerField(
+        default=1
+    )
+
+    minimum_amount = models.PositiveIntegerField(
+        default=0
+    )
+
+    active = models.BooleanField(
+        default=True
+    )
+
+    apply_to_all_users = models.BooleanField(
+        default=False,
+        verbose_name="برای همه کاربران"
+    )
+
+    apply_to_all_packages = models.BooleanField(
+        default=False,
+        verbose_name="برای همه پلن‌ها"
+    )
+
+    def __str__(self):
+        return self.code
+
+    def is_valid(self, user, package, amount):
+
+        now = timezone.now()
+
+        if not self.active:
+            return False, "کد غیرفعال است."
+
+        if now < self.start_at:
+            return False, "کد هنوز فعال نشده است."
+
+        if now > self.end_at:
+            return False, "کد منقضی شده است."
+
+        if self.minimum_amount and amount < self.minimum_amount:
+            return False, "حداقل مبلغ خرید رعایت نشده است."
+
+        if self.usage_limit and self.usage_count >= self.usage_limit:
+            return False, "ظرفیت کد به پایان رسیده است."
+
+        if self.packages.exists() and package not in self.packages.all():
+            return False, "این کد برای این پلن معتبر نیست."
+
+        if self.users.exists() and user not in self.users.all():
+            return False, "این کد مخصوص کاربران خاص است."
+
+        if DiscountUsage.objects.filter(
+            discount=self,
+            user=user
+        ).count() >= self.per_user_limit:
+
+            return False, "قبلاً از این کد استفاده کرده‌اید."
+
+        return True, ""
+
+    def calculate_discount(self, amount):
+
+        if self.type == "fixed":
+
+            discount = self.value
+
+        else:
+
+            discount = amount * self.value // 100
+
+            if self.max_discount:
+
+                discount = min(
+                    discount,
+                    self.max_discount
+                )
+
+        return min(discount, amount)
+
+    class Meta:
+        verbose_name = "کد تخفیف"
+        verbose_name_plural = "کدهای تخفیف"
+
+class PackageRequest(models.Model):
     student = models.ForeignKey(
         Student,
         on_delete=models.CASCADE,
@@ -91,6 +229,20 @@ class PackageRequest(models.Model):
         verbose_name="مبلغ نهایی"
     )
 
+    discount_code = models.ForeignKey(
+        DiscountCode,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="orders"
+    )
+
+    discount_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0
+    )
+
     paid = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -98,6 +250,35 @@ class PackageRequest(models.Model):
     class Meta:
         verbose_name = "درخواست پلن"
         verbose_name_plural = "درخواست های پلن"
+
+class DiscountUsage(models.Model):
+
+    discount = models.ForeignKey(
+        DiscountCode,
+        on_delete=models.CASCADE,
+        related_name="usages"
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    package_request = models.ForeignKey(
+        PackageRequest,
+        on_delete=models.CASCADE
+    )
+
+    used_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    class Meta:
+        unique_together = (
+            "discount",
+            "user",
+            "package_request"
+        )
 
 class Consultation(models.Model):
 

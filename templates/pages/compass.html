@@ -239,7 +239,7 @@
 {% block content %}
 {% if a_live_is_active %}
 <div class="section-t-space">
-    <a class="blog-btn border-btn vebinar-notif"
+    <a class="blog-btn border-btn vebinar-notif" target="_blank"
     {% if a_live_is_active.stream_url %}
     href="{{ a_live_is_active.stream_url }}"
     {% elif a_live_is_active.aparat_url %}
@@ -384,11 +384,11 @@
 {% if atropine_teams %}
 <div class="top-instructors-section section-t-space  mt-3" style="background-color: white;">
     <div class="title px-15">
-        <h4>تیم علمی آتروپین <a href="{% url 'counseling_introduction' %}" class="see-all">مشاهده همه</a></h4>
+        <h4>تیم انتخاب رشته آتروپین</h4>
     </div>
 
     <div class="instructors-box">
-        <ul class="instructors-list px-15">
+        <ul class="instructors-list px-15" style="justify-content: center;">
             {% for atropine_team in atropine_teams %}
             <li style="box-shadow: 0 0 5px gainsboro; border-radius: 15px;">
                 <a href="{% url 'consultant_show' atropine_team.id %}" class="my-card">

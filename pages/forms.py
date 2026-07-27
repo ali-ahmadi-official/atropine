@@ -93,3 +93,16 @@ class Personality60Form(forms.ModelForm):
                 if isinstance(field.widget, forms.Select)
                 else "form-control"
             })
+
+class DiscountCodeForm(forms.Form):
+
+    code = forms.CharField(
+        max_length=30,
+        label="کد تخفیف",
+        widget=forms.TextInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "اگر کد تخفیف دارید وارد کنید",
+            }
+        ),
+    )

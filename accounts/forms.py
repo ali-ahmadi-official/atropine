@@ -3,12 +3,12 @@ from django import forms
 from django.utils import timezone
 from django.contrib.auth.forms import UserCreationForm
 from pages.models import (
-    LIVE_SHOW_IN_CHOICES, STORY_SHOW_IN_CHOICES, POSTER_SHOW_IN_CHOICES,
+    LIVE_SHOW_IN_CHOICES,
     News, Story, LiveEvent, Achievement, Survey, SurveyOption, PlansIntroduction, DataIntroduction,
     CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction,
-    Poster, Comment, FAQ, Media, RankBank, Rule, StaticMessage
+    Poster, Comment, FAQ, Media, RankField, RankBank, Rule, StaticMessage
 )
-from payments.models import Package
+from payments.models import Package, DiscountCode
 from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
 
 class BaseModelForm(forms.ModelForm):
@@ -19,9 +19,13 @@ class BaseModelForm(forms.ModelForm):
             widget = field.widget
 
             if not isinstance(widget, forms.CheckboxInput):
-                widget.attrs["class"] = "form-control"
+                widget.attrs["class"] = (
+                    widget.attrs.get("class", "") + " form-control"
+                ).strip()
             else:
-                widget.attrs["class"] = "form-check-input"
+                widget.attrs["class"] = (
+                    widget.attrs.get("class", "") + " form-check-input"
+                ).strip()
 
 class UserCreationForm(UserCreationForm):
     class Meta:
@@ -415,6 +419,11 @@ class RankBankForm(BaseModelForm):
         model = RankBank
         fields = "__all__"
 
+class RankFieldForm(BaseModelForm):
+    class Meta:
+        model = RankField
+        fields = "__all__"
+
 class RuleForm(BaseModelForm):
     class Meta:
         model = Rule
@@ -523,3 +532,77 @@ class Personality60Form(BaseModelForm):
     class Meta:
         model = Personality60
         exclude = ["student"]
+
+class DiscountCodeForm(BaseModelForm):
+
+    apply_to_all_users = forms.BooleanField(
+        required=False,
+        label="برای همه کاربران"
+    )
+
+    apply_to_all_packages = forms.BooleanField(
+        required=False,
+        label="برای همه پلن‌ها"
+    )
+
+    class Meta:
+        model = DiscountCode
+
+        fields = [
+            "code",
+            "type",
+            "value",
+            "max_discount",
+            "minimum_amount",
+            "usage_limit",
+            "per_user_limit",
+            "start_at",
+            "end_at",
+            "active",
+            "apply_to_all_users",
+            "users",
+            "apply_to_all_packages",
+            "packages",
+        ]
+
+        widgets = {
+            "users": forms.SelectMultiple(
+                attrs={
+                    "class": "form-select select2"
+                }
+            ),
+            "packages": forms.SelectMultiple(
+                attrs={
+                    "class": "form-select select2"
+                }
+            ),
+            "start_at": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local"
+                }
+            ),
+            "end_at": forms.DateTimeInput(
+                attrs={
+                    "type": "datetime-local"
+                }
+            ),
+        }
+
+    def save(self, commit=True):
+
+        obj = super().save(commit=False)
+
+        if commit:
+            obj.save()
+
+            if self.cleaned_data["apply_to_all_users"]:
+                obj.users.set(User.objects.all())
+            else:
+                obj.users.set(self.cleaned_data["users"])
+
+            if self.cleaned_data["apply_to_all_packages"]:
+                obj.packages.set(Package.objects.all())
+            else:
+                obj.packages.set(self.cleaned_data["packages"])
+
+        return obj

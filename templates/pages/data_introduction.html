@@ -180,34 +180,42 @@
 </div>
 
 <div class="mx-3" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-    <a href="{% url 'videos' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a href="{% url 'videos' %}" class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         ویدئوهای معرفی اختصاصی رشته‌ها
     </a>
-    <a href="{% url 'voices' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a href="{% url 'voices' %}" class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#dc3545,#172561); font-size: x-large;">
         ویس های بررسی رشته شهرها
     </a>
-    <a href="{% url 'rank_bank' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a href="{% url 'rank_bank' %}" class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         بانک رتبه قبولی
     </a>
-    <a href="{% url 'rule' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a href="{% url 'rule' %}" class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#dc3545,#172561); font-size: x-large;">
         قوانین و آئین نامه‌ها
     </a>
-    <a href="{% url 'else_videos' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a {% if is_paid %} href="{% url 'else_videos' %}" {% endif %} class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         سایر ویدئوها
     </a>
-    <a href="{% url 'else_voices' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a {% if is_paid %} href="{% url 'else_voices' %}" {% endif %} class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#dc3545,#b02a37,#172561); font-size: x-large;">
         سایر ویس‌ها
     </a>
-    <a href="{% url 'static_message' %}" class="btn mb-4" 
-        style="max-width: 800px; color: #172561; border: 3px solid; border-color: #172561; background-color: #e9ecef; font-size: x-large;">
+
+    <a {% if is_paid %} href="{% url 'static_message' %}" {% endif %} class="btn mb-4"
+        style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         پاسخ به پرسش‌های داوطلبین
     </a>
+
 </div>
 
 {% include 'includes/packages.html' %}

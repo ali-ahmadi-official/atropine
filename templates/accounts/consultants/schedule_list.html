@@ -7,74 +7,186 @@
 {% endblock %}
 
 {% block content %}
-<div class="table-responsive" dir="rtl">
-    <div class="card-header justify-content-between">
-        <div class="card-title">
-            <h4>
-                لیست نوبت های مشاوره
+<section class="section-t-space feature-course-section popular-course-section" dir="rtl">
+    <div class="custom-container">
+        <div class="title mb-1">
+            <h4 class="mb-3">
+                نوبت های مشاوره فردی
                 <a href="{% url 'schedule_add' %}">
                     <span class="btn btn-success-transparent">افزودن</span>
                 </a>
             </h4>
         </div>
-    </div>
-    <table class="table text-nowrap table-hover">
-        <thead>
-            <tr>
-                <th scope="col">شناسه</th>
-                <th scope="col">تاریخ</th>
-                <th scope="col">ساعت شروع</th>
-                <th scope="col">ساعت پایان</th>
-                <th scope="col">رزرو شده؟</th>
-                <th scope="col">رزرو توسط</th>
-                <th scope="col">عملیات</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for schedule in schedules %}
-            <tr>
-                <td>
-                    {{ schedule.id }}
-                </td>
-                <td>
-                    {{ schedule.date_shamsi }}
-                </td>
-                <td>
-                    {{ schedule.start_time }}
-                </td>
-                <td>
-                    {{ schedule.end_time }}
-                </td>
-                <td>
-                    {% if schedule.is_reserved %}
-                    <span class="badge bg-success-transparent">بله</span>
-                    {% else %}
-                    <span class="badge bg-danger-transparent">خیر</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if schedule.request %}
-                    <a href="{% url 'show_my_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
-                    {% else %}
-                    <span class="badge bg-warning-transparent">----</span>
-                    {% endif %}
-                </td>
-                <td>
-                    {% if schedule.request == None %}
-                    <a href="{% url 'schedule_delete' schedule.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
-                        <i class="ri-delete-bin-line"></i>
-                    </a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="7" style="text-align: center;">
-                    موردی یافت نشد.
-                </td>
-            </tr>
+
+        <div class="container my-4">
+
+            {% if weeks %}
+
+            <div class="d-flex justify-content-between align-items-center mb-3" style="gap: 25px;">
+
+                <button id="prevWeek" class="btn btn-outline-primary">
+                    هفته قبل
+                </button>
+
+                <!-- <h5 id="weekTitle" class="mb-0"></h5> -->
+
+                <button id="nextWeek" class="btn btn-outline-primary">
+                    هفته بعد
+                </button>
+
+            </div>
+
+
+            {% for week in weeks %}
+
+            <div class="week-table {% if not week.is_current %}d-none{% endif %}" data-index="{{ forloop.counter0 }}"
+                data-title="هفته {{ week.title }}">
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover align-middle text-center schedule-table">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                {% for day in week.days %}
+                                <th>
+                                    {{ day.name }}
+                                    <br>
+                                    <small>{{ day.date_shamsi }}</small>
+                                </th>
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for row in week.rows %}
+
+                            <tr>
+
+                                {% for slot in row %}
+
+                                <td style="height:65px">
+
+                                    {% if slot %}
+
+                                    {% if slot.is_reserved %}
+
+                                    <a
+                                        {% if slot.request %}
+                                        href="{% url 'show_my_student' slot.request.service.student.user.id %}"
+                                        {% endif %}
+                                        class="btn btn-success btn-sm w-100">
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
+                                        رزرو شده
+
+                                        <br>
+
+                                        {{ slot.request.service.student.user.mobile }}
+
+                                    </a>
+
+                                    {% else %}
+
+                                    <a href="{% url 'schedule_delete' slot.id %}"
+                                        class="btn btn-info btn-sm w-100">
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
+                                        بدون رزرو
+
+                                    </a>
+
+                                    {% endif %}
+
+                                    {% endif %}
+
+                                </td>
+
+                                {% endfor %}
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
             {% endfor %}
-        </tbody>
-    </table>
-</div>
+
+            {% endif %}
+
+        </div>
+    </div>
+</section>
+
+<script>
+    const tables = document.querySelectorAll(".week-table");
+
+    let current = 0;
+
+    tables.forEach((table, index) => {
+
+        if (!table.classList.contains("d-none"))
+            current = index;
+
+    });
+
+    function showWeek(index) {
+
+        tables.forEach(t => t.classList.add("d-none"));
+
+        tables[index].classList.remove("d-none");
+
+        // document.getElementById("weekTitle").innerHTML =
+        //     tables[index].dataset.title;
+
+    }
+
+    showWeek(current);
+
+    document.getElementById("nextWeek").onclick = function () {
+    
+
+        if (current < tables.length - 1) {
+
+            current++;
+
+            showWeek(current);
+
+        }
+
+    }
+
+    document.getElementById("prevWeek").onclick = function () {
+
+        if (current > 0) {
+
+            current--;
+
+            showWeek(current);
+
+        }
+
+    }
+</script>
 {% endblock %}

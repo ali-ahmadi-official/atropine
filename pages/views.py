@@ -12,13 +12,30 @@ from django.db.models import Q
 from apps.models import ContentCategory
 from accounts.models import User, Rank, ConsultantSchedule, Student
 from accounts.forms import RankForm, AForm, Personality60Form
-from payments.models import Package, ServiceToStudent, PackageRequest, Payment, Consultation
+from payments.models import Package, ServiceToStudent, PackageRequest, Payment, Consultation, DiscountCode, DiscountUsage
 from .models import (
     Story, LiveEvent, Achievement, DataIntroduction, AboutUsIntroduction,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction,
-    Poster, Comment, FAQ, Media, RankBank, Rule, StaticMessage
+    Poster, Comment, FAQ, Media,RankField, RankBank, Rule, StaticMessage
 )
-from .forms import CompleteProfileForm
+from .forms import CompleteProfileForm, DiscountCodeForm
+
+def global_context(request):
+    has_database_service = False
+
+    if request.user.is_authenticated and request.user.role == "student":
+        student = getattr(request.user, "user_student", None)
+
+        if student:
+            has_database_service = ServiceToStudent.objects.filter(
+                student=student,
+                service="5",
+                is_used=False
+            ).exists()
+
+    return {
+        "has_database_service": has_database_service
+    }
 
 def main(request):
     stories = Story.objects.filter(show_in__icontains="main")
@@ -207,14 +224,6 @@ def counseling_introduction(request):
         'consultants': consultants,
     }
     return render(request, 'pages/counseling_introduction.html', context)
-
-from collections import defaultdict
-from datetime import timedelta
-
-import jdatetime
-from django.shortcuts import get_object_or_404, render
-from django.utils import timezone
-
 
 def consultant_show(request, id):
 
@@ -431,6 +440,7 @@ def live_time_steps(request):
 
     lives = LiveEvent.objects.filter(
         is_public=True,
+        year="1405"
     )
 
     for live in lives:
@@ -528,6 +538,26 @@ def live_archives(request):
 def data_introduction(request, id):
     data_intro = get_object_or_404(DataIntroduction, id=id)
 
+    is_paid = False
+    
+    if request.user.is_authenticated and request.user.role == "student":
+    
+        student = getattr(request.user, "user_student", None)
+    
+        if student:
+    
+            has_database_service = ServiceToStudent.objects.filter(
+                student=student,
+                service="5",
+                is_used=False
+            ).exists()
+    
+            if has_database_service:
+                is_paid = True
+
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
+
     posters = Poster.objects.filter(show_in__icontains="DataIntroduction")
 
     packages = Package.objects.all()
@@ -544,6 +574,7 @@ def data_introduction(request, id):
 
     context = {
         "data_intro": data_intro,
+        "is_paid": is_paid,
         "posters": posters,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -566,16 +597,11 @@ def videos(request):
                 is_used=False
             ).exists()
     
-            if not has_database_service:
-                medias = medias.filter(is_free=True)
-            else:
+            if has_database_service:
                 is_paid = True
     
-        else:
-            medias = medias.filter(is_free=True)
-    
-    else:
-        medias = medias.filter(is_free=True)
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
 
     shamsi_years = sorted(
         medias.values_list("year", flat=True).distinct(),
@@ -608,11 +634,18 @@ def videos(request):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
+        "database_package": database_package,
         "is_paid": is_paid,
         "title": "ویدئوهای معرفی اختصاصی رشته ها",
         "shamsi_years": shamsi_years,
         "categories": categories,
+        "selected_year": selected_year,
+        "selected_category": selected_category,
         "medias": medias,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -622,29 +655,24 @@ def videos(request):
 def else_videos(request):
     medias = Media.objects.filter(media_type="else_video")
     is_paid = False
-
+    
     if request.user.is_authenticated and request.user.role == "student":
-
+    
         student = getattr(request.user, "user_student", None)
-
+    
         if student:
-
+    
             has_database_service = ServiceToStudent.objects.filter(
                 student=student,
                 service="5",
                 is_used=False
             ).exists()
-
-            if not has_database_service:
-                medias = medias.filter(is_free=True)
-            else:
+    
+            if has_database_service:
                 is_paid = True
-
-        else:
-            medias = medias.filter(is_free=True)
-
-    else:
-        medias = medias.filter(is_free=True)
+    
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
 
     shamsi_years = sorted(
         medias.values_list("year", flat=True).distinct(),
@@ -677,11 +705,18 @@ def else_videos(request):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
+        "database_package": database_package,
         "is_paid": is_paid,
         "title": "سایر ویدئوها",
         "shamsi_years": shamsi_years,
         "categories": categories,
+        "selected_year": selected_year,
+        "selected_category": selected_category,
         "medias": medias,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -691,29 +726,24 @@ def else_videos(request):
 def voices(request):
     medias = Media.objects.filter(media_type="voice")
     is_paid = False
-
+    
     if request.user.is_authenticated and request.user.role == "student":
-
+    
         student = getattr(request.user, "user_student", None)
-
+    
         if student:
-
+    
             has_database_service = ServiceToStudent.objects.filter(
                 student=student,
                 service="5",
                 is_used=False
             ).exists()
-
-            if not has_database_service:
-                medias = medias.filter(is_free=True)
-            else:
+    
+            if has_database_service:
                 is_paid = True
-
-        else:
-            medias = medias.filter(is_free=True)
-
-    else:
-        medias = medias.filter(is_free=True)
+    
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
 
     shamsi_years = sorted(
         medias.values_list("year", flat=True).distinct(),
@@ -746,11 +776,18 @@ def voices(request):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
+        "database_package": database_package,
         "is_paid": is_paid,
         "title": "ویس های بررسی رشته شهرها",
         "shamsi_years": shamsi_years,
         "categories": categories,
+        "selected_year": selected_year,
+        "selected_category": selected_category,
         "medias": medias,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -760,7 +797,7 @@ def voices(request):
 def else_voices(request):
     medias = Media.objects.filter(media_type="else_voice")
     is_paid = False
-
+    
     if request.user.is_authenticated and request.user.role == "student":
     
         student = getattr(request.user, "user_student", None)
@@ -773,16 +810,11 @@ def else_voices(request):
                 is_used=False
             ).exists()
     
-            if not has_database_service:
-                medias = medias.filter(is_free=True)
-            else:
+            if has_database_service:
                 is_paid = True
     
-        else:
-            medias = medias.filter(is_free=True)
-    
-    else:
-        medias = medias.filter(is_free=True)
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
 
     shamsi_years = sorted(
         medias.values_list("year", flat=True).distinct(),
@@ -815,11 +847,18 @@ def else_voices(request):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
+        "database_package": database_package,
         "is_paid": is_paid,
         "title": "سایر ویس ها",
         "shamsi_years": shamsi_years,
         "categories": categories,
+        "selected_year": selected_year,
+        "selected_category": selected_category,
         "medias": medias,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
@@ -844,15 +883,25 @@ def rank_bank(request):
             ).exists()
     
             if not has_database_service:
-                ranks = ranks.filter(is_free=True)
+                ranks = ranks.filter(field__is_free=True)
             else:
                 is_paid = True
     
         else:
-            ranks = ranks.filter(is_free=True)
+            ranks = ranks.filter(field__is_free=True)
     
     else:
-        ranks = ranks.filter(is_free=True)
+        ranks = ranks.filter(field__is_free=True)
+
+    rank_fields = RankField.objects.order_by("field")
+
+    if not is_paid:
+        rank_fields = rank_fields.filter(is_free=True)
+
+    selected_field = request.GET.get("field")
+
+    if selected_field:
+        ranks = ranks.filter(field_id=selected_field)
 
     packages = Package.objects.all()
 
@@ -866,8 +915,14 @@ def rank_bank(request):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
+        "database_package": database_package,
         "is_paid": is_paid,
+        "rank_fields": rank_fields,
         "title": "بانک رتبه قبولی",
         "ranks": ranks,
         "single_service_packages": single_service_packages,
@@ -1082,6 +1137,49 @@ def payment_view(request, package_id):
 
     final_price -= discount
 
+    discount_code = None
+    discount_amount = Decimal("0")
+
+    if request.method == "POST" and request.POST.get("action") == "discount":
+
+        form = DiscountCodeForm(request.POST)
+
+        if form.is_valid():
+
+            code = form.cleaned_data["code"].strip().upper()
+
+            discount_code = DiscountCode.objects.filter(
+                code=code
+            ).first()
+
+            if discount_code:
+
+                valid, error = discount_code.is_valid(
+                    request.user,
+                    package,
+                    final_price
+                )
+
+                if valid:
+
+                    discount_amount = discount_code.calculate_discount(
+                        final_price
+                    )
+
+                    final_price -= discount_amount
+
+                    context["discount_code"] = discount_code
+
+                    context["discount_amount"] = discount_amount
+
+                else:
+
+                    context["discount_error"] = error
+
+            else:
+
+                context["discount_error"] = "کد تخفیف معتبر نیست."
+
     if final_price < 0:
         final_price = Decimal("0")
 
@@ -1094,9 +1192,15 @@ def payment_view(request, package_id):
         }
     )
 
-    if not created:
-        order.final_price = final_price
-        order.save(update_fields=["final_price"])
+    order.final_price = final_price
+    order.discount_code = discount_code
+    order.discount_amount = discount_amount
+
+    order.save(update_fields=[
+        "final_price",
+        "discount_code",
+        "discount_amount",
+    ])
 
     context.update({
         "order": order,
@@ -1110,6 +1214,8 @@ def payment_view(request, package_id):
             kwargs={"package_id": package.id}
         ),
     })
+
+    context["discount_form"] = DiscountCodeForm()
 
     return render(request, "pages/payment.html", context)
 

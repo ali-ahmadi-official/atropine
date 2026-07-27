@@ -85,9 +85,9 @@ class LiveEvent(models.Model):
         verbose_name="عنوان لایو"
     )
 
-    description = models.TextField(
-        blank=True,
-        verbose_name="توضیحات"
+    description = CKEditor5Field(
+        "معرفی و توضیحات",
+        config_name="default"
     )
 
     cover = models.ImageField(
@@ -400,8 +400,9 @@ class Media(models.Model):
         verbose_name="عنوان"
     )
 
-    description = models.TextField(
-        verbose_name="توضیحات"
+    description = CKEditor5Field(
+        "معرفی و توضیحات",
+        config_name="default"
     )
 
     media_type = models.CharField(
@@ -429,6 +430,24 @@ class Media(models.Model):
         verbose_name = "مدیا"
         verbose_name_plural = "مدیا ها"
 
+class RankField(models.Model):
+    field = models.CharField(
+        max_length=200,
+        verbose_name="رشته قبولی"
+    )
+
+    is_free = models.BooleanField(
+        default=False,
+        verbose_name="رایگان"
+    )
+
+    def __str__(self):
+        return f"{self.field}"
+
+    class Meta:
+        verbose_name = "دسته بندی رشته"
+        verbose_name_plural = "دسته بندی رشته ها"
+
 class RankBank(models.Model):
     QUOTA_CHOICES = (
         ("1", "آزاد"),
@@ -448,8 +467,12 @@ class RankBank(models.Model):
         verbose_name="سهمیه"
     )
 
-    field = models.CharField(
-        max_length=200,
+    field = models.ForeignKey(
+        RankField,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="rank_field_bank",
         verbose_name="رشته قبولی"
     )
 
@@ -458,11 +481,6 @@ class RankBank(models.Model):
         verbose_name="توضیحات",
         null=True,
         blank=True
-    )
-
-    is_free = models.BooleanField(
-        default=False,
-        verbose_name="رایگان"
     )
 
     class Meta:
@@ -475,8 +493,9 @@ class Rule(models.Model):
         verbose_name="عنوان"
     )
 
-    description = models.TextField(
-        verbose_name="توضیحات"
+    description = CKEditor5Field(
+        "معرفی و توضیحات",
+        config_name="default"
     )
 
     image = models.ImageField(

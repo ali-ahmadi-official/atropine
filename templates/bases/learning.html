@@ -61,7 +61,7 @@
         {% endblock %}
 
         <!-- Mobile Section Start -->
-        <div class="mobile-style-1" style="z-index: 20000;">
+        <div class="mobile-style-1" style="z-index: 999;">
             <ul>
                 <li class="{% if '/' == request.path %} active {% endif %}">
                     <a href="{% url 'main' %}" class="mobile-box">
@@ -125,11 +125,11 @@
         {% endblock %}
 
         <!-- space box start -->
-        <div class="learning-box"></div>
+        <div class="learning-box" style="padding: 24px 0;"></div>
         <!-- space box end -->
 
         <!-- Side menu offcanvas start -->
-        <div class="offcanvas theme-offcanvas learning-offcanvas offcanvas-start" tabindex="-1" id="sideMenu">
+        <div class="offcanvas theme-offcanvas learning-offcanvas offcanvas-start" tabindex="-1" id="sideMenu" style="z-index: 99999;">
             <div class="offcanvas-header">
                 <div class="profile-box">
                     <div class="profile-image">

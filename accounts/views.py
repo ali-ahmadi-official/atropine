@@ -1,5 +1,8 @@
 import re
 import jdatetime
+from collections import defaultdict
+from datetime import timedelta
+from django.utils import timezone
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.contrib import messages
@@ -7,21 +10,21 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LogoutView
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from pages.models import (
     Story, Achievement, LiveEvent, Poster, Comment, FAQ,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, DataIntroduction,
-    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankBank, Rule, StaticMessage
+    ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankField, RankBank, Rule, StaticMessage
 )
-from payments.models import Package, Consultation, Payment, ServiceToStudent
+from payments.models import Package, Consultation, Payment, ServiceToStudent, DiscountCode
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
 from .forms import (
     UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, CreateConsultantForm, ConsultantScheduleForm,
     PackageForm, AForm, RankForm, Personality60Form,
     PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, DataIntroductionForm,
     ChoiceIntroductionForm, LiveIntroductionForm,
-    AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RuleForm, StaticMessageForm
+    AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RankFieldForm, RuleForm, StaticMessageForm,
+    DiscountCodeForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -50,6 +53,65 @@ def validate_mobile(mobile):
         return False, None
 
     return True, mobile
+
+def admin_login(request):
+
+    if request.user.is_authenticated:
+
+        if request.user.role == "super_admin":
+            return redirect("admin_dashboard")
+
+        elif request.user.role == "supervisor":
+            return redirect("supervisor_dashboard")
+
+        elif request.user.role == "consultant":
+            return redirect("consultant_dashboard")
+
+        return redirect("main")
+
+    if request.method == "POST":
+
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "").strip()
+
+        if not username or not password:
+            messages.error(request, "نام کاربری و رمز عبور را وارد کنید.")
+            return redirect("admin-login")
+
+        user = authenticate(
+            username=username,
+            password=password
+        )
+
+        if user is None:
+            messages.error(request, "نام کاربری یا رمز عبور صحیح نیست.")
+            return redirect("admin-login")
+
+        if user.role == "student":
+            messages.error(
+                request,
+                "دانش آموزان باید از طریق ورود با شماره موبایل وارد شوند."
+            )
+            return redirect("admin-login")
+
+        if user.is_suspended:
+            messages.error(request, "حساب کاربری شما تعلیق شده است.")
+            return redirect("admin-login")
+
+        login(request, user)
+
+        if user.role == "super_admin":
+            return redirect("admin_dashboard")
+
+        elif user.role == "supervisor":
+            return redirect("supervisor_dashboard")
+
+        elif user.role == "consultant":
+            return redirect("consultant_dashboard")
+
+        return redirect("main")
+
+    return render(request, "accounts/admin_login.html")
 
 def mobile_login(request):
 
@@ -81,8 +143,6 @@ def mobile_login(request):
                 request.session.pop("auth_mobile", None)
                 return redirect("login")
 
-            return redirect("password-login")
-
         last_otp = OTP.objects.filter(
             mobile=mobile,
             is_used=False
@@ -107,57 +167,6 @@ def mobile_login(request):
         return redirect("verify-otp")
 
     return render(request, "accounts/mobile_login.html")
-
-def password_login(request):
-
-    mobile = request.session.get("auth_mobile")
-
-    if not mobile:
-        return redirect("login")
-
-    user = User.objects.filter(mobile=mobile).first()
-
-    if user is None:
-        return redirect("login")
-
-    if request.method == "POST":
-
-        password = request.POST.get("password", "").strip()
-
-        user = authenticate(
-            username=mobile,
-            password=password
-        )
-
-        if user is None:
-            messages.error(request, "رمز عبور صحیح نیست.")
-            return redirect("password-login")
-
-        login(request, user)
-
-        request.session.pop("auth_mobile", None)
-
-        if user.role == "super_admin":
-            return redirect("admin_dashboard")
-
-        elif user.role == "supervisor":
-            return redirect("supervisor_dashboard")
-
-        elif user.role == "consultant":
-            return redirect("consultant_dashboard")
-
-        elif user.role == "student":
-            return redirect("main")
-
-        return redirect("main")
-
-    return render(
-        request,
-        "accounts/password_login.html",
-        {
-            "mobile": mobile
-        }
-    )
 
 def verify_otp(request):
 
@@ -190,12 +199,22 @@ def verify_otp(request):
         otp.is_used = True
         otp.save()
 
-        user = User.objects.create(
-            username=mobile,
-            mobile=mobile,
-            password=make_password(code),
-            role="student"
-        )
+        user = User.objects.filter(username=mobile).first()
+
+        if user:
+
+            if user.role == "student":
+                user.password = make_password(code)
+                user.save(update_fields=["password"])
+
+        else:
+
+            user = User.objects.create(
+                username=mobile,
+                mobile=mobile,
+                password=make_password(code),
+                role="student"
+            )
 
         user = authenticate(
             username=mobile,
@@ -593,6 +612,14 @@ class RankBankListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListVie
     template_name = "accounts/admins/rank_bank_list.html"
     context_object_name = "rank_banks"
 
+    def get_queryset(self):
+        return RankBank.objects.select_related("field")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["rank_fields"] = RankField.objects.all()
+        return context
+
 class RankBankCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
     allowed_roles = ["super_admin"]
     model = RankBank
@@ -612,6 +639,20 @@ class RankBankDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, Delet
     model = RankBank
     template_name = 'accounts/admins/rank_bank_delete.html'
     success_url = reverse_lazy('rank_bank_list')
+
+class RankFieldCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
+    model = RankField
+    form_class = RankFieldForm
+    template_name = "accounts/admins/rank_field_add.html"
+    success_url = reverse_lazy("rank_bank_list")
+
+class RankFieldUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
+    model = RankField
+    form_class = RankFieldForm
+    template_name = "accounts/admins/rank_field_edit.html"
+    success_url = reverse_lazy("rank_bank_list")
 
 class RuleListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
     allowed_roles = ["super_admin"]
@@ -808,6 +849,25 @@ def show_student(request, id):
         context
     )
 
+class DiscountCodeListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
+    model = DiscountCode
+    template_name = "accounts/admins/discount_code_list.html"
+    context_object_name = "discount_codes"
+
+class DiscountCodeCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
+    model = DiscountCode
+    form_class = DiscountCodeForm
+    template_name = "accounts/admins/discount_code_add.html"
+    success_url = reverse_lazy("discount_code_list")
+
+class DiscountCodeDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
+    model = DiscountCode
+    template_name = "accounts/admins/discount_code_delete.html"
+    success_url = reverse_lazy("discount_code_list")
+
 # endregion
 
 # region consultant
@@ -841,21 +901,102 @@ class ConsultantScheduleListView(ListView):
 
         schedules = ConsultantSchedule.objects.filter(
             consultant=self.request.user.user_consultant
-        )
+        ).order_by("date", "start_time")
+
+        today = timezone.localdate()
+        current_week_start = today - timedelta(days=(today.weekday() + 2) % 7)
+
+        week_dict = defaultdict(list)
 
         for schedule in schedules:
 
             consultation = Consultation.objects.filter(
                 schedule=schedule
-            ).select_related("service__student__user").first()
+            ).select_related(
+                "service__student__user"
+            ).first()
 
             schedule.request = consultation
 
-            schedule.date_shamsi = jdatetime.date.fromgregorian(
-                date=schedule.date
-            ).strftime("%Y/%m/%d")
+            week_start = schedule.date - timedelta(
+                days=(schedule.date.weekday() + 2) % 7
+            )
 
-        context["schedules"] = schedules
+            week_dict[week_start].append(schedule)
+
+        future = sorted(
+            [w for w in week_dict if w >= current_week_start]
+        )
+
+        past = sorted(
+            [w for w in week_dict if w < current_week_start]
+        )
+
+        ordered = future + past
+
+        day_names = [
+            "شنبه",
+            "یکشنبه",
+            "دوشنبه",
+            "سه شنبه",
+            "چهارشنبه",
+            "پنجشنبه",
+            "جمعه",
+        ]
+
+        weeks = []
+
+        for week_start in ordered:
+
+            days = []
+
+            for i in range(7):
+
+                day_date = week_start + timedelta(days=i)
+
+                slots = sorted(
+                    [
+                        s
+                        for s in week_dict[week_start]
+                        if s.date == day_date
+                    ],
+                    key=lambda x: x.start_time,
+                )
+
+                days.append({
+                    "name": day_names[i],
+                    "date_shamsi": jdatetime.date.fromgregorian(
+                        date=day_date
+                    ).strftime("%Y/%m/%d"),
+                    "slots": slots,
+                })
+
+            rows = []
+
+            for r in range(15):
+
+                row = []
+
+                for day in days:
+
+                    if r < len(day["slots"]):
+                        row.append(day["slots"][r])
+                    else:
+                        row.append(None)
+
+                rows.append(row)
+
+            weeks.append({
+                "title": jdatetime.date.fromgregorian(
+                    date=week_start
+                ).strftime("%Y/%m/%d"),
+                "is_current": week_start == current_week_start,
+                "days": days,
+                "rows": rows,
+            })
+
+        context["weeks"] = weeks
+
         return context
 
 class ConsultantScheduleCreateView(CreateView):

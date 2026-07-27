@@ -23,7 +23,8 @@
                 <th scope="col">شناسه کاربر</th>
                 <th scope="col">شماره تلفن کاربر</th>
                 <th scope="col">خدمات دریافتی</th>
-                <th scope="col">مبلغ پرداخت شده (ریال)</th>
+                <th scope="col">مبلغ پرداخت شده (تومان)</th>
+                <th scope="col">کد پیگیری</th>
                 <th scope="col">وضعیت پرداخت</th>
             </tr>
         </thead>
@@ -48,6 +49,13 @@
                 </td>
                 <td>
                     {{ payment.amount }}
+                </td>
+                <td>
+                    {% if payment.ref_id %}
+                    {{ payment.ref_id }}
+                    {% else %}
+                    -----
+                    {% endif %}
                 </td>
                 <td>
                     {% if payment.status == "SUCCESS" %}

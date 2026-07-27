@@ -7,9 +7,11 @@ from .views import (
     about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations
 )
 
+from accounts.views import mobile_login
+
 urlpatterns = [
-    path('', compass, name='main'),
-    path('compass/', main, name='compass'),
+    path('', mobile_login),
+    path('compass/', compass, name='main'),
     path('story-show/<int:id>/<slug:show>/', story_show, name='story_show'),
     path('self-story-show/<int:id>/', self_story_show, name='self_story_show'),
     path('courses/', courses, name='courses'),

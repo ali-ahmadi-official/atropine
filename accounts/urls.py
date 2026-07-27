@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (
+    admin_login,
     mobile_login,
-    password_login,
     verify_otp,
     LogoutView,
     MainLogoutView,
@@ -59,6 +59,8 @@ from .views import (
     RankBankCreateView,
     RankBankUpdateView,
     RankBankDeleteView,
+    RankFieldCreateView,
+    RankFieldUpdateView,
     RuleListView,
     RuleCreateView,
     RuleUpdateView,
@@ -72,6 +74,9 @@ from .views import (
     AdminConsultantUpdateView,
     AdminConsultantScheduleListView,
     AdminConsultantScheduleDeleteView,
+    DiscountCodeListView,
+    DiscountCodeCreateView,
+    DiscountCodeDeleteView,
     show_student,
 
     consultant_dashboard,
@@ -91,8 +96,8 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", mobile_login, name="login"),
-    path("login/", password_login, name="password-login"),
+    path("admins-login/", admin_login, name="admin-login"),
+    path("login/", mobile_login, name="login"),
     path("verify/", verify_otp, name="verify-otp"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("main-logout/", MainLogoutView.as_view(), name="main_logout"),
@@ -168,6 +173,9 @@ urlpatterns = [
     path("admins/rank-banks/<int:pk>/edit/", RankBankUpdateView.as_view(), name="rank_bank_edit"),
     path("admins/rank-banks/<int:pk>/delete/", RankBankDeleteView.as_view(), name="rank_bank_delete"),
 
+    path("admins/rank-fields/add/", RankFieldCreateView.as_view(), name="rank_field_add"),
+    path("admins/rank-fields/<int:pk>/edit/", RankFieldUpdateView.as_view(), name="rank_field_edit"),
+
     path("admins/rules/", RuleListView.as_view(), name="rule_list"),
     path("admins/rules/add/", RuleCreateView.as_view(), name="rule_add"),
     path("admins/rules/<int:pk>/edit/", RuleUpdateView.as_view(), name="rule_edit"),
@@ -185,6 +193,10 @@ urlpatterns = [
     path("admins/schedules/", AdminConsultantScheduleListView.as_view(), name="admin_schedule_list"),
     path("admins/schedules/<int:pk>/delete/", AdminConsultantScheduleDeleteView.as_view(), name="admin_schedule_delete"),
     path("admins/show-student/<int:id>/", show_student, name="show_student"),
+
+    path("admins/discount-codes/", DiscountCodeListView.as_view(), name="discount_code_list"),
+    path("admins/discount-codes/add/", DiscountCodeCreateView.as_view(), name="discount_code_add"),
+    path("admins/discount-codes/<int:pk>/edit/", DiscountCodeDeleteView.as_view(), name="discount_code_delete"),
 
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 

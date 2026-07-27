@@ -261,6 +261,24 @@
                     
                     {% else %}
 
+                        {% if discount_error %}
+                        <div class="alert alert-danger mb-3">
+                            {{ discount_error }}
+                        </div>
+                        {% endif %}
+
+                        <!-- فرم کد تخفیف -->
+                        <form method="post" class="mb-4">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="discount">
+
+                            {{ discount_form.code }}
+
+                            <button class="btn btn-primary mt-2">
+                                اعمال کد تخفیف
+                            </button>
+                        </form>
+
                         <h5 class="mb-3">
 
                             خدمات داخل پکیج
@@ -342,6 +360,28 @@
                                     </td>
 
                                 </tr>
+
+                                {% if discount_code %}
+
+                                <tr>
+
+                                    <th>
+
+                                        کد تخفیف
+
+                                        ({{ discount_code.code }})
+
+                                    </th>
+
+                                    <td class="text-danger">
+
+                                        - {{ discount_amount }} تومان
+
+                                    </td>
+
+                                </tr>
+
+                                {% endif %}
 
                                 <tr class="table-success">
 

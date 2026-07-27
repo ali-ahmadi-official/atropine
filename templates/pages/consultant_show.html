@@ -99,7 +99,8 @@
 <section class="section-t-space feature-course-section popular-course-section">
     <div class="custom-container">
         <div class="title mb-1">
-            <h4 class="mb-3">نوبت های مشاوره فردی</h4>
+            <h4 class="mb-3">نوبت های جلسه فردی انتخاب رشته</h4>
+            <h5 class="w-100" style="text-align: center; color: #172561;">« برای رزرو یکی از تایم های خالی روی بازه زمانی مدنظر کلیک کنید »</h5>
         </div>
 
         <div class="container mt-4">
@@ -169,7 +170,7 @@
 
                                         <br>
 
-                                        رزرو
+                                        امکان رزرو
 
                                     </a>
 
@@ -217,51 +218,56 @@
 
 <script>
     const tables = document.querySelectorAll(".week-table");
+    const nextBtn = document.getElementById("nextWeek");
+    const prevBtn = document.getElementById("prevWeek");
 
     let current = 0;
 
     tables.forEach((table, index) => {
-
-        if (!table.classList.contains("d-none"))
+        if (!table.classList.contains("d-none")) {
             current = index;
-
+        }
     });
 
+    function updateButtons() {
+        if (current === 0) {
+            prevBtn.style.opacity = "0";
+            prevBtn.style.pointerEvents = "none";
+        } else {
+            prevBtn.style.opacity = "1";
+            prevBtn.style.pointerEvents = "auto";
+        }
+
+        if (current === tables.length - 1) {
+            nextBtn.style.opacity = "0";
+            nextBtn.style.pointerEvents = "none";
+        } else {
+            nextBtn.style.opacity = "1";
+            nextBtn.style.pointerEvents = "auto";
+        }
+    }
+
     function showWeek(index) {
-
         tables.forEach(t => t.classList.add("d-none"));
-
         tables[index].classList.remove("d-none");
 
-        document.getElementById("weekTitle").innerHTML =
-            tables[index].dataset.title;
-
+        updateButtons();
     }
 
     showWeek(current);
 
-    document.getElementById("nextWeek").onclick = function () {
-
+    nextBtn.onclick = function () {
         if (current < tables.length - 1) {
-
             current++;
-
             showWeek(current);
-
         }
-
     }
 
-    document.getElementById("prevWeek").onclick = function () {
-
+    prevBtn.onclick = function () {
         if (current > 0) {
-
             current--;
-
             showWeek(current);
-
         }
-
     }
 </script>
 {% endblock %}
