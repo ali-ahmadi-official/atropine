@@ -200,7 +200,7 @@ def verify_otp(request):
         otp.is_used = True
         otp.save()
 
-        user = User.objects.filter(username=mobile).first()
+        user = User.objects.filter(mobile=mobile).first()
 
         if user:
 
