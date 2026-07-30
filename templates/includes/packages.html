@@ -1,4 +1,18 @@
 <div class="py-3 px-2 my-2" style="background: linear-gradient(135deg, rgba(23,37,97,.18) 0%, rgba(23,37,97,.35) 100%);">
+    {% for single_service_package in single_service_packages %}
+    {% if '5' in single_service_package.service and not 'compass' in request.path %}
+        {% if not has_database_service %}
+        <div class="w-100 d-flex justify-content-center">
+            <a href="{% url 'payment_view' single_service_package.id %}" class="btn btn-danger mb-2 w-75" style="border-radius: 40px;">
+                خرید پایگاه داده
+                <br>
+                {{ single_service_package.total_price }} تومان
+            </a>
+        </div>
+        {% endif %}
+    {% endif %}
+    {% endfor %}
+
     <div class="package-switch">
         <button id="singleBtn" class="active">خدمات تکی</button>
         <button id="multiBtn">پکیج‌ها</button>
@@ -8,32 +22,58 @@
     {% if single_service_packages %}
     <section id="singlePackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
         <div class="">
-            <div class="swiper slider-1 px-15 reading-slider">
+            <div class="swiper slider-1 px-15 reading-slider" style="position: relative; overflow: visible;">
                 <div class="">
                     {% for single_service_package in single_service_packages %}
-                    {% if not has_database_service or single_service_package.service != "5" %}
-                    <div class="swiper-slide mt-2">
-                        <div class="reading-list">
-                            <div class="reading-box p-4">
-                                <div class="reading-detail">
-                                    <div class="reading-image"
-                                        style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
-                                        <i class="ri-inbox-line" style="font-size: 50px;"></i>
-                                    </div>
-                                    <div class="reading-name">
-                                        <h2 class="new-text-black">
-                                            {{ single_service_package.get_service_display }}
-                                        </h2>
-                                    </div>
+                    {% if not has_database_service %}
+                    <div class="swiper-slide mt-3">
+                        <a class="reading-list"
+                        {% if "5" in single_service_package.service %}
+                        href="{% url 'data_introduction' 1 %}"
+                        {% elif "2" in single_service_package.service %}
+                        href="{% url 'choice_introduction' %}"
+                        {% elif "1" in single_service_package.service and nayeb_link %}
+                        href="{% url 'consultant_show' nayeb_link.user.id %}"
+                        {% else %}
+                        href="#"
+                        {% endif %}>
+                            <div class="reading-box p-4" style="position: relative; overflow: visible;">
+                                {% if single_service_package.discount_percent %}
+                                <div class="discount-badge-round">
+                                    <span>{{ single_service_package.discount_percent }}%</span>
+                                    <small>تخفیف</small>
                                 </div>
-                                <h5 class="mt-1 new-text-black">{{ single_service_package.content|safe }}</h5>
-                                <a href="{% url 'payment_view' single_service_package.id %}"
-                                class="btn btn-danger mt-3 d-flex justify-content-between">
-                                    <span>خرید</span>
-                                    <span>{{ single_service_package.total_price }} ت</span>
-                                </a>
+                                {% endif %}
+                                <div class="reading-detail d-grid">
+                                    <div class="d-flex gap-3" style="align-items: center;">
+                                        <div class="reading-image"
+                                            style="display: flex; justify-content: center; align-items: center; background-color: #1725611e;">
+                                            <i class="ri-inbox-line" style="font-size: 50px;"></i>
+                                        </div>
+                                        <div class="reading-name">
+                                            <h2 class="new-text-black">
+                                                {{ single_service_package.get_service_display }}
+                                            </h2>
+                                        </div>
+                                    </div>
+                                    <h5 class="p-2 w-75"
+                                        style="background-color: #1725611e; color: #172561; margin: auto !important; border-radius: 15px; text-align: center; margin-top: 15px !important;">
+                                        {% if single_service_package.price_before_discount %}
+                                            <span class="old-price">
+                                                {{ single_service_package.price_before_discount }} تومان
+                                            </span>
+                                        {% endif %}
+
+                                        <span class="new-price">
+                                            {{ single_service_package.total_price }} تومان
+                                        </span>
+                                    </h5>
+                                </div>
+                                <button class="btn btn-danger mt-3 d-flex justify-content-center">
+                                    جزئیات بیشتر
+                                </button>
                             </div>
-                        </div>
+                        </a>
                     </div>
                     {% endif %}
                     {% endfor %}
@@ -56,29 +96,45 @@
     {% if multi_service_packages %}
     <section id="multiPackages" class="section-t-space continue-reading-section" style="width: 85%; margin: auto;">
         <div class="">
-            <div class="swiper slider-1 px-15 reading-slider">
+            <div class="swiper slider-1 px-15 reading-slider" style="position: relative; overflow: visible;">
                 <div style="display: flex; flex-direction: column; gap: 15px;">
                     {% for multi_service_package in multi_service_packages %}
-                    <div class="plan" 
+                    <a href="{% url 'payment_view' multi_service_package.id %}" class="plan mt-3" 
                         {% if multi_service_package.get_type_display == "طلایی" %}
-                        style="background-color: #f4e4a6cd;"
+                        style="background-color: #f4e4a6cd; position: relative; overflow: visible;"
                         {% elif multi_service_package.get_type_display == "برنزی" %}
-                        style="background-color: #F4B87333;"
+                        style="background-color: #F4B87333; position: relative; overflow: visible;"
+                        {% else %}
+                        style="position: relative; overflow: visible;"
                         {% endif %}>
+                        {% if multi_service_package.discount_percent %}
+                        <div class="discount-badge-round">
+                            <span>{{ multi_service_package.discount_percent }}%</span>
+                            <small>تخفیف</small>
+                        </div>
+                        {% endif %}
                         <div class="description w-100">
-                            <h2 class="w-100" style="text-align: center;">پکیج
+                            <h2 class="w-100" style="text-align: center;">
                                 <span 
                                 {% if multi_service_package.get_type_display == "طلایی" %} 
                                 style="color: #D4AF37;" 
                                 {% elif multi_service_package.get_type_display == "برنزی" %} 
                                 style="color: #B87333;" 
                                 {% endif %}>
-                                    {{ multi_service_package.get_type_display }}
+                                    {{ multi_service_package.name }}
                                 </span>
                             </h2>
                             <h5 class="p-2 w-75"
                                 style="background-color: #1725611e; color: #172561; margin: auto !important; border-radius: 15px; text-align: center; margin-top: 15px !important;">
-                                {{ multi_service_package.total_price }} تومان
+                                {% if multi_service_package.price_before_discount %}
+                                    <span class="old-price">
+                                        {{ multi_service_package.price_before_discount }} تومان
+                                    </span>
+                                {% endif %}
+
+                                <span class="new-price">
+                                    {{ multi_service_package.total_price }} تومان
+                                </span>
                             </h5>
 
                             <ul class="check-list w-100 mt-3">
@@ -87,11 +143,11 @@
                                 {% endfor %}
                             </ul>
 
-                            <a href="{% url 'payment_view' multi_service_package.id %}" class="btn btn-danger mt-2">
+                            <button class="btn btn-danger mt-2">
                                 خرید پکیج
-                            </a>
+                            </button>
                         </div>
-                    </div>
+                    </a>
                     {% endfor %}
                 </div>
             </div>

@@ -38,6 +38,11 @@ class Package(models.Model):
         ("3", "طلایی"),
     )
 
+    name = models.CharField(
+        max_length=200,
+        verbose_name="نام"
+    )
+
     service = MultiSelectField(
         max_length=100,
         choices=SERVICE_CHOICES,
@@ -55,6 +60,14 @@ class Package(models.Model):
         config_name="default"
     )
 
+    price_before_discount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        verbose_name="قیمت قبل از تخفیف (اختیاری)",
+        null=True,
+        blank=True
+    )
+
     total_price = models.DecimalField(
         max_digits=12,
         decimal_places=0,
@@ -63,6 +76,15 @@ class Package(models.Model):
 
     def __str__(self):
         return f"پکیج با خدمات: {'، '.join(self.service_labels())}"
+
+    @property
+    def discount_percent(self):
+        if self.price_before_discount and self.price_before_discount > self.total_price:
+            return int(
+                (self.price_before_discount - self.total_price)
+                / self.price_before_discount * 100
+            )
+        return 0
 
     def service_labels(self):
         choices = dict(self.SERVICE_CHOICES)
@@ -308,6 +330,11 @@ class PaymentStatus(models.TextChoices):
     FAILED = "FAILED", "ناموفق"
     CANCELED = "CANCELED", "لغو شده"
 
+class PaymentProvider(models.TextChoices):
+    ZARINPAL = "zarinpal", "زرین پال"
+    SNAPPPAY = "snapppay", "اسنپ پی"
+    DIGIPAY = "digipay", "دیجی پی"
+
 class Payment(models.Model):
 
     order = models.ForeignKey(
@@ -351,6 +378,17 @@ class Payment(models.Model):
 
     tracking_code = models.CharField(
         max_length=100,
+        blank=True
+    )
+
+    provider = models.CharField(
+        max_length=20,
+        choices=PaymentProvider.choices,
+        default=PaymentProvider.ZARINPAL
+    )
+
+    kiani_id = models.BigIntegerField(
+        null=True,
         blank=True
     )
 

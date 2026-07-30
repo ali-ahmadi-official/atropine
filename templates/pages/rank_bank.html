@@ -215,19 +215,6 @@
     </div>
 </section>
 
-{% if not is_paid %}
-<h3 class="w-100 py-4" style="text-align: center; color: #172561;">
-    👇خرید پایگاه داده برای مشاهده همه رتبه های قبولی👇
-</h3>
-{% if database_package %}
-<div class="w-100 d-flex" style="justify-content: center;">
-    <a href="{% url 'payment_view' database_package.id %}" class="btn btn-primary rounded-pill px-4 w-75" style="background-color: #172561;">
-        خرید پایگاه داده
-    </a>
-</div>
-{% endif %}
-{% endif %}
-
 {% include 'includes/packages.html' %}
 
 {% endblock %}

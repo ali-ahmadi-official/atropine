@@ -43,18 +43,58 @@
     <!-- Style css -->
     <link id="change-link" rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
 
+    <style>
+        .discount-badge-round{
+            position:absolute;
+            top:-12px;
+            right:-12px;
+            width:68px;
+            height:68px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#ff4d4f,#b9383a);
+            color:#fff;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            box-shadow:0 8px 20px rgba(0,0,0,.2);
+            font-weight:bold;
+        }
+
+        .discount-badge-round span{
+            font-size:18px;
+            line-height:1;
+        }
+
+        .discount-badge-round small{
+            font-size:11px;
+            margin-top:2px;
+        }
+
+        .old-price{
+            color:#888;
+            text-decoration:line-through;
+            font-size:14px;
+        }
+
+        .new-price{
+            color:#d32f2f;
+            font-size:16px;
+            font-weight:700;
+        }
+
+        .disabled-card{
+            pointer-events: none;
+            cursor: default;
+            opacity: .6;
+        }
+    </style>
+
     {% block static %}
     {% endblock %}
 </head>
 
-<body class="inter-body learning-color">
-    <!-- Loader Box Start -->
-    <div class="min-loader-wrapper" style="z-index: 30000;">
-        <img src="{% static 'images/loader/chatting.gif' %}" class="img-fluid loader" alt="">
-        <div class="loader-section chatting-color section-left"></div>
-        <div class="loader-section chatting-color section-right"></div>
-    </div>
-    <!-- Loader Box End -->
+<body class="inter-body learning-color" style="background-color: #eef1f6;">
     
     <main class="position-relative" style="background-color: #eef1f6;">
         {% block header %}
@@ -108,12 +148,12 @@
                 </li>
 
                 <li>
-                    <a href="{% url 'main' %}" class="mobile-box">
+                    <a href="{% url 'support' %}" class="mobile-box">
                         <div class="mobile-icon">
                             <i class="ri-message-3-line"></i>
                         </div>
                         <div class="mobile-name">
-                            <h5>چت</h5>
+                            <h5>پشتیبانی</h5>
                         </div>
                     </a>
                 </li>
@@ -280,17 +320,6 @@
                             </div>
                         </a>
                     </li>
-                    <li>
-                        <a href="{% url 'trust' %}" class="menu-setting-box">
-                            <div class="setting-icon">
-                                <i class="ri-shield-check-line"></i>
-                            </div>
-                            <div class="setting-name">
-                                <h4>نماد اعتماد</h4>
-                                <i class="ri-arrow-left-s-line"></i>
-                            </div>
-                        </a>
-                    </li>
                 </ul>
 
                 <section class="section-t-space section-b-space">
@@ -337,6 +366,11 @@
                         </a>
                     </li>
                 </ul>
+                <div style="padding: 20px;">
+                    <script src="https://www.zarinpal.com/webservice/TrustCode" type="text/javascript">
+                    
+                    </script>
+                </div>
             </div>
         </div>
         <!-- Side menu offcanvas end -->
@@ -348,9 +382,6 @@
     <!-- swiper js -->
     <script src="{% static 'js/swiper-bundle.min.js' %}"></script>
     <script src="{% static 'js/custom_swiper.js' %}"></script>
-
-    <!-- Loader js -->
-    <script src="{% static 'js/loader.js' %}"></script>
 
     <!-- Theme js-->
     <script src="{% static 'js/script.js' %}"></script>

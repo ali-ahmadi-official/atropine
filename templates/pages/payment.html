@@ -333,12 +333,13 @@
 
                                     <th width="50%">
 
-                                        قیمت اولیه پکیج
+                                        قیمت پکیج
 
                                     </th>
 
                                     <td>
 
+                                        <span class="text-danger" style="text-decoration: line-through;">{{ package.price_before_discount }}</span> 
                                         {{ package.total_price }} تومان
 
                                     </td>
@@ -405,12 +406,36 @@
 
                         {% if can_pay %}
 
-                            <a href="{{ payment_url }}"
-                               class="btn btn-success btn-lg w-100">
+                            <div class="d-flex gap-2">
 
-                                پرداخت آنلاین
+                                <a href="{% url 'payment_start' package.id 'zarinpal' %}"
+                                class="btn btn-info d-flex align-items-center gap-2">
+                                    <img src="{% static 'images/z-pay.jpeg' %}"
+                                        alt="زرین پال"
+                                        width="24"
+                                        height="24">
+                                    <span>زرین پال</span>
+                                </a>
 
-                            </a>
+                                <a href="{% url 'payment_start' package.id 'snapppay' %}"
+                                class="btn btn-info d-flex align-items-center gap-2">
+                                    <img src="{% static 'images/s-pay.png' %}"
+                                        alt="اسنپ پی"
+                                        width="24"
+                                        height="24">
+                                    <span>اسنپ پی</span>
+                                </a>
+
+                                <a href="{% url 'payment_start' package.id 'digipay' %}"
+                                class="btn btn-info d-flex align-items-center gap-2">
+                                    <img src="{% static 'images/d-pay.png' %}"
+                                        alt="دیجی پی"
+                                        width="24"
+                                        height="24">
+                                    <span>دیجی پی</span>
+                                </a>
+
+                            </div>
 
                         {% else %}
 
@@ -450,12 +475,6 @@
     </div>
 
 </div>
-
-<h2 class="w-100 py-4" style="text-align: center; color: #172561;">
-    سایر خدمات و پکیج‌ها
-</h2>
-
-{% include 'includes/packages.html' %}
 
 {% endblock %}
 

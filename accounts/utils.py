@@ -1,27 +1,42 @@
 import requests
 import random
 
-URL = "https://console.melipayamak.com/api/send/simple/ee4033b63f624bf1bc9edbce94d5ff19"
+TOKEN = "tokenQeuykplnvnws"
+
+URL = "https://atropine.ir/kiani/SMS/SendOTP.aspx"
 
 def generate_code():
     return str(random.randint(100000, 999999))
 
 def send_sms(mobile, code):
-    data = {
-        "from": "50004001586578",
-        "to": mobile,
-        "text": f"دپارتمان مشاوره و منتورینگ آتروپین\n\nکد ورود شما: {code}\n\nاین کد را در اختیار دیگران قرار ندهید."
-    }
-
     try:
-        response = requests.post(URL, json=data)
+        response = requests.get(
+            URL,
+            params={
+                "phone": mobile,
+                "otp": code,
+                "token": TOKEN,
+            },
+            timeout=10,
+        )
 
         response.raise_for_status()
 
+        result = response.text.strip()
+
+        if result == "1":
+            return {
+                "success": True,
+                "code": code,
+            }
+
         return {
-            "code": code,
-            "result": response.json()
+            "success": False,
+            "error": result,
         }
 
-    except Exception:
-        return None
+    except requests.RequestException:
+        return {
+            "success": False,
+            "error": "connection_error",
+        }

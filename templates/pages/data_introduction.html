@@ -9,6 +9,32 @@
 {% block static %}
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 <style>
+    .image-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.8);
+        z-index: 999999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .image-modal img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
     .package-switch {
         position: relative;
         display: flex;
@@ -201,17 +227,17 @@
         قوانین و آئین نامه‌ها
     </a>
 
-    <a {% if is_paid %} href="{% url 'else_videos' %}" {% endif %} class="btn mb-4"
+    <a {% if is_paid %} href="{% url 'else_videos' %}" {% else %} href="#" {% endif %} class="btn mb-4 {% if not is_paid %} preview-image {% endif %}"
         style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         سایر ویدئوها
     </a>
 
-    <a {% if is_paid %} href="{% url 'else_voices' %}" {% endif %} class="btn mb-4"
+    <a {% if is_paid %} href="{% url 'else_voices' %}" {% else %} href="#" {% endif %} class="btn mb-4 {% if not is_paid %} preview-image {% endif %}"
         style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#dc3545,#b02a37,#172561); font-size: x-large;">
         سایر ویس‌ها
     </a>
 
-    <a {% if is_paid %} href="{% url 'static_message' %}" {% endif %} class="btn mb-4"
+    <a {% if is_paid %} href="{% url 'static_message' %}" {% else %} href="#" {% endif %} class="btn mb-4 {% if not is_paid %} preview-image {% endif %}"
         style="max-width: 800px; color: #fff; border: none; background: linear-gradient(135deg,#172561,#dc3545); font-size: x-large;">
         پاسخ به پرسش‌های داوطلبین
     </a>
@@ -220,10 +246,52 @@
 
 {% include 'includes/packages.html' %}
 
+{% if not is_paid %}
+<div id="imageModal" class="image-modal">
+    <span class="close-modal">&times;</span>
+    <div class="d-grid gap-4 p-4" style="background-color: #e9ecef; border-radius: 40px;">
+        <h3>
+            برای مشاهده لازم است پایگاه داده را بخرید!
+        </h3>
+        <div class="w-100 d-flex justify-content-center">
+            <a href="{% url 'payment_view' database_package.id %}" class="btn btn-danger mb-2 w-75" style="border-radius: 40px;">
+                خرید پایگاه داده
+                <br>
+                {{ database_package.total_price }} تومان
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 {% endblock %}
 
 {% block script %}
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+<script>
+    const modal = document.getElementById("imageModal");
+    console.log("kir");
+    
+
+    document.querySelectorAll(".preview-image").forEach(img => {
+        img.addEventListener("click", function () {
+            modal.style.display = "flex";
+            console.log("kos");
+        });
+        
+    });
+
+    document.querySelector(".close-modal").onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // بستن با کلیک روی پس‌زمینه
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
 <script>
     const player = new Plyr('#first-player');
 </script>

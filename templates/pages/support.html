@@ -1,0 +1,37 @@
+{% extends 'bases/learning.html' %}
+
+{% load static %}
+
+{% block title %}
+دریافت اشتراک مشاوره از طریق پشتیبانی
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">دریافت اشتراک مشاوره از طریق پشتیبانی</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<div class="mt-4 pt-4" style="display:flex;justify-content:center;align-items:center;gap:30px">
+
+    <a target="_blank" href="https://t.me/atropine_admin">
+        <img src="{% static 'images/telegram.jpg' %}" alt="telegram" width="150">
+    </a>
+
+    <a target="_blank" href="https://ble.ir/atropine_admin">
+        <img src="{% static 'images/bale.jpg' %}" alt="bale" width="150">
+    </a>
+
+</div>
+{% endblock %}

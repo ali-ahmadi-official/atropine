@@ -161,7 +161,7 @@
 
                 <div class="card-header bg-primary text-white" style="background-color: #172561 !important;">
                     <h4 class="mb-0">
-                        رزرو جلسه مشاوره
+                        رزرو جلسه مشاوره با {{ consultant.get_full_name }}
                     </h4>
                 </div>
 
@@ -181,19 +181,32 @@
 
                     {% elif service_required %}
 
-                        <div class="alert alert-warning">
+                    <div class="alert alert-warning">
 
-                            <h5>
-                                برای رزرو این جلسه ابتدا باید سرویس
-                                <strong>{{ service_name }}</strong>
-                                را خریداری کنید.
-                            </h5>
+                        <h5>
+                            برای رزرو این جلسه ابتدا باید سرویس
+                            <strong>{{ service_name }}</strong>
+                            را خریداری کنید.
+                        </h5>
 
-                            <a href="{% url 'choice_introduction' %}" class="btn btn-primary mt-3" style="background-color: #172561 !important;">
+                        {% if buy_service_url %}
+
+                            <a href="{{ buy_service_url }}"
+                            class="btn btn-success mt-3">
+                                خرید این سرویس
+                            </a>
+
+                        {% else %}
+
+                            <a href="{% url 'choice_introduction' %}"
+                            class="btn btn-primary mt-3"
+                            style="background-color:#172561 !important;">
                                 مشاهده خدمات
                             </a>
 
-                        </div>
+                        {% endif %}
+
+                    </div>
 
                     <!-- فرم رتبه -->
 
@@ -266,12 +279,15 @@
                     {% elif ready_to_reserve %}
 
                         <div class="alert alert-success">
+                            <div class="alert alert-success text-center">
 
-                            <h5>
-                                تمام مراحل با موفقیت تکمیل شده است.
-                            </h5>
+                                <h5>
 
-                            <hr>
+                                ضرورت دارد قبل از برگزاری جلسه تلفنی،پرسشنامه هایی را تکمیل کنید که پیش از جلسه از طریق پیامک به شما اطلاع داده خواهد شد.
+                                
+                                </h5>
+
+                            </div>
 
                             <p>
                                 <strong>مشاور:</strong>

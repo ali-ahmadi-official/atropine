@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.db import transaction
 from django.db.models import Q
 from apps.models import ContentCategory
-from accounts.models import User, Rank, ConsultantSchedule, Student
+from accounts.models import User, Rank, Consultant, ConsultantSchedule, Student
 from accounts.forms import RankForm, AForm, Personality60Form
 from payments.models import Package, ServiceToStudent, PackageRequest, Payment, Consultation, DiscountCode, DiscountUsage
 from .models import (
@@ -33,8 +33,13 @@ def global_context(request):
                 is_used=False
             ).exists()
 
+    nayeb_link = Consultant.objects.filter(
+        user__last_name="نایب زاده"
+    ).first()
+
     return {
-        "has_database_service": has_database_service
+        "has_database_service": has_database_service,
+        "nayeb_link": nayeb_link,
     }
 
 def main(request):
@@ -127,7 +132,7 @@ def compass(request):
 
     comments = Comment.objects.all().order_by("-id")
     
-    faqs = FAQ.objects.all().order_by("-id")
+    faqs = FAQ.objects.all()
 
     context = {
         "stories": stories,
@@ -572,8 +577,13 @@ def data_introduction(request, id):
         if len(p.service) != 1
     ]
 
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
     context = {
         "data_intro": data_intro,
+        "database_package": database_package,
         "is_paid": is_paid,
         "posters": posters,
         "single_service_packages": single_service_packages,
@@ -882,16 +892,11 @@ def rank_bank(request):
                 is_used=False
             ).exists()
     
-            if not has_database_service:
-                ranks = ranks.filter(field__is_free=True)
-            else:
+            if has_database_service:
                 is_paid = True
     
-        else:
-            ranks = ranks.filter(field__is_free=True)
-    
-    else:
-        ranks = ranks.filter(field__is_free=True)
+    if request.user.is_authenticated and request.user.role != "student":
+        is_paid = True
 
     rank_fields = RankField.objects.order_by("field")
 
@@ -1006,6 +1011,9 @@ def about_us(request):
 
     return render(request, 'pages/about_us.html', {"intro": intro, "posters": posters})
 
+def support(request):
+    return render(request, 'pages/support.html')
+
 def trust(request):
     return render(request, 'pages/trust.html')
 
@@ -1058,36 +1066,37 @@ def payment_view(request, package_id):
 
     user = request.user
 
-    if not user.first_name or not user.last_name or not user.mobile:
+    if package.service != ["5"]:
+        if not user.first_name or not user.last_name or not user.mobile:
 
-        if request.method == "POST":
+            if request.method == "POST":
 
-            form = CompleteProfileForm(request.POST)
+                form = CompleteProfileForm(request.POST)
 
-            if form.is_valid():
+                if form.is_valid():
 
-                user.first_name = form.cleaned_data["first_name"]
-                user.last_name = form.cleaned_data["last_name"]
-                user.mobile = form.cleaned_data["mobile"]
-                user.save()
+                    user.first_name = form.cleaned_data["first_name"]
+                    user.last_name = form.cleaned_data["last_name"]
+                    user.mobile = form.cleaned_data["mobile"]
+                    user.save()
 
-                return redirect(
-                    reverse("payment_view", kwargs={"package_id": package.id})
+                    return redirect(
+                        reverse("payment_view", kwargs={"package_id": package.id})
+                    )
+
+            else:
+
+                form = CompleteProfileForm(
+                    initial={
+                        "first_name": user.first_name,
+                        "last_name": user.last_name,
+                        "mobile": user.mobile,
+                    }
                 )
 
-        else:
+            context["profile_form"] = form
 
-            form = CompleteProfileForm(
-                initial={
-                    "first_name": user.first_name,
-                    "last_name": user.last_name,
-                    "mobile": user.mobile,
-                }
-            )
-
-        context["profile_form"] = form
-
-        return render(request, "pages/payment.html", context)
+            return render(request, "pages/payment.html", context)
 
     # -----------------------
     # مرحله 3 : محاسبه مبلغ
@@ -1209,10 +1218,6 @@ def payment_view(request, package_id):
         "discount": discount,
         "final_price": final_price,
         "can_pay": final_price > 0,
-        "payment_url": reverse(
-            "payment_start",
-            kwargs={"package_id": package.id}
-        ),
     })
 
     context["discount_form"] = DiscountCodeForm()
@@ -1310,93 +1315,112 @@ def reserve_consultation(request, schedule_id):
     ).first()
 
     if service is None:
+
+        package = None
+
+        for p in Package.objects.all():
+            if len(p.service) == 1 and p.service[0] == service_code:
+                package = p
+                break
+
         context["service_required"] = True
-        return render(request, "pages/reserve_consultation.html", context)
+
+        if package:
+            context["buy_service_url"] = reverse(
+                "payment_view",
+                kwargs={"package_id": package.id}
+            )
+
+        return render(
+            request,
+            "pages/reserve_consultation.html",
+            context
+        )
 
     # ---------------------- Rank ----------------------
 
-    if not hasattr(student, "student_rank"):
+    # if not hasattr(student, "student_rank"):
 
-        if request.method == "POST" and request.POST.get("step") == "rank":
+    #     if request.method == "POST" and request.POST.get("step") == "rank":
 
-            form = RankForm(
-                request.POST,
-                request.FILES
-            )
+    #         form = RankForm(
+    #             request.POST,
+    #             request.FILES
+    #         )
 
-            if form.is_valid():
-                obj = form.save(commit=False)
-                obj.student = student
-                obj.save()
+    #         if form.is_valid():
+    #             obj = form.save(commit=False)
+    #             obj.student = student
+    #             obj.save()
 
-                return redirect(
-                    "reserve_consultation",
-                    schedule.id
-                )
+    #             return redirect(
+    #                 "reserve_consultation",
+    #                 schedule.id
+    #             )
 
-        else:
-            form = RankForm()
+    #     else:
+    #         form = RankForm()
 
-        context["show_rank_form"] = True
-        context["rank_form"] = form
+    #     context["show_rank_form"] = True
+    #     context["rank_form"] = form
 
-        return render(request, "pages/reserve_consultation.html", context)
+    #     return render(request, "pages/reserve_consultation.html", context)
 
-    # ---------------------- AB ----------------------
+    # # ---------------------- AB ----------------------
 
-    if not (student.a_completed):
+    # if not (student.a_completed):
 
-        if request.method == "POST" and request.POST.get("step") == "ab":
+    #     if request.method == "POST" and request.POST.get("step") == "ab":
 
-            form = AForm(request.POST)
+    #         form = AForm(request.POST)
 
-            if form.is_valid():
+    #         if form.is_valid():
 
-                obj = form.save(commit=False)
-                obj.student = student
-                obj.save()
+    #             obj = form.save(commit=False)
+    #             obj.student = student
+    #             obj.save()
 
-                obj.a_save()
+    #             obj.a_save()
 
-                return redirect(
-                    "reserve_consultation",
-                    schedule.id
-                )
+    #             return redirect(
+    #                 "reserve_consultation",
+    #                 schedule.id
+    #             )
 
-        else:
-            form = AForm()
+    #     else:
+    #         form = AForm()
 
-        context["show_ab_form"] = True
-        context["ab_form"] = form
+    #     context["show_ab_form"] = True
+    #     context["ab_form"] = form
 
-        return render(request, "pages/reserve_consultation.html", context)
+    #     return render(request, "pages/reserve_consultation.html", context)
 
-    # ---------------------- Personality ----------------------
+    # # ---------------------- Personality ----------------------
 
-    if not hasattr(student, "student_personality_60"):
+    # if not hasattr(student, "student_personality_60"):
 
-        if request.method == "POST" and request.POST.get("step") == "personality":
+    #     if request.method == "POST" and request.POST.get("step") == "personality":
 
-            form = Personality60Form(request.POST)
+    #         form = Personality60Form(request.POST)
 
-            if form.is_valid():
+    #         if form.is_valid():
 
-                obj = form.save(commit=False)
-                obj.student = student
-                obj.save()
+    #             obj = form.save(commit=False)
+    #             obj.student = student
+    #             obj.save()
 
-                return redirect(
-                    "reserve_consultation",
-                    schedule.id
-                )
+    #             return redirect(
+    #                 "reserve_consultation",
+    #                 schedule.id
+    #             )
 
-        else:
-            form = Personality60Form()
+    #     else:
+    #         form = Personality60Form()
 
-        context["show_personality_form"] = True
-        context["personality_form"] = form
+    #     context["show_personality_form"] = True
+    #     context["personality_form"] = form
 
-        return render(request, "pages/reserve_consultation.html", context)
+    #     return render(request, "pages/reserve_consultation.html", context)
 
     # ---------------------- تایید نهایی ----------------------
 

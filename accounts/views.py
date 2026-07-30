@@ -2,8 +2,9 @@ import re
 import jdatetime
 from collections import defaultdict
 from datetime import timedelta
-from django.utils import timezone
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
@@ -593,12 +594,52 @@ class MediaCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateVi
     template_name = "accounts/admins/media_add.html"
     success_url = reverse_lazy("media_list")
 
+    def form_valid(self, form):
+        self.object = form.save()
+
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": True,
+                "redirect": str(self.success_url),
+            })
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": False,
+                "errors": form.errors,
+            }, status=400)
+
+        return super().form_invalid(form)
+
 class MediaUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
     allowed_roles = ["super_admin"]
     model = Media
     form_class = MediaForm
     template_name = "accounts/admins/media_edit.html"
     success_url = reverse_lazy("media_list")
+
+    def form_valid(self, form):
+        self.object = form.save()
+    
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": True,
+                "redirect": str(self.success_url),
+            })
+    
+        return super().form_valid(form)
+    
+    def form_invalid(self, form):
+        if self.request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return JsonResponse({
+                "success": False,
+                "errors": form.errors,
+            }, status=400)
+    
+        return super().form_invalid(form)
 
 class MediaDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
     allowed_roles = ["super_admin"]

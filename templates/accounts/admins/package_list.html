@@ -22,6 +22,7 @@
         <thead>
             <tr>
                 <th scope="col">شناسه</th>
+                <th scope="col">نام</th>
                 <th scope="col">نوع پکیج</th>
                 <th scope="col">خدمات</th>
                 <th scope="col">قیمت</th>
@@ -33,6 +34,9 @@
             <tr>
                 <td>
                     {{ package.id }}
+                </td>
+                <td>
+                    {{ package.name }}
                 </td>
                 <td>
                     {{ package.get_type_display }}
@@ -52,7 +56,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center;">
+                <td colspan="6" style="text-align: center;">
                     موردی یافت نشد.
                 </td>
             </tr>

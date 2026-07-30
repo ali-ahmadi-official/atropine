@@ -20,6 +20,11 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.name.label }}</p>
+            {% include 'includes/error.html' with errors=form.name.errors %}
+            {{ form.name }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.service.label }}</p>
             {% include 'includes/error.html' with errors=form.service.errors %}
             {{ form.service }}
@@ -33,6 +38,11 @@
             <p class="mt-2 text-muted">{{ form.content.label }}</p>
             {% include 'includes/error.html' with errors=form.content.errors %}
             {{ form.content }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.price_before_discount.label }}</p>
+            {% include 'includes/error.html' with errors=form.price_before_discount.errors %}
+            {{ form.price_before_discount }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.total_price.label }}</p>

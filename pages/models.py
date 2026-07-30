@@ -511,8 +511,8 @@ class Rule(models.Model):
 
 class StaticMessage(models.Model):
     SENDER_CHOICES = (
-        ("1", "ادمین"),
-        ("2", "داوطلب"),
+        ("1", "جواب"),
+        ("2", "سوال"),
     )
 
     sender = models.CharField(
