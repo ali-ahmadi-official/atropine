@@ -232,7 +232,7 @@
                 <div class="reading-list w-100">
                     {% if is_paid %}
                     <div class="reading-box video-item" data-video="{{ media.content.url }}"
-                        data-title="{{ media.title }}" data-description="{{ media.description|safe }}">
+                        data-title="{{ media.title }}" data-description="{{ media.description }}">
                         <div class="reading-detail">
                             <div class="reading-image">
                                 {% if media.cover %}

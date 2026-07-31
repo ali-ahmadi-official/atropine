@@ -218,6 +218,30 @@
                     </form>
 
                     <li>
+                        <a href="{% url 'payment_list' %}" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-secure-payment-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>تاریخچه پرداخت</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{% url 'student_consultations' %}" class="menu-setting-box">
+                            <div class="setting-icon">
+                                <i class="ri-calendar-check-line"></i>
+                            </div>
+                            <div class="setting-name">
+                                <h4>تاریخچه رزرو مشاوره</h4>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </div>
+                        </a>
+                    </li>
+
+                    <li>
                         <a href="#" class="menu-setting-box"
                         onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             <div class="setting-icon">

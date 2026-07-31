@@ -1031,6 +1031,11 @@ def atropine_team(request):
 
 def payment_view(request, package_id):
 
+    next_url = request.GET.get("next")
+
+    if next_url:
+        request.session["payment_next"] = next_url
+
     package = get_object_or_404(Package, id=package_id)
 
     packages = Package.objects.all()
@@ -1265,6 +1270,13 @@ def payment_list(request):
 
     }
 
+    context["payment_success"] = request.session.pop(
+        "payment_success",
+        False
+    )
+
+    context["continue_url"] = request.session.get("payment_next")
+
 
     return render(
         request,
@@ -1328,9 +1340,18 @@ def reserve_consultation(request, schedule_id):
         context["service_required"] = True
 
         if package:
-            context["buy_service_url"] = reverse(
+            payment_url = reverse(
                 "payment_view",
                 kwargs={"package_id": package.id}
+            )
+
+            continue_url = reverse(
+                "reserve_consultation",
+                kwargs={"schedule_id": schedule.id}
+            )
+
+            context["buy_service_url"] = (
+                f"{payment_url}?next={continue_url}"
             )
 
         return render(

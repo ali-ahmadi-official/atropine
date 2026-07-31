@@ -950,6 +950,8 @@ class ConsultantScheduleListView(ListView):
 
         week_dict = defaultdict(list)
 
+        reserved_schedules = []
+
         for schedule in schedules:
 
             consultation = Consultation.objects.filter(
@@ -959,6 +961,9 @@ class ConsultantScheduleListView(ListView):
             ).first()
 
             schedule.request = consultation
+
+            if schedule.request:
+                reserved_schedules.append(schedule)
 
             week_start = schedule.date - timedelta(
                 days=(schedule.date.weekday() + 2) % 7
@@ -1045,6 +1050,8 @@ class ConsultantScheduleListView(ListView):
             })
 
         context["weeks"] = weeks
+
+        context["reserved_schedules"] = reserved_schedules
 
         return context
 

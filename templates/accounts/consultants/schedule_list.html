@@ -194,6 +194,54 @@
     </div>
 </section>
 
+<div class="table-responsive my-3" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست نوبت های رزرو شده
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">تاریخ</th>
+                <th scope="col">ساعت شروع</th>
+                <th scope="col">ساعت پایان</th>
+                <th scope="col">رزرو توسط</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for schedule in reserved_schedules %}
+            <tr>
+                <td>
+                    {{ schedule.id }}
+                </td>
+                <td>
+                    {{ schedule.date_shamsi }}
+                </td>
+                <td>
+                    {{ schedule.start_time }}
+                </td>
+                <td>
+                    {{ schedule.end_time }}
+                </td>
+                <td>
+                    <a href="{% url 'show_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 <script>
     const tables = document.querySelectorAll(".week-table");
 

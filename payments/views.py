@@ -312,6 +312,8 @@ def verify_payment(request):
             response["data"]["ref_id"]
         )
 
+        request.session["payment_success"] = True
+
         return redirect("payment_list")
 
     payment.status = PaymentStatus.FAILED
@@ -346,6 +348,8 @@ def verify_kiani_payment(request):
     ).json()
 
     if response.get("ok") and response.get("isPaid"):
+
+        request.session["payment_success"] = True
 
         complete_payment(payment)
 

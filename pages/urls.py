@@ -40,5 +40,5 @@ urlpatterns = [
     path('payment-view/<int:package_id>/', payment_view, name='payment_view'),
     path('payment-list/', payment_list, name='payment_list'),
     path('reserve-consultation/<int:schedule_id>/', reserve_consultation, name='reserve_consultation'),
-    path('student_consultations/', student_consultations, name='student_consultations'),
+    path('student-consultations/', student_consultations, name='student_consultations'),
 ]

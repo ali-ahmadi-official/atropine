@@ -338,8 +338,9 @@
                                     </th>
 
                                     <td>
-
+                                        {% if package.price_before_discount %}
                                         <span class="text-danger" style="text-decoration: line-through;">{{ package.price_before_discount }}</span> 
+                                        {% endif %}
                                         {{ package.total_price }} تومان
 
                                     </td>

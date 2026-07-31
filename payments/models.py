@@ -57,7 +57,9 @@ class Package(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     price_before_discount = models.DecimalField(

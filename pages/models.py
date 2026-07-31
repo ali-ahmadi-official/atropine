@@ -87,7 +87,9 @@ class LiveEvent(models.Model):
 
     description = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     cover = models.ImageField(
@@ -215,7 +217,9 @@ class PlansIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -233,7 +237,9 @@ class DataIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -251,7 +257,9 @@ class CounselingIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -269,7 +277,9 @@ class EstimationIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -287,7 +297,9 @@ class ChoiceIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -305,7 +317,9 @@ class LiveIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -323,7 +337,9 @@ class AboutUsIntroduction(models.Model):
 
     content = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     class Meta:
@@ -402,7 +418,9 @@ class Media(models.Model):
 
     description = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     media_type = models.CharField(
@@ -495,7 +513,9 @@ class Rule(models.Model):
 
     description = CKEditor5Field(
         "معرفی و توضیحات",
-        config_name="default"
+        config_name="default",
+        null=True,
+        blank=True
     )
 
     image = models.ImageField(
