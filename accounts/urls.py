@@ -84,6 +84,7 @@ from .views import (
     ConsultantUpdateView,
     ConsultantScheduleListView,
     ConsultantScheduleCreateView,
+    ConsultantScheduleUpdateView,
     ConsultantScheduleDeleteView,
     MyStudentListView,
     show_my_student,
@@ -205,6 +206,7 @@ urlpatterns = [
 
     path("consultants/schedules/", ConsultantScheduleListView.as_view(), name="schedule_list"),
     path("consultants/schedules/add/", ConsultantScheduleCreateView.as_view(), name="schedule_add"),
+    path("consultants/schedules/<int:pk>/edit/", ConsultantScheduleUpdateView.as_view(), name="schedule_edit"),
     path("consultants/schedules/<int:pk>/delete/", ConsultantScheduleDeleteView.as_view(), name="schedule_delete"),
 
     path("consultants/my-students/", MyStudentListView.as_view(), name="my_student_list"),

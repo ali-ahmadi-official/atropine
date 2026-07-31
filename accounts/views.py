@@ -1,7 +1,7 @@
 import re
 import jdatetime
 from collections import defaultdict
-from datetime import timedelta
+from datetime import timedelta, datetime
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -945,6 +945,7 @@ class ConsultantScheduleListView(ListView):
         ).order_by("date", "start_time")
 
         today = timezone.localdate()
+        now = timezone.localtime()
         current_week_start = today - timedelta(days=(today.weekday() + 2) % 7)
 
         week_dict = defaultdict(list)
@@ -1021,7 +1022,14 @@ class ConsultantScheduleListView(ListView):
                 for day in days:
 
                     if r < len(day["slots"]):
-                        row.append(day["slots"][r])
+                        slot = day["slots"][r]
+                        slot_datetime = timezone.make_aware(
+                            datetime.combine(slot.date, slot.start_time)
+                        )
+                        
+                        slot.is_available = (slot_datetime > now)
+
+                        row.append(slot)
                     else:
                         row.append(None)
 
@@ -1049,6 +1057,12 @@ class ConsultantScheduleCreateView(CreateView):
     def form_valid(self, form):
         form.instance.consultant = self.request.user.user_consultant
         return super().form_valid(form)
+
+class ConsultantScheduleUpdateView(UpdateView):
+    model = ConsultantSchedule
+    form_class = ConsultantScheduleForm
+    template_name = "accounts/consultants/schedule_edit.html"
+    success_url = reverse_lazy("schedule_list")
 
 class ConsultantScheduleDeleteView(DeleteView):
     model = ConsultantSchedule

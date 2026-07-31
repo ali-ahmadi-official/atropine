@@ -74,42 +74,97 @@
 
                                     {% if slot %}
 
-                                    {% if slot.is_reserved %}
+                                    {% if slot.request %}
+                                    
+                                        <button class="btn btn-danger btn-sm w-100">
+                                        
+                                            {{ slot.start_time|time:"H:i" }}
+                                            -
+                                            {{ slot.end_time|time:"H:i" }}
+                                            
+                                            <br>
+                                            
+                                            رزرو شده {{ slot.request.service.student.user.mobile }}
 
-                                    <a
-                                        {% if slot.request %}
-                                        href="{% url 'show_my_student' slot.request.service.student.user.id %}"
-                                        {% endif %}
-                                        class="btn btn-success btn-sm w-100">
+                                            <br>
 
-                                        {{ slot.start_time|time:"H:i" }}
-                                        -
-                                        {{ slot.end_time|time:"H:i" }}
+                                            <a href="{% url 'show_my_student' slot.request.service.student.user.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-eye-line"></i>
+                                            </a>
+                                        
+                                        </button>
+                                
+                                    {% elif slot.is_reserved %}
 
-                                        <br>
+                                        <button class="btn btn-warning btn-sm w-100">
 
-                                        رزرو شده
+                                            {{ slot.start_time|time:"H:i" }}
+                                            -
+                                            {{ slot.end_time|time:"H:i" }}
 
-                                        <br>
+                                            <br>
 
-                                        {{ slot.request.service.student.user.mobile }}
+                                            غیر قابل رزرو
 
-                                    </a>
+                                            <br>
+
+                                            <a href="{% url 'schedule_edit' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+
+                                            <a href="{% url 'schedule_delete' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </a>
+
+                                        </button>
+
+                                    {% elif not slot.is_available %}
+
+                                        <button class="btn btn-warning btn-sm w-100">
+
+                                            {{ slot.start_time|time:"H:i" }}
+                                            -
+                                            {{ slot.end_time|time:"H:i" }}
+
+                                            <br>
+
+                                            غیر قابل رزرو
+
+                                            <br>
+
+                                            <a href="{% url 'schedule_edit' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+
+                                            <a href="{% url 'schedule_delete' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </a>
+
+                                        </button>
 
                                     {% else %}
 
-                                    <a href="{% url 'schedule_delete' slot.id %}"
-                                        class="btn btn-info btn-sm w-100">
+                                        <button class="btn btn-success btn-sm w-100">
 
-                                        {{ slot.start_time|time:"H:i" }}
-                                        -
-                                        {{ slot.end_time|time:"H:i" }}
+                                            {{ slot.start_time|time:"H:i" }}
+                                            -
+                                            {{ slot.end_time|time:"H:i" }}
 
-                                        <br>
+                                            <br>
 
-                                        بدون رزرو
+                                            امکان رزرو
 
-                                    </a>
+                                            <br>
+
+                                            <a href="{% url 'schedule_edit' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+
+                                            <a href="{% url 'schedule_delete' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </a>
+
+                                        </button>
 
                                     {% endif %}
 
