@@ -533,6 +533,8 @@ def live_archives(request):
         "lives": lives,
         "years": shamsi_years,
         "categories": categories,
+        "selected_year": selected_year,
+        "selected_category": selected_category,
         "selected_year": str(selected_year) if selected_year else "",
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,

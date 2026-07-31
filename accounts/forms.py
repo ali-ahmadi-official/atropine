@@ -146,13 +146,6 @@ class ConsultantScheduleForm(BaseModelForm):
     def clean(self):
         cleaned_data = super().clean()
 
-        show_in = cleaned_data.get("show_in", [])
-
-        if "archives" not in show_in:
-            show_in.append("archives")
-
-        cleaned_data["show_in"] = show_in
-
         try:
             jy, jm, jd = map(int, cleaned_data["date"].split("/"))
             cleaned_data["date"] = (
@@ -277,6 +270,13 @@ class LiveEventForm(BaseModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+
+        show_in = cleaned_data.get("show_in", [])
+        
+        if "archives" not in show_in:
+            show_in.append("archives")
+        
+        cleaned_data["show_in"] = show_in
 
         start_date = cleaned_data.get("start_date")
         start_time = cleaned_data.get("start_time")
