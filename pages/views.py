@@ -383,7 +383,10 @@ def choice_introduction(request):
 
     posters = Poster.objects.filter(show_in__icontains="choice")
 
+    all_consultants = request.GET.get("all_consultants")
     atropine_teams = User.objects.filter(role='consultant')
+    if all_consultants:
+        atropine_teams = atropine_teams.exclude(first_name="دکتر امیرحسین", last_name="نایب زاده")
 
     packages = Package.objects.all()
 

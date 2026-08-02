@@ -269,14 +269,11 @@
 {% block script %}
 <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
 <script>
-    const modal = document.getElementById("imageModal");
-    console.log("kir");
-    
+    const modal = document.getElementById("imageModal");    
 
     document.querySelectorAll(".preview-image").forEach(img => {
         img.addEventListener("click", function () {
             modal.style.display = "flex";
-            console.log("kos");
         });
         
     });

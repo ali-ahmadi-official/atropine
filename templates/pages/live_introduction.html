@@ -3,12 +3,38 @@
 {% load static %}
 
 {% block title %}
-وبینار های طلایی آتروپین
+لایو های تخصصی انتخاب رشته | 1405
 {% endblock %}
 
 {% block static %}
 <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
 <style>
+    .image-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.8);
+        z-index: 999999;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .image-modal img {
+        max-width: 90%;
+        max-height: 90%;
+        border-radius: 10px;
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 40px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
     .package-switch {
         position: relative;
         display: flex;
@@ -150,8 +176,7 @@
     <div class="instructors-box">
         <ul class="instructors-list px-15"
             style="display: flex; flex-direction: column; max-height: 300px; overflow-y: scroll;">
-            <li class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
-                <a target="_blank"
+            <a target="_blank"
                 {% if live.stream_url %}
                 href="{{ live.stream_url }}"
                 {% elif live.aparat_url %}
@@ -161,9 +186,9 @@
                 {% elif live.video %}
                 href="{{ live.video.url }}"
                 {% else %}
-                href="#"
-                {% endif %}
-                class="my-card" style="justify-content: space-between;">
+                id="no-link"
+                {% endif %} class="w-100" style="box-shadow: 0 0 5px gainsboro; border-radius: 15px; background-color: #1725611e;">
+                <div class="my-card" style="justify-content: space-between;">
                     <div style="display: flex; justify-content: center; align-items: center;">
                         <div class="instructors-image-edited">
                             <img src="{{ live.cover.url }}" class="img-fluid" alt="atropine team avatar">
@@ -179,7 +204,7 @@
                             <h6>{{ live.start_date_shamsi }}</h6>
                         </div>
                     </div>
-                </a>
+                </div>
                 {% if live.video %}
                 <div class="p-4">
                     <video class="intro-plans-video" id="first-player" controls>
@@ -190,7 +215,7 @@
                 <div class="p-4">
                     {{ live.description|safe }}
                 </div>
-            </li>
+            </a>
         </ul>
         <div class="px-15">
             <a href="{% url 'live_time_steps' %}" class="btn btn-primary mt-3" style="background-color: #172561;">برنامه زمان بندی لایوها</a>
@@ -200,6 +225,14 @@
 
 {% include 'includes/packages.html' %}
 
+<div id="imageModal" class="image-modal">
+    <span class="close-modal">&times;</span>
+    <div class="d-grid gap-4 p-4" style="background-color: #e9ecef; border-radius: 40px;">
+        <h3>
+            این لایو هنوز برگزار نشده، در تاریخ و ساعت اعلام شده وارد شوید.
+        </h3>
+    </div>
+</div>
 {% endblock %}
 
 {% block script %}
@@ -239,5 +272,26 @@
 
         sw.classList.add("multi");
     }
+</script>
+<script>
+    const modal = document.getElementById("imageModal");    
+
+    document.querySelectorAll("#no-link").forEach(img => {
+        img.addEventListener("click", function () {
+            modal.style.display = "flex";
+        });
+        
+    });
+
+    document.querySelector(".close-modal").onclick = function () {
+        modal.style.display = "none";
+    };
+
+    // بستن با کلیک روی پس‌زمینه
+    modal.onclick = function(e) {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    };
 </script>
 {% endblock %}

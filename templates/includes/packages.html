@@ -33,7 +33,7 @@
                         {% if "5" in single_service_package.service %}
                         href="{% url 'data_introduction' 1 %}"
                         {% elif "2" in single_service_package.service %}
-                        href="{% url 'choice_introduction' %}"
+                        href="{% url 'choice_introduction' %}?all_consultants=no"
                         {% elif "1" in single_service_package.service and nayeb_link %}
                         href="{% url 'consultant_show' nayeb_link.user.id %}"
                         {% else %}
