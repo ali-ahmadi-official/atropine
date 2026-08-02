@@ -52,6 +52,7 @@ class News(models.Model):
     class Meta:
         verbose_name = "خبر"
         verbose_name_plural = "خبرها"
+        ordering = ["-id"]
 
 class Story(models.Model):
     title = models.CharField(
@@ -78,6 +79,7 @@ class Story(models.Model):
     class Meta:
         verbose_name = "استوری"
         verbose_name_plural = "استوری ها"
+        ordering = ["-id"]
 
 class LiveEvent(models.Model):
     title = models.CharField(
@@ -159,6 +161,7 @@ class LiveEvent(models.Model):
     class Meta:
         verbose_name = "لایو"
         verbose_name_plural = "لایوها"
+        ordering = ["-id"]
 
 class Achievement(models.Model):
     full_name = models.CharField(
@@ -179,6 +182,7 @@ class Achievement(models.Model):
     class Meta:
         verbose_name = "افتخار"
         verbose_name_plural = "افتخارات"
+        ordering = ["-id"]
 
 class Survey(models.Model):
     title = models.CharField(
@@ -189,6 +193,7 @@ class Survey(models.Model):
     class Meta:
         verbose_name = "نظرسنجی"
         verbose_name_plural = "نظرسنجی ها"
+        ordering = ["-id"]
 
 class SurveyOption(models.Model):
     survey = models.ForeignKey(
@@ -205,6 +210,7 @@ class SurveyOption(models.Model):
     class Meta:
         verbose_name = "گزینه نظرسنجی"
         verbose_name_plural = "گزینه های نظرسنجی"
+        ordering = ["-id"]
 
 class PlansIntroduction(models.Model):
     video = models.FileField(
@@ -225,6 +231,7 @@ class PlansIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی خدمت"
         verbose_name_plural = "معرفی های خدمت"
+        ordering = ["-id"]
 
 class DataIntroduction(models.Model):
     video = models.FileField(
@@ -245,6 +252,7 @@ class DataIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی پایگاه داده"
         verbose_name_plural = "معرفی های پایگاه داده"
+        ordering = ["-id"]
 
 class CounselingIntroduction(models.Model):
     video = models.FileField(
@@ -265,6 +273,7 @@ class CounselingIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی مشاوره"
         verbose_name_plural = "معرفی های مشاوره"
+        ordering = ["-id"]
 
 class EstimationIntroduction(models.Model):
     video = models.FileField(
@@ -285,6 +294,7 @@ class EstimationIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی تخمین قبولی"
         verbose_name_plural = "معرفی های تخمین قبولی"
+        ordering = ["-id"]
 
 class ChoiceIntroduction(models.Model):
     video = models.FileField(
@@ -305,6 +315,7 @@ class ChoiceIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی انتخاب رشته"
         verbose_name_plural = "معرفی های انتخاب رشته"
+        ordering = ["-id"]
 
 class LiveIntroduction(models.Model):
     video = models.FileField(
@@ -325,6 +336,7 @@ class LiveIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی وبینار"
         verbose_name_plural = "معرفی های وبینار"
+        ordering = ["-id"]
 
 class AboutUsIntroduction(models.Model):
     video = models.FileField(
@@ -345,6 +357,7 @@ class AboutUsIntroduction(models.Model):
     class Meta:
         verbose_name = "معرفی ما"
         verbose_name_plural = "معرفی های ما"
+        ordering = ["-id"]
 
 class Poster(models.Model):
     cover = models.ImageField(
@@ -367,6 +380,7 @@ class Poster(models.Model):
     class Meta:
         verbose_name = "پوستر"
         verbose_name_plural = "پوستر ها"
+        ordering = ["-id"]
 
 class Comment(models.Model):
     cover = models.ImageField(
@@ -382,6 +396,7 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "کامنت"
         verbose_name_plural = "کامنت ها"
+        ordering = ["-id"]
 
 class FAQ(models.Model):
     question = models.CharField(
@@ -397,6 +412,7 @@ class FAQ(models.Model):
     class Meta:
         verbose_name = "پرسش و پاسخ"
         verbose_name_plural = "پرسش و پاسخ ها"
+        ordering = ["-id"]
 
 class Media(models.Model):
     content = models.FileField(
@@ -447,6 +463,7 @@ class Media(models.Model):
     class Meta:
         verbose_name = "مدیا"
         verbose_name_plural = "مدیا ها"
+        ordering = ["-id"]
 
 class RankField(models.Model):
     field = models.CharField(
@@ -465,6 +482,7 @@ class RankField(models.Model):
     class Meta:
         verbose_name = "دسته بندی رشته"
         verbose_name_plural = "دسته بندی رشته ها"
+        ordering = ["-id"]
 
 class RankBank(models.Model):
     QUOTA_CHOICES = (
@@ -504,6 +522,7 @@ class RankBank(models.Model):
     class Meta:
         verbose_name = "رتبه قبولی"
         verbose_name_plural = "رتبه قبولی ها"
+        ordering = ["-id"]
 
 class Rule(models.Model):
     title = models.CharField(
@@ -528,6 +547,7 @@ class Rule(models.Model):
     class Meta:
         verbose_name = "قانون"
         verbose_name_plural = "قوانین"
+        ordering = ["-id"]
 
 class StaticMessage(models.Model):
     SENDER_CHOICES = (
@@ -549,3 +569,4 @@ class StaticMessage(models.Model):
     class Meta:
         verbose_name = "پیام ثابت"
         verbose_name_plural = "پیام های ثابت"
+        ordering = ["id"]

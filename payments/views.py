@@ -5,7 +5,9 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
-from accounts.models import Student
+from django.db import transaction
+from accounts.models import Student, ConsultantSchedule
+from .models import Consultation
 
 from .models import (
     Package,
@@ -127,7 +129,7 @@ def start_payment(request, package_id, provider):
         create_response = requests.get(
             "https://atropine.ir/kiani/Create.aspx",
             params={
-                "amount": int(order.final_price),
+                "amount": int(order.final_price) * 10,
                 "userphone": student.user.mobile,
             }
         ).json()
@@ -141,7 +143,7 @@ def start_payment(request, package_id, provider):
             "https://atropine.ir/kiani/SnappPay/Payment.aspx",
             params={
                 "kianiId": kiani_id,
-                "amount": int(order.final_price),
+                "amount": int(order.final_price) * 10,
             }
         ).json()
 
@@ -162,7 +164,7 @@ def start_payment(request, package_id, provider):
         create_response = requests.get(
             "https://atropine.ir/kiani/Create.aspx",
             params={
-                "amount": int(order.final_price),
+                "amount": int(order.final_price) * 10,
                 "userphone": student.user.mobile,
             }
         ).json()
@@ -176,7 +178,7 @@ def start_payment(request, package_id, provider):
             "https://atropine.ir/kiani/DigiPay/Payment.aspx",
             params={
                 "kianiId": kiani_id,
-                "amount": int(order.final_price),
+                "amount": int(order.final_price) * 10,
             }
         ).json()
 
@@ -251,6 +253,45 @@ def complete_payment(payment, ref_id=None):
     except Exception:
         pass
 
+def auto_reserve(schedule_id, student):
+
+    schedule = ConsultantSchedule.objects.filter(
+        id=schedule_id,
+        is_reserved=False
+    ).first()
+
+    if schedule is None:
+        return False
+
+    if schedule.consultant.user.last_name == "نایب زاده":
+        service_code = "1"
+    else:
+        service_code = "2"
+
+    service = ServiceToStudent.objects.filter(
+        student=student,
+        service=service_code,
+        is_used=False
+    ).first()
+
+    if service is None:
+        return False
+
+    with transaction.atomic():
+
+        service.is_used = True
+        service.save(update_fields=["is_used"])
+
+        schedule.is_reserved = True
+        schedule.save(update_fields=["is_reserved"])
+
+        Consultation.objects.create(
+            service=service,
+            schedule=schedule
+        )
+
+    return True
+
 def verify_payment(request):
 
     authority = request.GET.get("Authority")
@@ -312,6 +353,18 @@ def verify_payment(request):
             response["data"]["ref_id"]
         )
 
+        schedule_id = request.session.pop(
+            "reserve_schedule_id",
+            None
+        )
+
+        if schedule_id:
+            auto_reserve(
+                schedule_id,
+                payment.order.student
+            )
+
+        request.session["consultation_reserved"] = bool(schedule_id)
         request.session["payment_success"] = True
 
         return redirect("payment_list")
@@ -352,6 +405,19 @@ def verify_kiani_payment(request):
         request.session["payment_success"] = True
 
         complete_payment(payment)
+
+        schedule_id = request.session.pop(
+            "reserve_schedule_id",
+            None
+        )
+
+        if schedule_id:
+            auto_reserve(
+                schedule_id,
+                payment.order.student
+            )
+
+        request.session["consultation_reserved"] = bool(schedule_id)
 
     else:
 

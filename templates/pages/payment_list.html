@@ -176,14 +176,20 @@
 
                     <br>
 
-                    کد پیگیری:
+                    کد پیگیری: {{ last_payment.ref_id }}
 
-                    {{ last_payment.ref_id }}
+                    
+                    {% if consultation_reserved  %}
 
-                    {% if continue_url  %}
+                    <br>
 
-                    <a href="{{ continue_url }}" class="btn btn-primary mt-2">
-                        تکمیل نهایی فرآیند رزرو مشاوره
+                    رزرو مشاوره نیز با موفقیت ثبت شد.
+
+                    <br>
+
+                    <a href="{% url 'student_consultations' %}"
+                    class="btn btn-primary">
+                        مشاهده مشاوره‌های من
                     </a>
 
                     {% endif %}

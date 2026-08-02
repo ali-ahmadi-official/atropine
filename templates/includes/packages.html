@@ -1,6 +1,7 @@
 <div class="py-3 px-2 my-2" style="background: linear-gradient(135deg, rgba(23,37,97,.18) 0%, rgba(23,37,97,.35) 100%);">
     {% for single_service_package in single_service_packages %}
     {% if '5' in single_service_package.service and not 'compass' in request.path %}
+    {% if not 'choice-introduction' in request.path %}
         {% if not has_database_service %}
         <div class="w-100 d-flex justify-content-center">
             <a href="{% url 'payment_view' single_service_package.id %}" class="btn btn-danger mb-2 w-75" style="border-radius: 40px;">
@@ -10,6 +11,7 @@
             </a>
         </div>
         {% endif %}
+    {% endif %}
     {% endif %}
     {% endfor %}
 

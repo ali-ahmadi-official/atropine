@@ -22,6 +22,7 @@ class ServiceToStudent(models.Model):
     class Meta:
         verbose_name = "خدمت به داوطلب"
         verbose_name_plural = "خدمت ها به داوطلبان"
+        ordering = ["-id"]
 
 class Package(models.Model):
     SERVICE_CHOICES = (
@@ -95,6 +96,7 @@ class Package(models.Model):
     class Meta:
         verbose_name = "پلن"
         verbose_name_plural = "پلن ها"
+        ordering = ["-id"]
 
 class DiscountCode(models.Model):
     TYPE_CHOICES = (
@@ -230,6 +232,7 @@ class DiscountCode(models.Model):
     class Meta:
         verbose_name = "کد تخفیف"
         verbose_name_plural = "کدهای تخفیف"
+        ordering = ["-id"]
 
 class PackageRequest(models.Model):
     student = models.ForeignKey(
@@ -274,6 +277,7 @@ class PackageRequest(models.Model):
     class Meta:
         verbose_name = "درخواست پلن"
         verbose_name_plural = "درخواست های پلن"
+        ordering = ["-id"]
 
 class DiscountUsage(models.Model):
 
@@ -298,6 +302,7 @@ class DiscountUsage(models.Model):
     )
 
     class Meta:
+        ordering = ["-id"]
         unique_together = (
             "discount",
             "user",
@@ -325,6 +330,7 @@ class Consultation(models.Model):
     class Meta:
         verbose_name = "جلسه مشاوره"
         verbose_name_plural = "جلسات مشاوره"
+        ordering = ["-id"]
 
 class PaymentStatus(models.TextChoices):
     INIT = "INIT", "ایجاد شده"
@@ -397,3 +403,4 @@ class Payment(models.Model):
     class Meta:
         verbose_name = "فاکتور پرداخت"
         verbose_name_plural = "فاکتور های پرداخت"
+        ordering = ["-id"]

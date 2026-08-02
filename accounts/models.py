@@ -22,6 +22,7 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "کاربر"
         verbose_name_plural = "کاربران"
+        ordering = ["-id"]
 
     def __str__(self):
         return f"{self.get_full_name()} ({self.get_role_display()})"
@@ -34,6 +35,7 @@ class Student(models.Model):
     class Meta:
         verbose_name = "داوطلب"
         verbose_name_plural = "داوطلبان"
+        ordering = ["-id"]
 
 class Consultant(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_consultant", verbose_name="کاربر")
@@ -73,6 +75,7 @@ class ConsultantSchedule(models.Model):
     class Meta:
         verbose_name = "برنامه حضور مشاور"
         verbose_name_plural = "برنامه های حضور مشاور"
+        ordering = ["-id"]
 
 class OTP(models.Model):
     mobile = models.CharField(max_length=15)
@@ -106,6 +109,7 @@ class Rank(models.Model):
     class Meta:
         verbose_name = "فرم اطلاعات رتبه سهمیه"
         verbose_name_plural = "فرم های اطلاعات رتبه سهمیه"
+        ordering = ["-id"]
 
 class AB(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name="student_AB", verbose_name="داوطلب")
@@ -153,6 +157,7 @@ class AB(models.Model):
     class Meta:
         verbose_name = "فرم اطلاعات A و B"
         verbose_name_plural = "فرم های اطلاعات A و B"
+        ordering = ["-id"]
 
     def a_save(self):
         result = super().save()
@@ -233,3 +238,4 @@ class Personality60(models.Model):
     class Meta:
         verbose_name = "فرم تحلیل شخصیت 60 سوالی"
         verbose_name_plural = "فرم های تحلیل شخصیت 60 سوالی"
+        ordering = ["-id"]

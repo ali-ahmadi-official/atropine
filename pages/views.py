@@ -1275,6 +1275,11 @@ def payment_list(request):
         False
     )
 
+    context["consultation_reserved"] = request.session.pop(
+        "consultation_reserved",
+        False
+    )
+
     context["continue_url"] = request.session.get("payment_next")
 
 
@@ -1340,6 +1345,8 @@ def reserve_consultation(request, schedule_id):
         context["service_required"] = True
 
         if package:
+            request.session["reserve_schedule_id"] = schedule.id
+
             payment_url = reverse(
                 "payment_view",
                 kwargs={"package_id": package.id}

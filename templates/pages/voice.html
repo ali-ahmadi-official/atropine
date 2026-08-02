@@ -227,7 +227,7 @@
 
 <section class="section-t-space continue-reading-section pt-2">
     <div class="custom-container">
-        <div class="row g-3">
+        <div id="media-list" class="row g-3" style="max-height: 300px; overflow-y: scroll;">
             {% for media in medias %}
             <div class="col-12">
                 <div class="reading-list w-100">
@@ -389,5 +389,62 @@
 
         sw.classList.add("multi");
     }
+</script>
+<script>
+window.addEventListener("load", function () {
+
+    const container = document.getElementById("media-list");
+    if (!container) return;
+
+    const items = Array.from(container.children);
+    if (items.length < 2) return;
+
+    // کپی انتها
+    items.forEach(item => {
+        container.appendChild(item.cloneNode(true));
+    });
+
+    // کپی ابتدا
+    [...items].reverse().forEach(item => {
+        container.insertBefore(item.cloneNode(true), container.firstChild);
+    });
+
+    // ارتفاع بخش اصلی
+    const originalHeight = container.scrollHeight / 3;
+
+    // شروع از لیست اصلی
+    container.scrollTop = originalHeight;
+
+    let jumping = false;
+
+    container.addEventListener("scroll", function () {
+
+        if (jumping) return;
+
+        // رسیدن به بالا
+        if (container.scrollTop <= 5) {
+            jumping = true;
+            container.scrollTop += originalHeight;
+
+            requestAnimationFrame(() => {
+                jumping = false;
+            });
+        }
+
+        // رسیدن به پایین
+        const maxScroll = container.scrollHeight - container.clientHeight;
+
+        if (container.scrollTop >= maxScroll - 5) {
+            jumping = true;
+            container.scrollTop -= originalHeight;
+
+            requestAnimationFrame(() => {
+                jumping = false;
+            });
+        }
+
+    });
+
+});
 </script>
 {% endblock %}
