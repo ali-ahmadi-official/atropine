@@ -231,7 +231,7 @@
             {% for media in medias %}
             <div class="col-12">
                 <div class="reading-list w-100">
-                    {% if is_paid %}
+                    {% if is_paid or media.is_free %}
                     <div class="reading-box video-item" data-video="{{ media.content.url }}"
                         data-title="{{ media.title }}" data-description="{{ media.description }}">
                         <div class="reading-detail">
@@ -303,22 +303,31 @@
 <script>
     const modal = document.getElementById("imageModal");
 
-    document.querySelectorAll(".preview-image").forEach(img => {
-        img.addEventListener("click", function () {
-            modal.style.display = "flex";
-        });
-        
+    const mediaList = document.getElementById("media-list");
+
+    mediaList.addEventListener("click", function (e) {
+
+        const img = e.target.closest(".preview-image");
+
+        if (!img) return;
+
+        modal.style.display = "flex";
+
     });
+
 
     document.querySelector(".close-modal").onclick = function () {
         modal.style.display = "none";
     };
 
+
     // بستن با کلیک روی پس‌زمینه
     modal.onclick = function(e) {
+
         if (e.target === modal) {
             modal.style.display = "none";
         }
+
     };
 </script>
 <script>
@@ -329,27 +338,30 @@
     const title = document.getElementById('video-title');
     const description = document.getElementById('video-description');
 
-    document.querySelectorAll('.video-item').forEach(item => {
+    const container = document.getElementById('media-list');
 
-        item.addEventListener('click', function () {
+    container.addEventListener('click', function (e) {
 
-            const videoUrl = this.dataset.video;
-            const videoTitle = this.dataset.title;
-            const videoDescription = this.dataset.description;
+        const item = e.target.closest('.video-item');
 
-            source.src = videoUrl;
+        if (!item) return;
 
-            video.load();
+        const videoUrl = item.dataset.video;
+        const videoTitle = item.dataset.title;
+        const videoDescription = item.dataset.description;
 
-            player.play();
+        source.src = videoUrl;
 
-            title.textContent = videoTitle;
-            description.innerHTML = videoDescription;
+        video.load();
 
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        player.play();
+
+        title.textContent = videoTitle;
+        description.innerHTML = videoDescription;
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
         });
 
     });

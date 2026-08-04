@@ -44,6 +44,11 @@ class Consultant(models.Model):
         config_name="default"
     )
 
+    show_schedules = models.BooleanField(
+        default=True,
+        verbose_name="نمایش نوبت های مشاوره"
+    )
+
     class Meta:
         verbose_name = "مشاور"
         verbose_name_plural = "مشاورین"

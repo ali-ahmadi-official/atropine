@@ -194,7 +194,8 @@
             </li>
             {% endfor %}
         </ul>
-        {% elif data_intro.video %}
+        {% endif %}
+        {% if data_intro.video %}
         <video class="intro-plans-video" id="first-player" controls>
             <source src="{{ data_intro.video.url }}" type="video/mp4">
         </video>

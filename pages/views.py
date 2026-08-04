@@ -356,6 +356,9 @@ def consultant_show(request, id):
 
         })
 
+    if not consultant.user_consultant.show_schedules:
+        weeks = False
+
     context = {
 
         "consultant": consultant,
@@ -619,13 +622,17 @@ def videos(request):
         is_paid = True
 
     shamsi_years = sorted(
-        medias.values_list("year", flat=True).distinct(),
+        medias.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
         reverse=True,
     )
+
     categories = sorted(
-        medias.exclude(category="")
-            .values_list("category", flat=True)
-            .distinct()
+        medias.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
     )
 
     selected_year = request.GET.get("year")
@@ -690,13 +697,17 @@ def else_videos(request):
         is_paid = True
 
     shamsi_years = sorted(
-        medias.values_list("year", flat=True).distinct(),
+        medias.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
         reverse=True,
     )
+
     categories = sorted(
-        medias.exclude(category="")
-            .values_list("category", flat=True)
-            .distinct()
+        medias.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
     )
 
     selected_year = request.GET.get("year")
@@ -761,13 +772,17 @@ def voices(request):
         is_paid = True
 
     shamsi_years = sorted(
-        medias.values_list("year", flat=True).distinct(),
+        medias.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
         reverse=True,
     )
+
     categories = sorted(
-        medias.exclude(category="")
-            .values_list("category", flat=True)
-            .distinct()
+        medias.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
     )
 
     selected_year = request.GET.get("year")
@@ -832,13 +847,17 @@ def else_voices(request):
         is_paid = True
 
     shamsi_years = sorted(
-        medias.values_list("year", flat=True).distinct(),
+        medias.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
         reverse=True,
     )
+
     categories = sorted(
-        medias.exclude(category="")
-            .values_list("category", flat=True)
-            .distinct()
+        medias.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
     )
 
     selected_year = request.GET.get("year")

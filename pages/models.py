@@ -463,7 +463,7 @@ class Media(models.Model):
     class Meta:
         verbose_name = "مدیا"
         verbose_name_plural = "مدیا ها"
-        ordering = ["-id"]
+        ordering = ["-is_free", "-id"]
 
 class RankField(models.Model):
     field = models.CharField(
