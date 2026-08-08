@@ -176,8 +176,9 @@
 
                     <br>
 
+                    {% if last_payment.ref_id %}
                     کد پیگیری: {{ last_payment.ref_id }}
-
+                    {% endif %}
                     
                     {% if consultation_reserved  %}
 
@@ -298,6 +299,14 @@
                             </th>
 
                             <th>
+                                کسر از کیف پول
+                            </th>
+
+                            <th>
+                                مبلغ پرداختی درگاه
+                            </th>
+
+                            <th>
                                 وضعیت
                             </th>
 
@@ -347,6 +356,27 @@
                             <td>
 
                                 {{ payment.amount }}
+
+                                تومان
+
+                            </td>
+
+
+
+                            <td>
+
+                                {{ payment.wallet_amount }}
+
+                                تومان
+
+                            </td>
+
+
+
+
+                            <td>
+
+                                {{ payment.gateway_amount  }}
 
                                 تومان
 

@@ -19,6 +19,10 @@ class ServiceToStudent(models.Model):
 
     is_used = models.BooleanField(default=False)
 
+    @property
+    def service_name(self):
+        return dict(Package.SERVICE_CHOICES).get(self.service, "-")
+
     class Meta:
         verbose_name = "خدمت به داوطلب"
         verbose_name_plural = "خدمت ها به داوطلبان"
@@ -27,7 +31,7 @@ class ServiceToStudent(models.Model):
 class Package(models.Model):
     SERVICE_CHOICES = (
         ("1", "جلسه فردی با دکتر نایب زاده"),
-        ("2", "جلسه فردی با مشاور"),
+        ("2", "جلسه فردی با دکتر جهان‌تیغ"),
         ("3", "تحلیل شخصیت"),
         ("4", "تعیین شانس قبولی"),
         ("5", "پایگاه داده"),
@@ -339,6 +343,7 @@ class PaymentStatus(models.TextChoices):
     CANCELED = "CANCELED", "لغو شده"
 
 class PaymentProvider(models.TextChoices):
+    WALLET = "wallet", "کیف پول"
     ZARINPAL = "zarinpal", "زرین پال"
     SNAPPPAY = "snapppay", "اسنپ پی"
     DIGIPAY = "digipay", "دیجی پی"
@@ -400,7 +405,40 @@ class Payment(models.Model):
         blank=True
     )
 
+    wallet_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0
+    )
+
+    gateway_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0
+    )
+
     class Meta:
         verbose_name = "فاکتور پرداخت"
         verbose_name_plural = "فاکتور های پرداخت"
+        ordering = ["-id"]
+
+class Wallet(models.Model):
+
+    student = models.OneToOneField(
+        Student,
+        on_delete=models.CASCADE,
+        related_name="wallet",
+        verbose_name="داوطلب"
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=0,
+        default=0,
+        verbose_name="موجودی"
+    )
+
+    class Meta:
+        verbose_name = "کیف پول"
+        verbose_name_plural = "کیف های پول"
         ordering = ["-id"]

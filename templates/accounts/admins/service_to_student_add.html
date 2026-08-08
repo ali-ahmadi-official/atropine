@@ -1,0 +1,53 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+افزودن خدمات داوطلبان
+{% endblock %}
+
+{% block content %}
+<div class="alert alert-info mb-4" dir="rtl">
+    <h6 class="fw-bold mb-3">
+        لیست کد خدمات <span style="font-size: small;">(کد خدمت موردنظر را در پایین وارد کنید)</span>
+    </h6>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 120px;">شناسه</th>
+                    <th>نام خدمت</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for id, name in services %}
+                <tr>
+                    <td>
+                        <span class="badge bg-primary">
+                            {{ id }}
+                        </span>
+                    </td>
+                    <td>{{ name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row gy-۴" dir="rtl">
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ field.label }}</p>
+            {% include 'includes/error.html' with errors=field.errors %}
+            {{ field }}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+    </form>
+</div>
+{% endblock %}

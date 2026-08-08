@@ -12,16 +12,17 @@ from django.db.models import Q
 from apps.models import ContentCategory
 from accounts.models import User, Rank, Consultant, ConsultantSchedule, Student
 from accounts.forms import RankForm, AForm, Personality60Form
-from payments.models import Package, ServiceToStudent, PackageRequest, Payment, Consultation, DiscountCode, DiscountUsage
+from payments.models import Package, ServiceToStudent, PackageRequest, Payment, Consultation, DiscountCode, Wallet
 from .models import (
     Story, LiveEvent, Achievement, DataIntroduction, AboutUsIntroduction,
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction,
     Poster, Comment, FAQ, Media,RankField, RankBank, Rule, StaticMessage
 )
-from .forms import CompleteProfileForm, DiscountCodeForm
+from .forms import CompleteProfileForm, DiscountCodeForm, StudentForm1Form, StudentForm2Form, StudentForm3Form
 
 def global_context(request):
     has_database_service = False
+    wallet = False
 
     if request.user.is_authenticated and request.user.role == "student":
         student = getattr(request.user, "user_student", None)
@@ -33,6 +34,8 @@ def global_context(request):
                 is_used=False
             ).exists()
 
+            wallet = getattr(student, "wallet", None)
+
     nayeb_link = Consultant.objects.filter(
         user__last_name="نایب زاده"
     ).first()
@@ -40,6 +43,7 @@ def global_context(request):
     return {
         "has_database_service": has_database_service,
         "nayeb_link": nayeb_link,
+        "wallet": wallet,
     }
 
 def main(request):
@@ -1221,6 +1225,13 @@ def payment_view(request, package_id):
     if final_price < 0:
         final_price = Decimal("0")
 
+    wallet, _ = Wallet.objects.get_or_create(
+        student=student
+    )
+
+    wallet_amount = min(wallet.amount, final_price)
+    gateway_amount = final_price - wallet_amount
+
     order, created = PackageRequest.objects.get_or_create(
         student=student,
         package=package,
@@ -1248,6 +1259,10 @@ def payment_view(request, package_id):
         "final_price": final_price,
         "can_pay": final_price > 0,
     })
+
+    context["wallet_amount"] = wallet_amount
+    context["gateway_amount"] = gateway_amount
+    context["wallet_balance"] = wallet.amount
 
     context["discount_form"] = DiscountCodeForm()
 
@@ -1544,5 +1559,170 @@ def student_consultations(request):
     return render(
         request,
         "pages/student_consultations.html",
+        context
+    )
+
+@login_required
+def student_form1(request):
+
+    context = {}
+    context["title"] = "فرم شماره 1 داوطبین جلسه فردی انتخاب رشته آتروپین"
+    context["form_name"] = "اطلاعات فردی"
+
+    if request.user.role != "student":
+        context["student_required"] = True
+        return render(request, "pages/student_form.html", context)
+
+    student = request.user.user_student
+
+    if hasattr(student, "student_form_1"):
+
+        context["created"] = True
+        context["fields"] = [
+            {
+                "verbose_name": str(field.verbose_name).replace("*", "").strip(),
+                "value": getattr(student.student_form_1, field.name)
+            }
+            for field in student.student_form_1._meta.fields
+            if field.name not in ["id", "student"]
+        ]
+
+        return render(
+            request,
+            "pages/student_form.html",
+            context
+        )
+
+    if request.method == "POST":
+
+        form = StudentForm1Form(request.POST)
+
+        if form.is_valid():
+
+            obj = form.save(commit=False)
+            obj.student = student
+            obj.save()
+
+            return redirect("student_form1")
+
+    else:
+
+        form = StudentForm1Form()
+
+    context["form"] = form
+
+    return render(
+        request,
+        "pages/student_form.html",
+        context
+    )
+
+@login_required
+def student_form2(request):
+
+    context = {}
+    context["title"] = "فرم شماره 2 داوطبین جلسه فردی انتخاب رشته آتروپین"
+    context["form_name"] = "اطلاعات رتبه و کارنامه"
+
+    if request.user.role != "student":
+        context["student_required"] = True
+        return render(request, "pages/student_form.html", context)
+
+    student = request.user.user_student
+
+    if hasattr(student, "student_form_2"):
+
+        context["created"] = True
+        context["fields"] = [
+            {
+                "verbose_name": str(field.verbose_name).replace("*", "").strip(),
+                "value": getattr(student.student_form_2, field.name)
+            }
+            for field in student.student_form_2._meta.fields
+            if field.name not in ["id", "student"]
+        ]
+
+        return render(
+            request,
+            "pages/student_form.html",
+            context
+        )
+
+    if request.method == "POST":
+
+        form = StudentForm2Form(request.POST)
+
+        if form.is_valid():
+
+            obj = form.save(commit=False)
+            obj.student = student
+            obj.save()
+
+            return redirect("student_form2")
+
+    else:
+
+        form = StudentForm2Form()
+
+    context["form"] = form
+
+    return render(
+        request,
+        "pages/student_form.html",
+        context
+    )
+
+@login_required
+def student_form3(request):
+
+    context = {}
+    context["title"] = "فرم شماره 3 داوطبین جلسه فردی انتخاب رشته آتروپین"
+    context["form_name"] = "شخصیت‌شناسی و علایق"
+
+    if request.user.role != "student":
+        context["student_required"] = True
+        return render(request, "pages/student_form.html", context)
+
+    student = request.user.user_student
+
+    if hasattr(student, "student_form_3"):
+
+        context["created"] = True
+        context["fields"] = [
+            {
+                "verbose_name": str(field.verbose_name).replace("*", "").strip(),
+                "value": getattr(student.student_form_3, field.name)
+            }
+            for field in student.student_form_3._meta.fields
+            if field.name not in ["id", "student"]
+        ]
+
+        return render(
+            request,
+            "pages/student_form.html",
+            context
+        )
+
+    if request.method == "POST":
+
+        form = StudentForm3Form(request.POST)
+
+        if form.is_valid():
+
+            obj = form.save(commit=False)
+            obj.student = student
+            obj.save()
+
+            return redirect("student_form3")
+
+    else:
+
+        form = StudentForm3Form()
+
+    context["form"] = form
+
+    return render(
+        request,
+        "pages/student_form.html",
         context
     )

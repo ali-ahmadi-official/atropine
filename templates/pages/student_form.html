@@ -1,0 +1,148 @@
+{% extends "bases/learning.html" %}
+
+{% block title %}
+{{ title }}
+{% endblock %}
+
+{% block header %}
+<header class="main-header learning-header">
+    <div class="custom-container">
+        <div class="row">
+            <div class="col-12">
+                {% include 'includes/top-header.html' %}
+            </div>
+        </div>
+
+        <div class="header-bottom header-bottom-2 mt-4 pb-3">
+            <h2 class="fw-500 text-white w-100" style="text-align: center;">{{ title }}</h2>
+        </div>
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            {% if student_required %}
+
+                <div class="alert alert-danger text-center">
+
+                    فقط داوطلبان امکان تکمیل این فرم را دارند.
+
+                </div>
+
+            {% elif created %}
+
+                <div class="card shadow">
+
+                    <div class="card-header">
+
+                        <h4 class="mb-0">
+
+                            فرم قبلاً ثبت شده است
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="alert alert-success">
+
+                            اطلاعات شما قبلاً ثبت شده است و امکان ویرایش وجود ندارد.
+
+                        </div>
+
+                        <table class="table table-bordered">
+
+                            <tbody>
+
+                                {% for field in fields %}
+
+                                <tr>
+
+                                    <th style="width:35%;">
+                                        {{ field.verbose_name }}
+                                    </th>
+
+                                    <td>
+                                        {{ field.value }}
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="card shadow">
+
+                    <div class="card-header">
+
+                        <h4 class="mb-0">
+
+                            {{ form_name }}
+
+                        </h4>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <div class="alert alert-warning">
+
+                            اطلاعات شما محرمانه می‌ماند.
+                            <br>
+                            در تکمیل فرم دقت کنید، بعد از زدن دکمه <span style="font-weight: bold;">"تایید"</span> امکان ویرایش وجود ندارد.
+                            <br>
+                            <span style="font-weight: bold;">وارد کردن موارد ستاره دار الزامیست.</span>
+
+
+                        </div>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input type="hidden" name="step" value="ab">
+
+                            {{ form.as_p }}
+
+                            <div class="text-end mt-4">
+
+                                <button class="btn btn-success">
+
+                                    تایید اطلاعات و ثبت
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

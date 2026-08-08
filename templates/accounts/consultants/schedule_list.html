@@ -88,7 +88,7 @@
 
                                             <br>
 
-                                            <a href="{% url 'show_my_student' slot.request.service.student.user.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                            <a href="{% url 'show_my_student' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
                                                 <i class="ri-eye-line"></i>
                                             </a>
                                         
@@ -198,18 +198,22 @@
     <div class="card-header justify-content-between">
         <div class="card-title">
             <h4>
-                لیست نوبت های رزرو شده
+                لیست جلسات رزرو شده شما
             </h4>
         </div>
     </div>
-    <table class="table text-nowrap table-hover">
+    <table class="table text-nowrap table-hover my-4">
         <thead>
             <tr>
                 <th scope="col">شناسه</th>
-                <th scope="col">تاریخ</th>
-                <th scope="col">ساعت شروع</th>
-                <th scope="col">ساعت پایان</th>
-                <th scope="col">رزرو توسط</th>
+                <th scope="col">موبایل</th>
+                <th scope="col">نام و نام خانوادگی</th>
+                <th scope="col">آیدی تلگرام</th>
+                <th scope="col">زمان جلسه</th>
+                <th scope="col">وضعیت</th>
+                <th scope="col">سرویس پایگاه داده</th>
+                <th scope="col">هزینه پرداختی برای جلسه</th>
+                <th scope="col">عملیات</th>
             </tr>
         </thead>
         <tbody>
@@ -219,21 +223,45 @@
                     {{ schedule.id }}
                 </td>
                 <td>
-                    {{ schedule.date_shamsi }}
+                    {{ schedule.request.service.student.user.mobile }}
                 </td>
                 <td>
-                    {{ schedule.start_time }}
+                    {{ schedule.request.service.student.user.get_full_name }}
                 </td>
                 <td>
-                    {{ schedule.end_time }}
+                    {{ schedule.request.service.student.student_form_1.telegram_id }}
                 </td>
                 <td>
-                    <a href="{% url 'show_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
+                    {{ schedule.date_shamsi }} {{ schedule.start_time }} - {{ schedule.end_time }}
+                </td>
+                <td>
+                    {% if schedule.request.is_held %}
+                    <span class="badge bg-success-transparent">برگزار شده</span>
+                    {% else %}
+                    <span class="badge bg-warning-transparent">برگزار نشده</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.request.has_database %}
+                    <span class="badge bg-success-transparent">دارد</span>
+                    {% else %}
+                    <span class="badge bg-warning-transparent">ندارد</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if schedule.request.paid_amount %}
+                    <span class="badge bg-success-transparent">{{ schedule.request.paid_amount }}</span>
+                    {% else %}
+                    <span class="badge bg-warning-transparent">-----</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'show_my_student' schedule.id %}" class="badge bg-secondary-transparent">مشاهده جزئیات</a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="text-align: center;">
+                <td colspan="9" style="text-align: center;">
                     موردی یافت نشد.
                 </td>
             </tr>

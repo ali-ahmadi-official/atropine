@@ -1,4 +1,5 @@
 from django.urls import path
+from .excel import export_form1_excel, export_form2_excel, export_form3_excel
 from .views import (
     admin_login,
     mobile_login,
@@ -77,6 +78,14 @@ from .views import (
     DiscountCodeListView,
     DiscountCodeCreateView,
     DiscountCodeDeleteView,
+    WalletListView,
+    WalletCreateView,
+    WalletUpdateView,
+    ServiceToStudentListView,
+    ServiceToStudentCreateView,
+    ServiceToStudentDeleteView,
+    AdminSMSListView,
+    AdminSMSCreateView,
     show_student,
 
     consultant_dashboard,
@@ -88,6 +97,7 @@ from .views import (
     ConsultantScheduleDeleteView,
     MyStudentListView,
     show_my_student,
+    send_student_sms,
 
     student_dashboard,
     PaymentListView,
@@ -197,7 +207,18 @@ urlpatterns = [
 
     path("admins/discount-codes/", DiscountCodeListView.as_view(), name="discount_code_list"),
     path("admins/discount-codes/add/", DiscountCodeCreateView.as_view(), name="discount_code_add"),
-    path("admins/discount-codes/<int:pk>/edit/", DiscountCodeDeleteView.as_view(), name="discount_code_delete"),
+    path("admins/discount-codes/<int:pk>/delete/", DiscountCodeDeleteView.as_view(), name="discount_code_delete"),
+
+    path("admins/wallets/", WalletListView.as_view(), name="wallet_list"),
+    path("admins/wallets/add/", WalletCreateView.as_view(), name="wallet_add"),
+    path("admins/wallets/<int:pk>/edit/", WalletUpdateView.as_view(), name="wallet_edit"),
+
+    path("admins/service-to-students/", ServiceToStudentListView.as_view(), name="service_to_student_list"),
+    path("admins/service-to-students/add/", ServiceToStudentCreateView.as_view(), name="service_to_student_add"),
+    path("admins/service-to-students/<int:pk>/delete/", ServiceToStudentDeleteView.as_view(), name="service_to_student_delete"),
+
+    path("admins/sms/", AdminSMSListView.as_view(), name="admin_sms_list"),
+    path("admins/sms/add/", AdminSMSCreateView.as_view(), name="admin_sms_add"),
 
     path("consultants/dashboard/", consultant_dashboard, name="consultant_dashboard"),
 
@@ -211,6 +232,7 @@ urlpatterns = [
 
     path("consultants/my-students/", MyStudentListView.as_view(), name="my_student_list"),
     path("consultants/my-student/<int:id>/", show_my_student, name="show_my_student"),
+    path("consultants/send-student-sms/<int:student_id>/", send_student_sms, name="send_student_sms"),
 
     # path("students/dashboard/", student_dashboard, name="student_dashboard"),
 
@@ -218,4 +240,22 @@ urlpatterns = [
     # path("students/personality/", personality60, name="personality60"),
     # path("students/rank/", rank_form, name="rank_form"),
     # path("students/validity/", validity, name="validity"),
+]
+
+urlpatterns += [
+    path(
+        "consultants/my-student/<int:id>/export/form1/",
+        export_form1_excel,
+        name="export_form1_excel",
+    ),
+    path(
+        "consultants/my-student/<int:id>/export/form2/",
+        export_form2_excel,
+        name="export_form2_excel",
+    ),
+    path(
+        "consultants/my-student/<int:id>/export/form3/",
+        export_form3_excel,
+        name="export_form3_excel",
+    ),
 ]

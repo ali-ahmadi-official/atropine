@@ -51,7 +51,7 @@
                 </td>
                 <td>
                     {% if schedule.request %}
-                    <a href="{% url 'show_student' schedule.request.service.student.user.id %}" class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }}</a>
+                    <span class="badge bg-success-transparent">{{ schedule.request.service.student.user.get_full_name }} {{ schedule.request.service.student.user.mobile }}</span>
                     {% else %}
                     <span class="badge bg-warning-transparent">----</span>
                     {% endif %}

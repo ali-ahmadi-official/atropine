@@ -1,5 +1,5 @@
 from django import forms
-from accounts.models import Rank, AB, Personality60
+from accounts.models import Rank, AB, Personality60, StudentForm1, StudentForm2, StudentForm3
 
 class CompleteProfileForm(forms.Form):
     first_name = forms.CharField(
@@ -106,3 +106,63 @@ class DiscountCodeForm(forms.Form):
             }
         ),
     )
+
+class StudentForm1Form(forms.ModelForm):
+
+    class Meta:
+        model = StudentForm1
+        exclude = ("student",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+
+            if isinstance(field.widget, forms.CheckboxInput):
+                continue
+
+            field.widget.attrs.update({
+                "class": "form-select"
+                if isinstance(field.widget, forms.Select)
+                else "form-control"
+            })
+
+class StudentForm2Form(forms.ModelForm):
+
+    class Meta:
+        model = StudentForm2
+        exclude = ("student",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+
+            if isinstance(field.widget, forms.CheckboxInput):
+                continue
+
+            field.widget.attrs.update({
+                "class": "form-select"
+                if isinstance(field.widget, forms.Select)
+                else "form-control"
+            })
+
+class StudentForm3Form(forms.ModelForm):
+
+    class Meta:
+        model = StudentForm3
+        exclude = ("student",)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+
+            if isinstance(field.widget, forms.CheckboxInput):
+                continue
+
+            field.widget.attrs.update({
+                "class": "form-select"
+                if isinstance(field.widget, forms.Select)
+                else "form-control"
+            })

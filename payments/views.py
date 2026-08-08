@@ -76,14 +76,53 @@ def start_payment(request, package_id, provider):
                 status=400
             )
 
-    if order.final_price <= 0:
+    wallet = student.wallet
 
+    wallet_amount = min(
+        wallet.amount,
+        order.final_price
+    )
+
+    gateway_amount = order.final_price - wallet_amount
+
+    if gateway_amount < 0:
         return JsonResponse(
             {
-                "error": "این سفارش نیاز به پرداخت ندارد."
+                "error": "مبلغ پرداخت نامعتبر است."
             },
             status=400
         )
+
+    if gateway_amount == 0:
+        with transaction.atomic():
+
+            payment = Payment.objects.create(
+                order=order,
+                amount=order.final_price,
+                wallet_amount=wallet_amount,
+                gateway_amount=0,
+                authority=f"WALLET-{order.id}",
+                provider=PaymentProvider.WALLET,
+                status=PaymentStatus.SUCCESS,
+            )
+
+            complete_payment(payment)
+
+            schedule_id = request.session.pop(
+                "reserve_schedule_id",
+                None
+            )
+
+            if schedule_id:
+                auto_reserve(
+                    schedule_id,
+                    student
+                )
+
+        request.session["consultation_reserved"] = bool(schedule_id)
+        request.session["payment_success"] = True
+
+        return redirect("payment_list")
 
     Payment.objects.filter(
         order=order,
@@ -97,7 +136,7 @@ def start_payment(request, package_id, provider):
     if provider == "zarinpal":
         data = {
             "merchant_id": settings.ZARINPAL_MERCHANT_ID,
-            "amount": int(order.final_price) * 10,
+            "amount": int(gateway_amount) * 10,
             "description": f"پرداخت پکیج {package.id}",
             "callback_url": callback_url,
             "metadata": {
@@ -117,6 +156,8 @@ def start_payment(request, package_id, provider):
             Payment.objects.create(
                 order=order,
                 amount=order.final_price,
+                wallet_amount=wallet_amount,
+            gateway_amount=gateway_amount,
                 authority=authority,
                 provider=PaymentProvider.ZARINPAL,
             )
@@ -129,7 +170,7 @@ def start_payment(request, package_id, provider):
         create_response = requests.get(
             "https://atropine.ir/kiani/Create.aspx",
             params={
-                "amount": int(order.final_price) * 10,
+                "amount": int(gateway_amount) * 10,
                 "userphone": student.user.mobile,
             }
         ).json()
@@ -143,7 +184,7 @@ def start_payment(request, package_id, provider):
             "https://atropine.ir/kiani/SnappPay/Payment.aspx",
             params={
                 "kianiId": kiani_id,
-                "amount": int(order.final_price) * 10,
+                "amount": int(gateway_amount) * 10,
             }
         ).json()
 
@@ -153,6 +194,8 @@ def start_payment(request, package_id, provider):
         Payment.objects.create(
             order=order,
             amount=order.final_price,
+            wallet_amount=wallet_amount,
+            gateway_amount=gateway_amount,
             authority=str(kiani_id),
             provider=PaymentProvider.SNAPPPAY,
             kiani_id=kiani_id,
@@ -164,7 +207,7 @@ def start_payment(request, package_id, provider):
         create_response = requests.get(
             "https://atropine.ir/kiani/Create.aspx",
             params={
-                "amount": int(order.final_price) * 10,
+                "amount": int(gateway_amount) * 10,
                 "userphone": student.user.mobile,
             }
         ).json()
@@ -178,7 +221,7 @@ def start_payment(request, package_id, provider):
             "https://atropine.ir/kiani/DigiPay/Payment.aspx",
             params={
                 "kianiId": kiani_id,
-                "amount": int(order.final_price) * 10,
+                "amount": int(gateway_amount) * 10,
             }
         ).json()
 
@@ -188,6 +231,8 @@ def start_payment(request, package_id, provider):
         Payment.objects.create(
             order=order,
             amount=order.final_price,
+            wallet_amount=wallet_amount,
+            gateway_amount=gateway_amount,
             authority=str(kiani_id),
             provider=PaymentProvider.DIGIPAY,
             kiani_id=kiani_id,
@@ -208,6 +253,14 @@ def start_payment(request, package_id, provider):
 def complete_payment(payment, ref_id=None):
 
     order = payment.order
+
+    if payment.wallet_amount:
+
+        wallet = order.student.wallet
+
+        wallet.amount -= payment.wallet_amount
+
+        wallet.save(update_fields=["amount"])
 
     payment.status = PaymentStatus.SUCCESS
     payment.paid_at = timezone.now()
@@ -328,7 +381,7 @@ def verify_payment(request):
 
     data = {
         "merchant_id": settings.ZARINPAL_MERCHANT_ID,
-        "amount": int(order.final_price) * 10,
+        "amount": int(payment.gateway_amount) * 10,
         "authority": authority,
     }
 

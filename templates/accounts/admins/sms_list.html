@@ -1,0 +1,66 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست پیامک ها
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست پیامک ها
+                <a href="{% url 'admin_sms_add' %}">
+                    <span class="btn btn-success-transparent">پیام جدید</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">متن پیام</th>
+                <th scope="col">فرستنده</th>
+                <th scope="col">گیرندگان</th>
+                <th scope="col">وضعیت</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sms in smses %}
+            <tr>
+                <td>
+                    {{ sms.id }}
+                </td>
+                <td>
+                    {{ sms.message|truncatewords:10 }}
+                </td>
+                <td>
+                    {{ sms.sender }}
+                </td>
+                <td>
+                    {% for student in sms.students.all %}
+                        {{ student.user.get_full_name }} - {{ student.user.mobile }} <br>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% if sms.result == "1" %}
+                    <span class="badge bg-success-transparent">موفق</span>
+                    {% else %}
+                    <span class="badge bg-danger-transparent">ناموفق</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

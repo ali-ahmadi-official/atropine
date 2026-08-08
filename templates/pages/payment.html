@@ -401,11 +401,23 @@
 
                                 </tr>
 
+                                <tr>
+                                    <th>کسر از کیف پول</th>
+                                    <td class="text-danger">
+                                        - {{ wallet_amount }} تومان
+                                    </td>
+                                </tr>
+
+                                <tr class="table-success">
+                                    <th>مبلغ پرداخت درگاه</th>
+                                    <th>{{ gateway_amount }} تومان</th>
+                                </tr>
+
                             </tbody>
 
                         </table>
 
-                        {% if can_pay %}
+                        {% if can_pay and gateway_amount %}
 
                             <div class="d-flex gap-2">
 
@@ -418,14 +430,14 @@
                                     <span>زرین پال</span>
                                 </a>
 
-                                <a href="{% url 'payment_start' package.id 'snapppay' %}"
+                                <!-- <a href="{% url 'payment_start' package.id 'snapppay' %}"
                                 class="btn btn-info d-flex align-items-center gap-2">
                                     <img src="{% static 'images/s-pay.png' %}"
                                         alt="اسنپ پی"
                                         width="24"
                                         height="24">
                                     <span>اسنپ پی</span>
-                                </a>
+                                </a> -->
 
                                 <a href="{% url 'payment_start' package.id 'digipay' %}"
                                 class="btn btn-info d-flex align-items-center gap-2">
@@ -434,6 +446,21 @@
                                         width="24"
                                         height="24">
                                     <span>دیجی پی</span>
+                                </a>
+
+                            </div>
+                        
+                        {% elif wallet_amount %}
+
+                            <div class="d-flex gap-2" style="justify-content: center;">
+
+                                <a href="{% url 'payment_start' package.id 'wallet' %}"
+                                class="btn btn-info d-flex align-items-center gap-2 w-50">
+                                    <img src="{% static 'images/wallet.png' %}"
+                                        alt="کیف پول"
+                                        width="24"
+                                        height="24">
+                                    <span>کیف پول</span>
                                 </a>
 
                             </div>

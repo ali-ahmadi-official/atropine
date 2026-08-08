@@ -1,0 +1,66 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست خدمات داوطلبان
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست خدمات داوطلبان
+                <a href="{% url 'service_to_student_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">داوطلب</th>
+                <th scope="col">خدمت</th>
+                <th scope="col">استفاده شده؟</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for service_to_student in service_to_students %}
+            <tr>
+                <td>
+                    {{ service_to_student.id }}
+                </td>
+                <td>
+                    {{ service_to_student.student }}
+                </td>
+                <td>
+                    {{ service_to_student.service_name }}
+                </td>
+                <td>
+                    {% if service_to_student.is_used %}
+                    <span class="badge bg-success-transparent">بله</span>
+                    {% else %}
+                    <span class="badge bg-danger-transparent">خیر</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'service_to_student_delete' service_to_student.id %}" class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
+                        <i class="ri-delete-bin-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

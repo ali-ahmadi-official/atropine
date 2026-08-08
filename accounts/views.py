@@ -1,5 +1,6 @@
 import re
 import jdatetime
+import requests
 from collections import defaultdict
 from datetime import timedelta, datetime
 from django.http import JsonResponse
@@ -17,15 +18,15 @@ from pages.models import (
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, DataIntroduction,
     ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankField, RankBank, Rule, StaticMessage
 )
-from payments.models import Package, Consultation, Payment, ServiceToStudent, DiscountCode
-from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60
+from payments.models import Package, Consultation, Payment, ServiceToStudent, DiscountCode, Wallet, PaymentStatus
+from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60, SMS
 from .forms import (
     UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, CreateConsultantForm, ConsultantScheduleForm,
     PackageForm, AForm, RankForm, Personality60Form,
     PlansIntroductionForm, CounselingIntroductionForm, EstimationIntroductionForm, DataIntroductionForm,
     ChoiceIntroductionForm, LiveIntroductionForm,
     AboutUsIntroductionForm, CommentForm, FAQForm, MediaForm, RankBankForm, RankFieldForm, RuleForm, StaticMessageForm,
-    DiscountCodeForm
+    DiscountCodeForm, WalletForm, ServiceToStudentForm, SMSForm
 )
 from .utils import generate_code, send_sms
 from .personality.traits import calculate_item_scores
@@ -795,7 +796,7 @@ class AdminConsultantScheduleListView(ListView):
 class AdminConsultantScheduleDeleteView(DeleteView):
     model = ConsultantSchedule
     template_name = 'accounts/admins/schedule_delete.html'
-    success_url = reverse_lazy('schedule_list')
+    success_url = reverse_lazy('admin_schedule_list')
 
 def show_student(request, id):
 
@@ -886,7 +887,7 @@ def show_student(request, id):
 
     return render(
         request,
-        "accounts/consultants/show_my_student.html",
+        "accounts/admins/show_student.html",
         context
     )
 
@@ -908,6 +909,102 @@ class DiscountCodeDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, D
     model = DiscountCode
     template_name = "accounts/admins/discount_code_delete.html"
     success_url = reverse_lazy("discount_code_list")
+
+class WalletListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
+    model = Wallet
+    template_name = "accounts/admins/wallet_list.html"
+    context_object_name = "wallets"
+
+class WalletCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
+    model = Wallet
+    form_class = WalletForm
+    template_name = "accounts/admins/wallet_add.html"
+    success_url = reverse_lazy("wallet_list")
+
+class WalletUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, UpdateView):
+    allowed_roles = ["super_admin"]
+    model = Wallet
+    form_class = WalletForm
+    template_name = "accounts/admins/wallet_edit.html"
+    success_url = reverse_lazy("wallet_list")
+
+class ServiceToStudentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
+    model = ServiceToStudent
+    template_name = "accounts/admins/service_to_student_list.html"
+    context_object_name = "service_to_students"
+
+class ServiceToStudentCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
+    model = ServiceToStudent
+    form_class = ServiceToStudentForm
+    template_name = "accounts/admins/service_to_student_add.html"
+    success_url = reverse_lazy("service_to_student_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["services"] = Package.SERVICE_CHOICES
+
+        return context
+
+class ServiceToStudentDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
+    model = ServiceToStudent
+    template_name = "accounts/admins/service_to_student_delete.html"
+    success_url = reverse_lazy("service_to_student_list")
+
+class AdminSMSListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
+    model = SMS
+    template_name = "accounts/admins/sms_list.html"
+    context_object_name = "smses"
+
+class AdminSMSCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
+    allowed_roles = ["super_admin"]
+    model = SMS
+    form_class = SMSForm
+    template_name = "accounts/admins/sms_add.html"
+    success_url = reverse_lazy("admin_sms_list")
+
+    def form_valid(self, form):
+
+        sms = form.save(commit=False)
+
+        sms.sender = self.request.user
+
+        message = "-".join(
+            sms.message.split()
+        )
+
+        result = "1"
+
+        for student in form.cleaned_data["students"]:
+
+            response = requests.get(
+                "http://atropine.ir/kiani/SMS/SendPayam.aspx",
+                params={
+                    "phone": student.user.mobile,
+                    "payam": message,
+                    "token": "tokenQeuykplnvnws",
+                },
+                timeout=10,
+            )
+
+            if response.text.strip() != '"1"':
+                result = "-1"
+
+        sms.result = result
+
+        sms.save()
+
+        sms.students.set(
+            form.cleaned_data["students"]
+        )
+
+        return redirect("admin_sms_list")
 
 # endregion
 
@@ -963,6 +1060,28 @@ class ConsultantScheduleListView(ListView):
             schedule.request = consultation
 
             if schedule.request:
+                schedule.date_shamsi = jdatetime.date.fromgregorian(
+                    date=schedule.date
+                ).strftime("%Y/%m/%d")
+                
+                schedule.request.is_held = (
+                    schedule.date < today
+                )
+
+                schedule.request.has_database = ServiceToStudent.objects.filter(
+                    student=schedule.request.service.student,
+                    service="5",
+                    is_used=False,
+                ).exists()
+
+                payment = Payment.objects.filter(
+                    order__student=schedule.request.service.student,
+                    order__package__service__contains=[schedule.request.service.service],
+                    status=PaymentStatus.SUCCESS,
+                ).order_by("-id").first()
+
+                schedule.request.paid_amount = payment.amount if payment else None
+
                 reserved_schedules.append(schedule)
 
             week_start = schedule.date - timedelta(
@@ -1089,95 +1208,201 @@ class MyStudentListView(ListView):
 
 def show_my_student(request, id):
 
-    user = get_object_or_404(User, id=id)
+    schedule = get_object_or_404(
+        ConsultantSchedule,
+        id=id,
+        consultant=request.user.user_consultant
+    )
+
+    schedule.date_shamsi = jdatetime.date.fromgregorian(
+        date=schedule.date
+    ).strftime("%Y/%m/%d")
+
+    consultation = get_object_or_404(
+        Consultation.objects.select_related(
+            "service__student__user"
+        ),
+        schedule=schedule
+    )
+
+    user = consultation.service.student.user
+    student = getattr(user, "user_student", None)
+
+    if request.method == "POST":
+
+        action = request.POST.get("action")
+
+        if action == "send_sms":
+
+            message = request.POST.get("message", "").strip()
+
+            if message:
+
+                sms = SMS.objects.create(
+                    sender=request.user,
+                    message=message,
+                )
+
+                sms.students.add(student)
+
+                response = requests.get(
+                    "https://atropine.ir/kiani/SMS/SendPayam.aspx",
+                    params={
+                        "phone": student.user.mobile,
+                        "payam": "-".join(message.split()),
+                        "token": "tokenQeuykplnvnws",
+                    },
+                    timeout=10,
+                )
+
+                sms.result = (
+                    "1"
+                    if response.text.strip() == '"1"'
+                    else "-1"
+                )
+
+                sms.save()
+
+            return redirect(
+                "show_my_student",
+                id=id
+            )
+
+        elif action == "save_note":
+
+            consultation.notes = request.POST.get(
+                "notes",
+                ""
+            )
+
+            consultation.save()
+
+            return redirect(
+                "show_my_student",
+                id=id
+            )
 
     context = {
+        "schedule": schedule,
         "user": user,
+        "student": student,
+        "consultation": consultation,
+        "has_form_1": hasattr(student, "student_form_1"),
+        "has_form_2": hasattr(student, "student_form_2"),
+        "has_form_3": hasattr(student, "student_form_3"),
     }
 
-    student = getattr(user, "user_student", None)
+    context["smses"] = SMS.objects.filter(
+        sender=request.user,
+        students=student
+    ).order_by("-id")
 
     if student:
 
-        # ---------- Rank ----------
-        if hasattr(student, "student_rank"):
+        # ---------- form1 ----------
+        if hasattr(student, "student_form_1"):
 
-            rank_fields = []
+            form_1_fields = []
 
-            for field in student.student_rank._meta.fields:
-
-                if field.name in ["id", "student"]:
-                    continue
-
-                value = getattr(student.student_rank, field.name)
-
-                if hasattr(field, "choices") and field.choices:
-                    value = getattr(
-                        student.student_rank,
-                        f"get_{field.name}_display"
-                    )()
-
-                rank_fields.append({
-                    "label": field.verbose_name,
-                    "value": value,
-                })
-
-            context["rank_fields"] = rank_fields
-
-        # ---------- AB ----------
-        if hasattr(student, "student_AB"):
-
-            ab_fields = []
-
-            for field in student.student_AB._meta.fields:
+            for field in student.student_form_1._meta.fields:
 
                 if field.name in ["id", "student"]:
                     continue
 
-                value = getattr(student.student_AB, field.name)
+                value = getattr(student.student_form_1, field.name)
 
-                if hasattr(field, "choices") and field.choices:
-                    value = getattr(
-                        student.student_AB,
-                        f"get_{field.name}_display"
-                    )()
-
-                ab_fields.append({
+                form_1_fields.append({
                     "label": field.verbose_name,
                     "value": value,
                 })
 
-            context["ab_fields"] = ab_fields
+            context["form_1_fields"] = form_1_fields
 
-        # ---------- Personality ----------
-        if hasattr(student, "student_personality_60"):
+        # ---------- form2 ----------
+        if hasattr(student, "student_form_2"):
+        
+            form_2_fields = []
 
-            personality_fields = []
-
-            for field in student.student_personality_60._meta.fields:
+            for field in student.student_form_2._meta.fields:
 
                 if field.name in ["id", "student"]:
                     continue
 
-                value = getattr(student.student_personality_60, field.name)
+                value = getattr(student.student_form_2, field.name)
 
-                if hasattr(field, "choices") and field.choices:
-                    value = getattr(
-                        student.student_personality_60,
-                        f"get_{field.name}_display"
-                    )()
-
-                personality_fields.append({
+                form_2_fields.append({
                     "label": field.verbose_name,
                     "value": value,
                 })
 
-            context["personality_fields"] = personality_fields
+            context["form_2_fields"] = form_2_fields
+        
+        # ---------- form3 ----------
+        if hasattr(student, "student_form_3"):
+        
+            form_3_fields = []
+
+            for field in student.student_form_3._meta.fields:
+
+                if field.name in ["id", "student"]:
+                    continue
+
+                value = getattr(student.student_form_3, field.name)
+
+                form_3_fields.append({
+                    "label": field.verbose_name,
+                    "value": value,
+                })
+
+            context["form_3_fields"] = form_3_fields
 
     return render(
         request,
         "accounts/consultants/show_my_student.html",
         context
+    )
+
+@login_required
+def send_student_sms(request, student_id):
+
+    student = get_object_or_404(
+        Student,
+        id=student_id
+    )
+
+    message = request.POST.get("message", "").strip()
+
+    if not message:
+        messages.error(request, "متن پیام وارد نشده است.")
+        return redirect("show_my_student", id=request.POST["schedule_id"])
+
+    sms = SMS.objects.create(
+        sender=request.user,
+        message=message,
+    )
+
+    sms.students.add(student)
+
+    response = requests.get(
+        "http://atropine.ir/kiani/SMS/SendPayam.aspx",
+        params={
+            "phone": student.user.mobile,
+            "payam": "-".join(message.split()),
+            "token": "tokenQeuykplnvnws",
+        },
+        timeout=10,
+    )
+
+    if response.text.strip() == '"1"':
+        sms.result = "1" 
+    else:
+        sms.result = "-1"
+
+    sms.save()
+
+    return redirect(
+        "show_my_student",
+        id=request.POST["schedule_id"]
     )
 
 # endregion

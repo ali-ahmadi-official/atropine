@@ -1,0 +1,58 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست کیف پول داوطلبان
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست کیف پول داوطلبان
+                <a href="{% url 'wallet_add' %}">
+                    <span class="btn btn-success-transparent">افزودن</span>
+                </a>
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">شناسه</th>
+                <th scope="col">داوطلب</th>
+                <th scope="col">موجودی (تومان)</th>
+                <th scope="col">عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for wallet in wallets %}
+            <tr>
+                <td>
+                    {{ wallet.id }}
+                </td>
+                <td>
+                    {{ wallet.student }}
+                </td>
+                <td>
+                    {{ wallet.amount }}
+                </td>
+                <td>
+                    <a href="{% url 'wallet_edit' wallet.id %}" class="btn btn-icon btn-sm btn-success-transparent rounded-pill">
+                        <i class="ri-edit-2-line"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

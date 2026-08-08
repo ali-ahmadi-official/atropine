@@ -8,8 +8,8 @@ from pages.models import (
     CounselingIntroduction, EstimationIntroduction, ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction,
     Poster, Comment, FAQ, Media, RankField, RankBank, Rule, StaticMessage
 )
-from payments.models import Package, DiscountCode
-from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60
+from payments.models import Package, DiscountCode, Wallet, ServiceToStudent
+from .models import User, Consultant, ConsultantSchedule, Rank, AB, Personality60, SMS
 
 class BaseModelForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -433,6 +433,21 @@ class StaticMessageForm(BaseModelForm):
     class Meta:
         model = StaticMessage
         fields = "__all__"
+
+class WalletForm(BaseModelForm):
+    class Meta:
+        model = Wallet
+        fields = "__all__"
+
+class ServiceToStudentForm(BaseModelForm):
+    class Meta:
+        model = ServiceToStudent
+        exclude = ["is_used"]
+
+class SMSForm(BaseModelForm):
+    class Meta:
+        model = SMS
+        fields = ["students", "message"]
 
 class PackageForm(BaseModelForm):
     class Meta:

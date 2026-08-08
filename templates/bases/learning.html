@@ -146,17 +146,6 @@
                         </div>
                     </a>
                 </li>
-
-                <li>
-                    <a href="{% url 'support' %}" class="mobile-box">
-                        <div class="mobile-icon">
-                            <i class="ri-message-3-line"></i>
-                        </div>
-                        <div class="mobile-name">
-                            <h5>پشتیبانی</h5>
-                        </div>
-                    </a>
-                </li>
             </ul>
         </div>
         <!-- Mobile Section End -->
@@ -197,7 +186,7 @@
             </div>
             <div class="offcanvas-body">
                 <div class="title px-15">
-                    <h4>حساب کاربری</h4>
+                    <h4>حساب کاربری <span style="font-size: small;">{% if wallet.amount %}(موجودی: {{ wallet.amount }} تومان){% endif %}</span></h4>
                 </div>
                 <ul class="menu-setting-list">
                     {% if not request.user.username %}

@@ -4,11 +4,27 @@
     {% if not 'choice-introduction' in request.path %}
         {% if not has_database_service %}
         <div class="w-100 d-flex justify-content-center">
-            <a href="{% url 'payment_view' single_service_package.id %}" class="btn btn-danger mb-2 w-75" style="border-radius: 40px;">
-                خرید پایگاه داده
-                <br>
-                {{ single_service_package.total_price }} تومان
-            </a>
+            <a href="{% url 'payment_view' single_service_package.id %}" style="position: relative; overflow: visible; border-radius: 40px;" class="btn btn-danger mb-2 w-75">
+                <div class="discount-badge-round">
+                    {% if single_service_package.discount_percent %}
+                    <span>{{ single_service_package.discount_percent }}%</span>
+                    <small>تخفیف</small>
+                    {% endif %}
+                </div>
+                <div>
+                    <span style="color: #ffffff;">خرید پایگاه داده</span>
+                    <br>
+                    {% if single_service_package.price_before_discount %}
+                        <span class="old-price" style="color: #ffffff;">
+                            {{ single_service_package.price_before_discount }} تومان
+                        </span>
+                    {% endif %}
+    
+                    <span class="new-price" style="color: #ffffff;">
+                        {{ single_service_package.total_price }} تومان
+                    </span>
+                </div>
+            </a >
         </div>
         {% endif %}
     {% endif %}

@@ -4,7 +4,8 @@ from .views import (
     counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
     live_introduction, live_time_steps, live_archives, support,
     videos, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
-    about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations
+    about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations,
+    student_form1, student_form2, student_form3
 )
 
 from accounts.views import mobile_login
@@ -41,4 +42,7 @@ urlpatterns = [
     path('payment-list/', payment_list, name='payment_list'),
     path('reserve-consultation/<int:schedule_id>/', reserve_consultation, name='reserve_consultation'),
     path('student-consultations/', student_consultations, name='student_consultations'),
+    path('student-form1/', student_form1, name='student_form1'),
+    path('student-form2/', student_form2, name='student_form2'),
+    path('student-form3/', student_form3, name='student_form3'),
 ]
