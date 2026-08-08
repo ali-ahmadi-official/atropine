@@ -76,7 +76,7 @@ def main(request):
 
     achievements = Achievement.objects.all()
 
-    atropine_teams = User.objects.filter(role='consultant')
+    atropine_teams = User.objects.filter(role='consultant').order_by("id")
 
     posters = Poster.objects.filter(show_in__icontains="main")
 
@@ -132,7 +132,7 @@ def compass(request):
         if len(p.service) != 1
     ]
 
-    atropine_teams = User.objects.filter(role='consultant')
+    atropine_teams = User.objects.filter(role='consultant').order_by("id")
 
     comments = Comment.objects.all().order_by("-id")
     
@@ -391,7 +391,7 @@ def choice_introduction(request):
     posters = Poster.objects.filter(show_in__icontains="choice")
 
     all_consultants = request.GET.get("all_consultants")
-    atropine_teams = User.objects.filter(role='consultant')
+    atropine_teams = User.objects.filter(role='consultant').order_by("id")
     if all_consultants:
         atropine_teams = atropine_teams.exclude(first_name="دکتر امیرحسین", last_name="نایب زاده")
 
@@ -1051,7 +1051,7 @@ def achievement_list(request):
     return render(request, 'pages/achievement_list.html', {"achievements": achievements})
 
 def atropine_team(request):
-    atropine_teams = User.objects.filter(role='consultant')
+    atropine_teams = User.objects.filter(role='consultant').order_by("id")
 
     return render(request, 'pages/atropine_team.html', {"atropine_teams": atropine_teams})
 
