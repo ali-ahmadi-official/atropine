@@ -451,6 +451,8 @@ def live_introduction(request, id):
     return render(request, 'pages/live_introduction.html', context)
 
 def live_time_steps(request):
+    posters = Poster.objects.filter(show_in__icontains="lives")
+
     now = timezone.now()
 
     lives = LiveEvent.objects.filter(
@@ -483,6 +485,7 @@ def live_time_steps(request):
 
     context = {
         "lives": lives,
+        "posters": posters,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
@@ -497,14 +500,17 @@ def live_archives(request):
     )
 
     shamsi_years = sorted(
-        lives.values_list("year", flat=True).distinct(),
+        lives.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
         reverse=True,
     )
-
+    
     categories = sorted(
-        lives.exclude(category="")
-            .values_list("category", flat=True)
-            .distinct()
+        lives.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
     )
 
     selected_year = request.GET.get("year")
@@ -904,25 +910,25 @@ def else_voices(request):
     return render(request, 'pages/voice.html', context)
 
 def rank_bank(request):
-    ranks = RankBank.objects.all()
+    ranks = RankBank.objects.select_related("field").order_by("rank")
 
     is_paid = False
-    
+
     if request.user.is_authenticated and request.user.role == "student":
-    
+
         student = getattr(request.user, "user_student", None)
-    
+
         if student:
-    
+
             has_database_service = ServiceToStudent.objects.filter(
                 student=student,
                 service="5",
                 is_used=False
             ).exists()
-    
+
             if has_database_service:
                 is_paid = True
-    
+
     if request.user.is_authenticated and request.user.role != "student":
         is_paid = True
 
@@ -931,7 +937,7 @@ def rank_bank(request):
     if not is_paid:
         rank_fields = rank_fields.filter(is_free=True)
 
-    selected_field = request.GET.get("field")
+    selected_field = request.GET.get("field", "").strip()
 
     if selected_field:
         ranks = ranks.filter(field_id=selected_field)
@@ -956,12 +962,14 @@ def rank_bank(request):
         "database_package": database_package,
         "is_paid": is_paid,
         "rank_fields": rank_fields,
+        "selected_field": selected_field,
         "title": "بانک رتبه قبولی",
         "ranks": ranks,
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
-    return render(request, 'pages/rank_bank.html', context)
+
+    return render(request, "pages/rank_bank.html", context)
 
 def rule(request):
     rules = Rule.objects.all()
@@ -1532,6 +1540,17 @@ def student_consultations(request):
 
     student = request.user.user_student
 
+    unused_consultation_service_1 = ServiceToStudent.objects.filter(
+        student=student,
+        service="1",
+        is_used=False
+    ).exists()
+    unused_consultation_service_2 = ServiceToStudent.objects.filter(
+        student=student,
+        service="2",
+        is_used=False
+    ).exists()
+
     consultations = (
         Consultation.objects
         .filter(service__student=student)
@@ -1555,6 +1574,8 @@ def student_consultations(request):
 
     context["consultations"] = consultations
     context["today"] = timezone.localdate()
+    context["unused_consultation_service_1"] = unused_consultation_service_1
+    context["unused_consultation_service_2"] = unused_consultation_service_2
 
     return render(
         request,

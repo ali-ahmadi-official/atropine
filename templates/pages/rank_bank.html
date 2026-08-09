@@ -157,11 +157,16 @@
                         class="form-select"
                         onchange="this.form.submit()">
 
-                    <option value="">همه رشته‌ها</option>
+                    <option value=""
+                        {% if not selected_field %}selected{% endif %}>
+                        همه رشته‌ها
+                    </option>
 
                     {% for field in rank_fields %}
                         <option value="{{ field.id }}"
-                            {% if selected_field == field.id|stringformat:"s" %}selected{% endif %}>
+                            {% if selected_field == field.id|stringformat:"s" %}
+                                selected
+                            {% endif %}>
                             {{ field.field }}
                         </option>
                     {% endfor %}
@@ -196,7 +201,7 @@
                                     <td>{{ rank.rank }}</td>
                                     <td>{{ rank.get_quota_display }}</td>
                                     <td>{{ rank.field.field }}</td>
-                                    <td>{{ rank.description }}</td>
+                                    <td>{% if rank.description %}{{ rank.description }}{% endif %}</td>
                                 </tr>
                                 {% empty %}
                                 <tr>

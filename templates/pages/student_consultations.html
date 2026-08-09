@@ -44,6 +44,30 @@
 
             {% elif consultations %}
 
+                {% if unused_consultation_service_1 %}
+
+                    <div class="alert alert-info text-center">
+
+                        رزرو جلسه با دکتر نایب‌زاده شما انجام شده است.
+                        بعد از انتشار دفترچه توسط سنجش،
+                        از همین قسمت می‌توانید تاریخ و ساعت برگزاری جلسه را انتخاب کنید.
+                        از طریق پیامک به شما اطلاع‌رسانی خواهد شد.
+
+                    </div>
+                
+                {% elif unused_consultation_service_2 %}
+
+                    <div class="alert alert-info text-center">
+
+                        رزرو جلسه با دکتر جهان‌تیغ شما انجام شده است.
+                        بعد از انتشار دفترچه توسط سنجش،
+                        از همین قسمت می‌توانید تاریخ و ساعت برگزاری جلسه را انتخاب کنید.
+                        از طریق پیامک به شما اطلاع‌رسانی خواهد شد.
+
+                    </div>
+
+                {% endif %}
+
                 <div class="table-responsive">
 
                     <table class="table table-bordered table-hover align-middle">

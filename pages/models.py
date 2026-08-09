@@ -12,6 +12,7 @@ POSTER_SHOW_IN_CHOICES = (
     ("main", "صفحه خانه"),
     ("compass", "صفحه قطب نمای آتروپین"),
     ("choice", "صفحه جلسات فردی انتخاب رشته"),
+    ("lives", "لایو های تخصصی انتخاب رشته"),
     ("DataIntroduction", "صفحه معرفی پایگاه داده"),
     ("AboutUsIntroduction", "صفحه درباره‌ما"),
 )
@@ -522,7 +523,7 @@ class RankBank(models.Model):
     class Meta:
         verbose_name = "رتبه قبولی"
         verbose_name_plural = "رتبه قبولی ها"
-        ordering = ["-id"]
+        ordering = ["rank"]
 
 class Rule(models.Model):
     title = models.CharField(

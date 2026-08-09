@@ -244,6 +244,39 @@
                 تومان
             </p>
 
+            {% if last_payment.status == "SUCCESS" %}
+            <table class="table table-bordered align-middle text-center">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">خدمت</th>
+                        <th style="width: 60%;">توضیحات</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for service in last_payment.order.package.service_labels %}
+                        <tr>
+                            <td>
+                                {{ service }}
+                            </td>
+
+                            <td>
+                                {% if service == "جلسه فردی با دکتر نایب زاده" or service == "جلسه فردی با دکتر جهان‌تیغ" %}
+                                    <div class="service-description-box">
+                                        پیش ثبت نام انجام شد با انتشار دفترچه توسط سنجش از طریق پیامک برای رزرو تاریخ و ساعت اطلاع رسانی خواهد شد.
+                                        در آن زمان از طریق منوی سایت قسمت تاریخچه رزرو مشاوره می‌توانید برای تعیین تاریخ و ساعت جلسه اقدام کنید.
+                                    </div>
+                                {% else %}
+                                    <div class="service-description-box">
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+
+            </table>
+            {% endif %}
 
         </div>
 
