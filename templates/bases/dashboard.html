@@ -166,8 +166,10 @@
 
         <!-- پایان هدر -->
         <!-- شروع::سایدبار -->
-        {% if request.user.role == "super_admin" %}
+        {% if request.user.role == "super_admin" and not request.user.is_limited %}
         {% include 'includes/aside_super_admin.html' %}
+        {% elif request.user.role == "super_admin" and request.user.is_limited %}
+        {% include 'includes/aside_super_admin_limited.html' %}
         {% elif request.user.role == "supervisor" %}
         {% include 'includes/aside_supervisor.html' %}
         {% elif request.user.role == "consultant" %}

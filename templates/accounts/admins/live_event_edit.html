@@ -84,6 +84,11 @@
             {{ form.is_public }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_active.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_active.errors %}
+            {{ form.is_active }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.show_in.label }}</p>
             {% include 'includes/error.html' with errors=form.show_in.errors %}
             {{ form.show_in }}

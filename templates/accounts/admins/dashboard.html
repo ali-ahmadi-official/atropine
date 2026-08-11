@@ -9,6 +9,51 @@
 <div class="container my-4" dir="rtl">
 
     <div class="card shadow-sm border-0">
+        {% if request.user.is_limited %}
+        <div class="card-body">
+
+            <h5 class="fw-bold text-center mb-4">
+                🚀 دسترسی سریع
+            </h5>
+
+            <div class="row g-3">
+
+                <!-- 1 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'faq_list' %}" class="btn btn-info-transparent w-100 py-3">
+                        <i class="bi bi-question-circle-fill d-block fs-3 mb-2"></i>
+                        پرسش و پاسخ ها
+                    </a>
+                </div>
+
+                <!-- 2 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'media_list' %}" class="btn btn-success-transparent w-100 py-3">
+                        <i class="bi bi-collection-play-fill d-block fs-3 mb-2"></i>
+                        مدیا
+                    </a>
+                </div>
+
+                <!-- 3 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'rank_bank_list' %}" class="btn btn-danger-transparent w-100 py-3">
+                        <i class="bi bi-bar-chart-fill d-block fs-3 mb-2"></i>
+                        جدول قبولی
+                    </a>
+                </div>
+
+                <!-- 4 -->
+                <div class="col-lg-3 col-md-4 col-6">
+                    <a href="{% url 'rule_list' %}" class="btn btn-warning-transparent w-100 py-3">
+                        <i class="bi bi-file-earmark-text-fill d-block fs-3 mb-2"></i>
+                        قوانین و آئین نامه ها
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+        {% else %}
         <div class="card-body">
 
             <h5 class="fw-bold text-center mb-4">
@@ -192,6 +237,7 @@
             </div>
 
         </div>
+        {% endif %}
     </div>
 
 </div>

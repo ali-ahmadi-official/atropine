@@ -38,6 +38,7 @@ class UserCreationForm(UserCreationForm):
             "password2",
             "role",
             "mobile",
+            "is_limited",
             "avatar",
         )
 
@@ -60,6 +61,9 @@ class UserCreationForm(UserCreationForm):
             "mobile": forms.TextInput(attrs={
                 "class": "form-control",
                 "placeholder": "09xxxxxxxxx",
+            }),
+            "is_limited": forms.CheckboxInput(attrs={
+                "class": "form-check-input",
             }),
             "avatar": forms.ClearableFileInput(attrs={
                 "class": "form-control",
@@ -85,7 +89,7 @@ class UserCreationForm(UserCreationForm):
 class UserForm(BaseModelForm):
     class Meta:
         model = User
-        fields = ["username", "first_name", "last_name", "mobile", "avatar"]
+        fields = ["username", "first_name", "last_name", "mobile", "is_limited", "avatar"]
 
 class ConsultantForm(BaseModelForm):
     class Meta:

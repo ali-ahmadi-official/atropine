@@ -52,8 +52,7 @@ def main(request):
     now = timezone.now()
     a_live_is_active = LiveEvent.objects.filter(
         is_public=True,
-        start_datetime__lte=now,
-        end_datetime__gte=now
+        is_active=True,
     ).first()
 
     next_live = LiveEvent.objects.filter(
@@ -98,8 +97,7 @@ def compass(request):
     now = timezone.now()
     a_live_is_active = LiveEvent.objects.filter(
         is_public=True,
-        start_datetime__lte=now,
-        end_datetime__gte=now
+        is_active=True,
     ).first()
 
     posters = Poster.objects.filter(show_in__icontains="compass")
@@ -935,6 +933,7 @@ def rank_bank(request):
     rank_fields = RankField.objects.order_by("field")
 
     if not is_paid:
+        ranks = ranks.filter(field__is_free=True)
         rank_fields = rank_fields.filter(is_free=True)
 
     selected_field = request.GET.get("field", "").strip()

@@ -31,6 +31,11 @@
             {{ form.mobile }}
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_limited.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_limited.errors %}
+            {{ form.is_limited }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.avatar.label }}</p>
             {% include 'includes/error.html' with errors=form.avatar.errors %}
             {{ form.avatar }}

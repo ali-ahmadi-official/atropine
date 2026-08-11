@@ -153,6 +153,11 @@ class LiveEvent(models.Model):
         verbose_name="نمایش عمومی"
     )
 
+    is_active = models.BooleanField(
+        default=False,
+        verbose_name="درحال برگزاری"
+    )
+
     show_in = MultiSelectField(
         max_length=100,
         choices=LIVE_SHOW_IN_CHOICES,

@@ -7,7 +7,7 @@ from .choices import *
 
 class User(AbstractUser):
     ROLE_CHOICES = (
-        ("super_admin", "مدیر کل"),
+        ("super_admin", "مدیرکل"),
         ("supervisor", "ناظر"),
         ("consultant", "مشاور"),
         ("student", "داوطلب"),
@@ -18,6 +18,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to="avatars/", blank=True, null=True, verbose_name="تصویر پروفایل")
     is_suspended = models.BooleanField(default=False, verbose_name="تعلیق شده")
     suspension_reason = models.TextField(blank=True, verbose_name="دلیل تعلیق")
+    is_limited = models.BooleanField(default=False, verbose_name="دسترسی محدود (برای مدیرکل)")
 
     class Meta:
         verbose_name = "کاربر"
