@@ -1,5 +1,6 @@
 import os
 import jdatetime
+import requests
 from collections import defaultdict
 from datetime import timedelta, datetime
 from decimal import Decimal
@@ -19,6 +20,20 @@ from .models import (
     Poster, Comment, FAQ, Media,RankField, RankBank, Rule, StaticMessage
 )
 from .forms import CompleteProfileForm, DiscountCodeForm, StudentForm1Form, StudentForm2Form, StudentForm3Form
+
+def send_sms(phone, message):
+    try:
+        requests.get(
+            "https://atropine.ir/kiani/SMS/SendPayam.aspx",
+            params={
+                "phone": phone,
+                "payam": "-".join(message.split()),
+                "token": "tokenQeuykplnvnws",
+            },
+            timeout=10,
+        )
+    except Exception:
+        pass
 
 def global_context(request):
     has_database_service = False
@@ -40,10 +55,19 @@ def global_context(request):
         user__last_name="نایب زاده"
     ).first()
 
+    try:
+        nayeb_consultant_open = User.objects.filter(id=73).first().user_consultant.show_schedules
+        jahan_consultant_open = User.objects.filter(id=74).first().user_consultant.show_schedules
+    except:
+        nayeb_consultant_open = False
+        jahan_consultant_open = False
+
     return {
         "has_database_service": has_database_service,
         "nayeb_link": nayeb_link,
         "wallet": wallet,
+        "nayeb_consultant_open": nayeb_consultant_open,
+        "jahan_consultant_open": jahan_consultant_open,
     }
 
 def main(request):
@@ -118,7 +142,7 @@ def compass(request):
             live.start_date_shamsi = ""
             live.status = "-"
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -393,7 +417,7 @@ def choice_introduction(request):
     if all_consultants:
         atropine_teams = atropine_teams.exclude(first_name="دکتر امیرحسین", last_name="نایب زاده")
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -429,7 +453,7 @@ def live_introduction(request, id):
         live.start_date_shamsi = ""
         live.status = "-"
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -469,7 +493,7 @@ def live_time_steps(request):
             live.start_date_shamsi = ""
             live.status = "-"
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -531,7 +555,7 @@ def live_archives(request):
             live.start_date_shamsi = ""
             live.status = "-"
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -581,7 +605,7 @@ def data_introduction(request, id):
 
     posters = Poster.objects.filter(show_in__icontains="DataIntroduction")
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -652,7 +676,7 @@ def videos(request):
     if selected_category:
         medias = medias.filter(category=selected_category)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -727,7 +751,7 @@ def else_videos(request):
     if selected_category:
         medias = medias.filter(category=selected_category)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -802,7 +826,7 @@ def voices(request):
     if selected_category:
         medias = medias.filter(category=selected_category)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -877,7 +901,7 @@ def else_voices(request):
     if selected_category:
         medias = medias.filter(category=selected_category)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -941,7 +965,7 @@ def rank_bank(request):
     if selected_field:
         ranks = ranks.filter(field_id=selected_field)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -973,7 +997,7 @@ def rank_bank(request):
 def rule(request):
     rules = Rule.objects.all()
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -996,7 +1020,7 @@ def rule(request):
 def rule_introduction(request, id):
     rule = get_object_or_404(Rule, id=id)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -1019,7 +1043,7 @@ def rule_introduction(request, id):
 def static_message(request):
     static_messages = StaticMessage.objects.all()
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
 
     single_service_packages = [
         p for p in packages
@@ -1071,7 +1095,7 @@ def payment_view(request, package_id):
 
     package = get_object_or_404(Package, id=package_id)
 
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
     
     single_service_packages = [
         p for p in packages
@@ -1277,7 +1301,7 @@ def payment_view(request, package_id):
 
 @login_required
 def payment_list(request):
-    packages = Package.objects.all()
+    packages = Package.objects.filter(is_public=True)
     
     single_service_packages = [
         p for p in packages
@@ -1364,9 +1388,11 @@ def reserve_consultation(request, schedule_id):
     if consultant.last_name == "نایب زاده":
         service_code = "1"
         service_name = "جلسه فردی با دکتر نایب زاده"
+        doctor_name = "نایب زاده"
     else:
         service_code = "2"
-        service_name = "جلسه فردی با مشاور"
+        service_name = "جلسه فردی با دکتر جهان تیغ"
+        doctor_name = "جهان تیغ"
 
     context["service_name"] = service_name
 
@@ -1511,6 +1537,11 @@ def reserve_consultation(request, schedule_id):
             Consultation.objects.create(
                 service=service,
                 schedule=schedule
+            )
+
+            send_sms(
+                service.student.user.mobile,
+                f'رزرو جلسه فردی شما با دکتر {doctor_name} برای تاریخ {schedule.date_shamsi} ساعت {schedule.start_time} تا ساعت {schedule.end_time} رزرو شد. اطلاعات تکمیلی و فرم های پرسشنامه برای تکمیل توسط شما، از طریق پیامک، طی چند روز قبل از برگزاری جلسه، برای شما ارسال خواهد شد.'
             )
 
         return redirect("student_consultations")

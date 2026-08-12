@@ -49,6 +49,11 @@
             {% include 'includes/error.html' with errors=form.total_price.errors %}
             {{ form.total_price }}
         </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_public.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_public.errors %}
+            {{ form.is_public }}
+        </div>
         <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
     </form>
 </div>

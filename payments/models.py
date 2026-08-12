@@ -81,6 +81,11 @@ class Package(models.Model):
         verbose_name="قیمت به تومان"
     )
 
+    is_public = models.BooleanField(
+        default=True,
+        verbose_name="نمایش عمومی"
+    )
+
     def __str__(self):
         return f"پکیج با خدمات: {'، '.join(self.service_labels())}"
 

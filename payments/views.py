@@ -1,4 +1,5 @@
 import requests
+import jdatetime
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect
@@ -6,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db import transaction
-from accounts.models import Student, ConsultantSchedule
+from accounts.models import User, Student, ConsultantSchedule
 from .models import Consultation
 
 from .models import (
@@ -18,6 +19,20 @@ from .models import (
     DiscountUsage,
     PaymentProvider
 )
+
+def send_sms(phone, message):
+    try:
+        requests.get(
+            "https://atropine.ir/kiani/SMS/SendPayam.aspx",
+            params={
+                "phone": phone,
+                "payam": "-".join(message.split()),
+                "token": "tokenQeuykplnvnws",
+            },
+            timeout=10,
+        )
+    except Exception:
+        pass
 
 def start_payment(request, package_id, provider):
 
@@ -285,6 +300,9 @@ def complete_payment(payment, ref_id=None):
             package_request=order,
         )
 
+    get_nayeb = False
+    get_jahan = False
+
     # ثبت خدمات
     for service in order.package.service:
 
@@ -293,18 +311,38 @@ def complete_payment(payment, ref_id=None):
             service=service
         )
 
+        if service == "1":
+            get_nayeb = True
+        elif service == "2":
+            get_jahan = True
+
     try:
-        requests.get(
-            "https://atropine.ir/kiani/SMS/SendOrder.aspx",
-            params={
-                "phone": order.student.user.mobile,
-                "basketId": order.package.id,
-                "token": settings.KIANI_SMS_TOKEN,
-            },
-            timeout=10,
+        nayeb_consultant_open = User.objects.filter(id=73).first().user_consultant.show_schedules
+        jahan_consultant_open = User.objects.filter(id=74).first().user_consultant.show_schedules
+    except:
+        nayeb_consultant_open = False
+        jahan_consultant_open = False
+
+    if get_nayeb and not nayeb_consultant_open:
+        send_sms(
+            order.student.user.mobile,
+            'پیش ثبت نام جلسه فردی با دکتر نایب زاده انجام شد. با انتشار دفترچه توسط سنجش، از طریق پیامک برای رزرو تاریخ و ساعت، به شما اطلاع رسانی خواهد شد. در آن زمان از طریق منوی سایت "قسمت تاریخچه رزرو مشاوره" می‌توانید برای تعیین تاریخ و ساعت جلسه اقدام کنید.'
         )
-    except Exception:
-        pass
+    elif get_jahan and not jahan_consultant_open:
+        send_sms(
+            order.student.user.mobile,
+            'پیش ثبت نام جلسه فردی با دکتر جهان تیغ انجام شد. با انتشار دفترچه توسط سنجش، از طریق پیامک برای رزرو تاریخ و ساعت، به شما اطلاع رسانی خواهد شد. در آن زمان از طریق منوی سایت "قسمت تاریخچه رزرو مشاوره" می‌توانید برای تعیین تاریخ و ساعت جلسه اقدام کنید.'
+        )
+    elif get_nayeb:
+        send_sms(
+            order.student.user.mobile,
+            'پیش ثبت نام جلسه فردی شما انجام شد. با مراجعه به صفحه ی "قسمت تاریخچه رزرو مشاوره" از منوی سایت، اقدام به تعیین تاریخ و ساعت برگزاری جلسه از جدول زمانی مشاور نمایید.'
+        )
+    elif get_jahan:
+        send_sms(
+            order.student.user.mobile,
+            'پیش ثبت نام جلسه فردی شما انجام شد. با مراجعه به صفحه ی "قسمت تاریخچه رزرو مشاوره" از منوی سایت، اقدام به تعیین تاریخ و ساعت برگزاری جلسه از جدول زمانی مشاور نمایید.'
+        )
 
 def auto_reserve(schedule_id, student):
 
@@ -313,13 +351,19 @@ def auto_reserve(schedule_id, student):
         is_reserved=False
     ).first()
 
+    schedule.date_shamsi = jdatetime.date.fromgregorian(
+        date=schedule.date
+    ).strftime("%Y/%m/%d")
+
     if schedule is None:
         return False
 
     if schedule.consultant.user.last_name == "نایب زاده":
         service_code = "1"
+        doctor_name = "نایب زاده"
     else:
         service_code = "2"
+        doctor_name = "جهان تیغ"
 
     service = ServiceToStudent.objects.filter(
         student=student,
@@ -341,6 +385,11 @@ def auto_reserve(schedule_id, student):
         Consultation.objects.create(
             service=service,
             schedule=schedule
+        )
+
+        send_sms(
+            service.student.user.mobile,
+            f'رزرو جلسه فردی شما با دکتر {doctor_name} برای تاریخ {schedule.date_shamsi} ساعت {schedule.start_time} تا ساعت {schedule.end_time} رزرو شد. اطلاعات تکمیلی و فرم های پرسشنامه برای تکمیل توسط شما، از طریق پیامک، طی چند روز قبل از برگزاری جلسه، برای شما ارسال خواهد شد.'
         )
 
     return True

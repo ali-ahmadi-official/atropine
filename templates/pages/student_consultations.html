@@ -44,7 +44,7 @@
 
             {% elif consultations %}
 
-                {% if unused_consultation_service_1 %}
+                {% if unused_consultation_service_1 and not nayeb_consultant_open %}
 
                     <div class="alert alert-info text-center">
 
@@ -55,7 +55,7 @@
 
                     </div>
                 
-                {% elif unused_consultation_service_2 %}
+                {% elif unused_consultation_service_2 and not jahan_consultant_open %}
 
                     <div class="alert alert-info text-center">
 
@@ -63,6 +63,28 @@
                         بعد از انتشار دفترچه توسط سنجش،
                         از همین قسمت می‌توانید تاریخ و ساعت برگزاری جلسه را انتخاب کنید.
                         از طریق پیامک به شما اطلاع‌رسانی خواهد شد.
+
+                    </div>
+
+                {% elif unused_consultation_service_1 %}
+
+                    <div class="alert alert-info text-center">
+
+                        برای رزرو تاریخ و ساعت برگزاری جلسه خود از طریق لینک زیر اقدام نمایید:
+                        جدول زمانی جلسات دکتر نایب زاده
+                        <br>
+                        <a href="{% url 'consultant_show' 73 %}" class="btn btn-primary"></a>
+
+                    </div>
+                
+                {% elif unused_consultation_service_2 %}
+
+                    <div class="alert alert-info text-center">
+
+                        برای رزرو تاریخ و ساعت برگزاری جلسه خود از طریق لینک زیر اقدام نمایید:
+                        جدول زمانی جلسات دکتر جهان تیغ
+                        <br>
+                        <a href="{% url 'consultant_show' 74 %}" class="btn btn-primary"></a>
 
                     </div>
 
@@ -172,7 +194,8 @@
 
                 <div class="alert alert-info">
 
-                    هنوز هیچ جلسه‌ای رزرو نکرده‌اید.
+                    هنوز هیچ جلسه‌ای رزرو نکرده‌اید یا جدول زمانی مشاور منتخب شما، باز نشده است. 
+                    اگر رزرو جلسه انجام داده اید، اطلاعات تکمیلی با باز شدن جدول زمانی مشاور برای شما پیامک خواهد شد.
 
                 </div>
 
