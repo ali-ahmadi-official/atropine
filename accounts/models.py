@@ -292,12 +292,14 @@ class StudentForm1(models.Model):
 
     mobile = models.CharField(
         max_length=11,
-        verbose_name="* شماره تماس"
+        verbose_name="* شماره تماس",
+        help_text="همان شماره که برای ادمین آتروپین ارسال کردید یا با آن وارد سامانه شدید"
     )
 
     telegram_id = models.CharField(
         max_length=100,
-        verbose_name="* آیدی تلگرام"
+        verbose_name="* آیدی تلگرام",
+        help_text="اگر آیدی ندارید لطفا بسازید چون برای پیدا کردن شما در بین انبوده پیام های دریافتی، ضرورت دارد"
     )
 
     age = models.PositiveSmallIntegerField(
@@ -306,7 +308,7 @@ class StudentForm1(models.Model):
 
     city = models.CharField(
         max_length=100,
-        verbose_name="* شهر محل زندگی"
+        verbose_name="* شهر فعلی محل زندگی"
     )
 
     university = models.CharField(
@@ -328,17 +330,18 @@ class StudentForm1(models.Model):
     employment_status = models.CharField(
         max_length=200,
         blank=True,
-        verbose_name="وضعیت استخدام"
+        verbose_name="آیا استخدام جایی هستید؟"
     )
 
     service_status = models.TextField(
         blank=True,
-        verbose_name="وضعیت گذراندن طرح یا سربازی"
+        verbose_name="وضعیت گذراندن دوره طرح یا سربازی",
+        help_text="ذکر محل خدمت: اورژانس، بهداشت، درمانگاه‌های نیروهای مسلح یا سایر"
     )
 
     other_description = models.TextField(
         blank=True,
-        verbose_name="سایر موارد مرتبط"
+        verbose_name="سایر موارد مرتبط را ذکر کنید"
     )
 
     class Meta:
@@ -352,7 +355,8 @@ class StudentForm2(models.Model):
     assistant_score = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        verbose_name="* نمره دستیاری ۴۰۵"
+        verbose_name="* نمره دستیاری ۴۰۵",
+        help_text="با کلید نهایی سنجش"
     )
 
     assistant_rank = models.PositiveIntegerField(
@@ -362,53 +366,58 @@ class StudentForm2(models.Model):
     )
 
     subgroup1_rank = models.PositiveIntegerField(
-        verbose_name="* رتبه زیرگروه یک"
+        verbose_name="* رتبه در زیر گروه یک"
     )
 
     subgroup2_rank = models.PositiveIntegerField(
-        verbose_name="* رتبه زیرگروه دو"
+        verbose_name="* رتبه در زیر گروه دو"
     )
 
     subgroup3_rank = models.PositiveIntegerField(
-        verbose_name="* رتبه زیرگروه سه"
+        verbose_name="* رتبه در زیر گروه سه"
     )
 
     subgroup4_rank = models.PositiveIntegerField(
-        verbose_name="* رتبه زیرگروه چهار"
+        verbose_name="* رتبه در زیر گروه چهار"
     )
 
     subgroup5_rank = models.PositiveIntegerField(
-        verbose_name="* رتبه زیرگروه پنج"
+        verbose_name="* رتبه در زیر گروه پنج"
     )
 
     quota = models.CharField(
         max_length=200,
         blank=True,
-        verbose_name="نوع سهمیه"
+        verbose_name="وضعیت سهمیه",
+        help_text="نوع سهمیه - در صورت وجود"
     )
 
     quota_25_rank = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="رتبه سهمیه ایثارگران ۲۵٪"
+        verbose_name="رتبه سهمیه ایثارگران ۲۵٪",
+        help_text="در صورت وجود"
     )
 
     quota_5_rank = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="رتبه سهمیه ایثارگران ۵٪"
+        verbose_name="سهمیه ایثارگران ۵٪",
+        help_text="در صورت وجود"
     )
 
     deprived_area1_rank = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="رتبه سهمیه محروم استان ۱"
+        verbose_name="سهمیه محروم استان ۱",
+        help_text="در صورت وجود"
     )
 
     deprived_area2_rank = models.PositiveIntegerField(
         null=True,
         blank=True,
-        verbose_name="رتبه سهمیه محروم استان ۲"
+        verbose_name="سهمیه محروم استان ۲",
+        help_text="در صورت وجود"
     )
 
     class Meta:
@@ -420,143 +429,155 @@ class StudentForm3(models.Model):
     student = models.OneToOneField(Student, on_delete=models.CASCADE, related_name="student_form_3", verbose_name="داوطلب")
 
     favorite_specialties = models.TextField(
-        verbose_name="* رشته‌های مورد علاقه"
+        verbose_name="* رشته‌های مورد علاقه شما به ترتیب اولویت"
     )
 
     city_priority = models.PositiveSmallIntegerField(
-        verbose_name="* اولویت انتخاب شهر"
+        verbose_name="* انتخاب شهر برای شما چقدر اولویت دارد؟",
+        help_text="۱ تا ۱۰"
     )
 
     preferred_cities = models.TextField(
-        verbose_name="* شهرهای مورد نظر"
+        verbose_name="* گزینه‌های اولویت‌بندی شده برای انتخاب شهر"
     )
 
     main_challenge = models.TextField(
-        verbose_name="* چالش اصلی انتخاب رشته"
+        verbose_name="* چالش اصلی شما در بحث انتخاب رشته چیست؟"
     )
 
     career_motivation = models.TextField(
-        verbose_name="* مهم‌ترین انگیزه شغلی"
+        verbose_name="* مهم‌ترین انگیزه شغلی فعلی شما",
+        help_text="پول، پرستیژ، نجات افراد و..."
     )
 
     reason_for_medicine = models.TextField(
-        verbose_name="* علت انتخاب پزشکی"
+        verbose_name="* علت انتخاب پزشکی بعد از کنکور چه بود؟"
     )
 
     risk_taking = models.PositiveSmallIntegerField(
-        verbose_name="* ریسک‌پذیری"
+        verbose_name="* ریسک‌پذیر هستید؟",
+        help_text="۱ تا ۱۰"
     )
 
     personality_type = models.CharField(
         max_length=100,
-        verbose_name="* درون‌گرا یا برون‌گرا"
+        verbose_name="* خود را فرد درون‌گرا می‌دانید یا برون‌گرا؟"
     )
 
     leadership = models.PositiveSmallIntegerField(
-        verbose_name="* توانایی لیدر بودن"
+        verbose_name="* توانایی لیدر بودن در جمع ؟",
+        help_text="۱ تا ۱۰"
     )
 
     empathy = models.PositiveSmallIntegerField(
-        verbose_name="* میزان همدلی"
+        verbose_name="* میزان همدلی شما با افراد و بیماران؟",
+        help_text="۱ تا ۱۰"
     )
 
     patient_interest = models.PositiveSmallIntegerField(
-        verbose_name="* علاقه به مریض دیدن"
+        verbose_name="* علاقه‌مند به مریض دیدن؟",
+        help_text="۱ تا ۱۰"
     )
 
     interested_in_surgery = models.CharField(
         max_length=10,
-        verbose_name="* علاقه‌مند به جراح شدن"
+        verbose_name="* علاقه‌مند به جراح شدن؟",
+        help_text="بله/خیر"
     )
 
     income_expectation = models.CharField(
         max_length=50,
-        verbose_name="* درآمد مورد نظر"
+        verbose_name="* درآمد مورد نظر",
+        help_text="بالا / متوسط"
     )
 
     procedure_interest = models.CharField(
         max_length=100,
-        verbose_name="* تمایل به پروسیجر یا طبابت"
+        verbose_name="* تمایل به پروسیجر در رشته دارید یا صرفاً طبابت بالینی؟"
     )
 
     night_shift_priority = models.CharField(
         max_length=100,
-        verbose_name="* اولویت نداشتن کشیک"
+        verbose_name="* کشیک نداشتن برای شما اولویت است؟"
     )
 
     hospital_environment_annoying = models.CharField(
         max_length=100,
-        verbose_name="* آزاردهنده بودن حضور طولانی در بیمارستان"
+        verbose_name="* آیا بودن طولانی‌مدت در محیط بیمارستان شما را آزار می‌دهد؟"
     )
 
     preferred_workplace = models.CharField(
         max_length=100,
-        verbose_name="* محیط کاری مورد علاقه"
+        verbose_name="* محیط بیمارستان و اورژانس را ترجیح می‌دهید یا مطب و درمانگاه؟"
     )
 
     free_time_importance = models.PositiveSmallIntegerField(
-        verbose_name="* اهمیت داشتن تایم آزاد"
+        verbose_name="* داشتن تایم آزاد چقدر برای شما اهمیت دارد؟",
+        help_text="۱ تا ۱۰"
     )
 
     strong_internship_departments = models.TextField(
-        verbose_name="* بخش‌های قوی دوران اینترنی"
+        verbose_name="* در دوران اینترنی در کدام بخش‌ها خود را توانمندتر می‌دانستید؟"
     )
 
     internship_shifts = models.CharField(
         max_length=200,
-        verbose_name="* وضعیت کشیک‌های اینترنی"
+        verbose_name="* کشیک‌های دوران اینترنی را خودتان گذرانده‌اید یا به دیگران سپرده‌اید؟"
     )
 
     decision_making = models.PositiveSmallIntegerField(
-        verbose_name="* قدرت تصمیم‌گیری در شرایط بحرانی"
+        verbose_name="* قدرت تصمیم‌گیری شما در شرایط بحرانی؟",
+        help_text="۱ تا ۱۰"
     )
 
     prefer_variety = models.CharField(
         max_length=100,
-        verbose_name="* ترجیح تنوع یا یکنواختی"
+        verbose_name="* تنوع را بر یکنواختی ترجیح می‌دهید؟"
     )
 
     hand_or_thinking = models.CharField(
         max_length=100,
-        verbose_name="* ترجیح کار با دست یا فکر"
+        verbose_name="* کار کردن با دست را ترجیح می‌دهید یا فکر کردن؟"
     )
 
     world_impact = models.CharField(
         max_length=100,
-        verbose_name="* تمایل به تأثیرگذاری در جهان"
+        verbose_name="* آیا دوست دارید فرد تأثیرگذاری در جهان باشید؟"
     )
 
     team_or_individual = models.CharField(
         max_length=100,
-        verbose_name="* علاقه به کار گروهی یا فردی"
+        verbose_name="* آیا به انجام کارهای گروهی علاقه‌مندید یا کارهای فردی؟"
     )
 
     work_independence = models.CharField(
         max_length=100,
-        verbose_name="* اهمیت استقلال کاری"
+        verbose_name="* استقلال کاری برایتان اهمیت زیادی دارد؟"
     )
 
     affected_by_critical_patient = models.CharField(
         max_length=100,
-        verbose_name="* تأثیرپذیری از بیمار بدحال"
+        verbose_name="* آیا در برخورد با بیمار بدحال بیش از معمول تحت تأثیر قرار می‌گیرید؟"
     )
 
     communication_interest = models.PositiveSmallIntegerField(
-        verbose_name="* علاقه به ارتباط کلامی با بیمار"
+        verbose_name="* آیا به ارتباط کلامی با بیماران علاقه‌مندید؟",
+        help_text="۱ تا ۱۰"
     )
 
     research_interest = models.PositiveSmallIntegerField(
-        verbose_name="* علاقه به پژوهش"
+        verbose_name="* آیا به ریسرچ و پژوهش علاقه‌مندید؟",
+        help_text="۱ تا ۱۰"
     )
 
     opposite_gender_exam = models.CharField(
         max_length=100,
-        verbose_name="* سخت بودن معاینه بیمار غیرهم‌جنس"
+        verbose_name="* آیا معاینه بیمار غیرهم‌جنس برای شما سخت است؟"
     )
 
     additional_notes = models.TextField(
         blank=True,
-        verbose_name="* توضیحات تکمیلی"
+        verbose_name="هر نکته‌ای که با توجه به شرایط‌تان نیاز است مشاور در جریان باشد، ذکر کنید"
     )
 
     class Meta:
