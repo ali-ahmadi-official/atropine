@@ -1236,7 +1236,20 @@ def show_my_student(request, id):
 
             message = request.POST.get("message", "").strip()
 
+            form_type = request.POST.get("form_type")
+
+            form_links = {
+                "1": "https://my.atropine.ir/student-form1/",
+                "2": "https://my.atropine.ir/student-form2/",
+                "3": "https://my.atropine.ir/student-form3/",
+            }
+
+            form_link = form_links.get(form_type)
+
             if message:
+
+                if form_link:
+                    message = f"{message}\n{form_link}"
 
                 sms = SMS.objects.create(
                     sender=request.user,

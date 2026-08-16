@@ -151,7 +151,7 @@
 
                         <td>
                             <a
-                                href="{% url 'export_form1_excel' schedule.id %}"
+                                href="{% url 'export_form2_excel' schedule.id %}"
                                 class="badge bg-info-transparent">
                                 دانلود
                             </a>
@@ -212,7 +212,7 @@
 
                         <td>
                             <a
-                                href="{% url 'export_form1_excel' schedule.id %}"
+                                href="{% url 'export_form3_excel' schedule.id %}"
                                 class="badge bg-info-transparent">
                                 دانلود
                             </a>
@@ -385,6 +385,7 @@
                 {% csrf_token %}
 
                 <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                <input type="hidden" name="form_type" value="1">
 
                 <div class="modal-header">
 
@@ -483,6 +484,7 @@
                 {% csrf_token %}
 
                 <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                <input type="hidden" name="form_type" value="2">
 
                 <div class="modal-header">
 
@@ -581,6 +583,7 @@
                 {% csrf_token %}
 
                 <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                <input type="hidden" name="form_type" value="3">
 
                 <div class="modal-header">
 
