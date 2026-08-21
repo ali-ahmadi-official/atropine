@@ -2,6 +2,7 @@ from datetime import timedelta
 from multiselectfield import MultiSelectField
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django_ckeditor_5.fields import CKEditor5Field
 from .choices import *
 
@@ -434,7 +435,11 @@ class StudentForm3(models.Model):
 
     city_priority = models.PositiveSmallIntegerField(
         verbose_name="* انتخاب شهر برای شما چقدر اولویت دارد؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     preferred_cities = models.TextField(
@@ -456,7 +461,11 @@ class StudentForm3(models.Model):
 
     risk_taking = models.PositiveSmallIntegerField(
         verbose_name="* ریسک‌پذیر هستید؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     personality_type = models.CharField(
@@ -466,17 +475,29 @@ class StudentForm3(models.Model):
 
     leadership = models.PositiveSmallIntegerField(
         verbose_name="* توانایی لیدر بودن در جمع ؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     empathy = models.PositiveSmallIntegerField(
         verbose_name="* میزان همدلی شما با افراد و بیماران؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     patient_interest = models.PositiveSmallIntegerField(
         verbose_name="* علاقه‌مند به مریض دیدن؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     interested_in_surgery = models.CharField(
@@ -513,7 +534,11 @@ class StudentForm3(models.Model):
 
     free_time_importance = models.PositiveSmallIntegerField(
         verbose_name="* داشتن تایم آزاد چقدر برای شما اهمیت دارد؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     strong_internship_departments = models.TextField(
@@ -527,7 +552,11 @@ class StudentForm3(models.Model):
 
     decision_making = models.PositiveSmallIntegerField(
         verbose_name="* قدرت تصمیم‌گیری شما در شرایط بحرانی؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     prefer_variety = models.CharField(
@@ -562,12 +591,20 @@ class StudentForm3(models.Model):
 
     communication_interest = models.PositiveSmallIntegerField(
         verbose_name="* آیا به ارتباط کلامی با بیماران علاقه‌مندید؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     research_interest = models.PositiveSmallIntegerField(
         verbose_name="* آیا به ریسرچ و پژوهش علاقه‌مندید؟",
-        help_text="۱ تا ۱۰"
+        help_text="۱ تا ۱۰",
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(10),
+        ],
     )
 
     opposite_gender_exam = models.CharField(

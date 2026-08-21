@@ -19,6 +19,7 @@
         <thead>
             <tr>
                 <th scope="col">شناسه</th>
+                <th scope="col">مسیر پرداخت</th>
                 <th scope="col">کد تراکنش</th>
                 <th scope="col">شناسه کاربر</th>
                 <th scope="col">شماره تلفن کاربر</th>
@@ -34,6 +35,9 @@
             <tr>
                 <td>
                     {{ payment.id }}
+                </td>
+                <td>
+                    {{ payment.get_provider_display }}
                 </td>
                 <td>
                     {{ payment.authority }}
@@ -70,7 +74,7 @@
             {% endif %}
             {% empty %}
             <tr>
-                <td colspan="8" style="text-align: center;">
+                <td colspan="9" style="text-align: center;">
                     موردی یافت نشد.
                 </td>
             </tr>

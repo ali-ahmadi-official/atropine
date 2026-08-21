@@ -156,6 +156,24 @@ class StudentForm3Form(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        fields_1_to_10 = [
+            "city_priority",
+            "risk_taking",
+            "leadership",
+            "empathy",
+            "patient_interest",
+            "free_time_importance",
+            "decision_making",
+            "communication_interest",
+            "research_interest",
+        ]
+        
+        for field_name in fields_1_to_10:
+            self.fields[field_name].widget.attrs.update({
+                "min": 1,
+                "max": 10,
+            })
+
         for field in self.fields.values():
 
             if isinstance(field.widget, forms.CheckboxInput):
@@ -166,3 +184,4 @@ class StudentForm3Form(forms.ModelForm):
                 if isinstance(field.widget, forms.Select)
                 else "form-control"
             })
+                    

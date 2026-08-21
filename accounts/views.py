@@ -1361,10 +1361,12 @@ def show_my_student(request, id):
                     continue
 
                 value = getattr(student.student_form_3, field.name)
+                help_text = field.help_text
 
                 form_3_fields.append({
                     "label": field.verbose_name,
                     "value": value,
+                    "help_text": help_text,
                 })
 
             context["form_3_fields"] = form_3_fields
