@@ -153,6 +153,60 @@
         flex: 0 0 100%;
     }
 </style>
+<style>
+    .video-wrapper {
+        position: relative;
+    }
+
+    .video-loader {
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        background: rgba(0, 0, 0, 0.75);
+
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease;
+    }
+
+    .video-loader.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .loader-logo {
+        width: 70px;
+        border-radius: 100%;
+        margin-bottom: 10px;
+    }
+
+    .loader-progress {
+        width: 200px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.25);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    #loader-progress-bar {
+        width: 0%;
+        height: 100%;
+        background: #fff;
+        transition: width 0.2s ease;
+    }
+
+    #loader-percent {
+        color: white;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -213,9 +267,21 @@
 
 <div class="category-section section-t-space pt-4">
     <div class="intro-plans">
-        <video class="intro-plans-video" id="first-player" controls playsinline preload="metadata">
-            <source id="video-source" src="" type="video/mp4">
-        </video>
+        <div class="video-wrapper">
+            <video class="intro-plans-video" id="first-player" controls playsinline preload="metadata">
+                <source id="video-source" src="" type="video/mp4">
+            </video>
+    
+            <div id="video-loader" class="video-loader">
+                <img src="{% static 'images/logo.jpg' %}" alt="Loading" class="loader-logo">
+    
+                <div class="loader-progress">
+                    <div id="loader-progress-bar"></div>
+                </div>
+    
+                <span id="loader-percent">0%</span>
+            </div>
+        </div>
 
         <div class="description">
             <h3 class="mb-3" id="video-title"></h3>
@@ -349,6 +415,8 @@
         const videoTitle = item.dataset.title;
         const videoDescription = item.dataset.description;
 
+        showLoader();
+
         source.src = videoUrl;
 
         video.load();
@@ -363,6 +431,82 @@
             behavior: 'smooth'
         });
 
+    });
+</script>
+<script>
+    const loader = document.getElementById('video-loader');
+    const progressBar = document.getElementById('loader-progress-bar');
+    const percentText = document.getElementById('loader-percent');
+
+    // نمایش Loader
+    function showLoader() {
+        loader.classList.add('active');
+    }
+
+
+    // مخفی کردن Loader
+    function hideLoader() {
+        loader.classList.remove('active');
+    }
+
+
+    // محاسبه مقدار Buffer شده
+    function updateBufferProgress() {
+
+        if (!video.duration || !video.buffered.length) {
+            return;
+        }
+
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+
+        let percent = (bufferedEnd / video.duration) * 100;
+
+        percent = Math.min(100, Math.round(percent));
+
+        progressBar.style.width = percent + '%';
+        percentText.textContent = percent + '%';
+    }
+
+
+    // وقتی ویدیو شروع به لود شدن می‌کند
+    video.addEventListener('loadstart', () => {
+        showLoader();
+    });
+
+
+    // وقتی metadata دریافت شد
+    video.addEventListener('loadedmetadata', () => {
+        updateBufferProgress();
+    });
+
+
+    // وقتی اطلاعات بیشتری از ویدیو دریافت می‌شود
+    video.addEventListener('progress', () => {
+        updateBufferProgress();
+    });
+
+
+    // وقتی ویدیو آماده پخش است
+    video.addEventListener('canplay', () => {
+        hideLoader();
+    });
+
+
+    // هنگام Buffer شدن
+    video.addEventListener('waiting', () => {
+        showLoader();
+    });
+
+
+    // وقتی Buffer دوباره آماده شد
+    video.addEventListener('playing', () => {
+        hideLoader();
+    });
+
+
+    // اگر ویدیو به انتها رسید
+    video.addEventListener('ended', () => {
+        hideLoader();
     });
 </script>
 <script>

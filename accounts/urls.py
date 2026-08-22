@@ -62,6 +62,7 @@ from .views import (
     RankBankDeleteView,
     RankFieldCreateView,
     RankFieldUpdateView,
+    RankFieldDeleteView,
     RuleListView,
     RuleCreateView,
     RuleUpdateView,
@@ -186,6 +187,7 @@ urlpatterns = [
 
     path("admins/rank-fields/add/", RankFieldCreateView.as_view(), name="rank_field_add"),
     path("admins/rank-fields/<int:pk>/edit/", RankFieldUpdateView.as_view(), name="rank_field_edit"),
+    path("admins/rank-fields/<int:pk>/delete/", RankFieldDeleteView.as_view(), name="rank_field_delete"),
 
     path("admins/rules/", RuleListView.as_view(), name="rule_list"),
     path("admins/rules/add/", RuleCreateView.as_view(), name="rule_add"),

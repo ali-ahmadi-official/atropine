@@ -405,13 +405,11 @@ class Comment(models.Model):
         ordering = ["-id"]
 
 class FAQ(models.Model):
-    question = models.CharField(
-        max_length=500,
+    question = models.TextField(
         verbose_name="سوال"
     )
 
-    answer = models.CharField(
-        max_length=500,
+    answer = models.TextField(
         verbose_name="پاسخ"
     )
 
@@ -567,8 +565,7 @@ class StaticMessage(models.Model):
         verbose_name="ارسال کننده",
     )
 
-    text = models.CharField(
-        max_length=600,
+    text = models.TextField(
         verbose_name="متن پیام"
     )
 

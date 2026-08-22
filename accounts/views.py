@@ -696,6 +696,12 @@ class RankFieldUpdateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, Upda
     template_name = "accounts/admins/rank_field_edit.html"
     success_url = reverse_lazy("rank_bank_list")
 
+class RankFieldDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
+    allowed_roles = ["super_admin"]
+    model = RankField
+    template_name = 'accounts/admins/rank_field_delete.html'
+    success_url = reverse_lazy('rank_bank_list')
+
 class RuleListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
     allowed_roles = ["super_admin"]
     model = Rule

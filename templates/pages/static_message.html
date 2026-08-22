@@ -200,14 +200,14 @@
                 <!-- پیام ادمین -->
                 <div class="static_message static_message-left">
                     <div class="bubble admin">
-                        {{ static_message.text }}
+                        {{ static_message.text|linebreaks }}
                     </div>
                 </div>
             {% else %}
                 <!-- پیام داوطلب -->
                 <div class="static_message static_message-right">
                     <div class="bubble user" dir="rtl">
-                        {{ static_message.text }}
+                        {{ static_message.text|linebreaks }}
                     </div>
                 </div>
             {% endif %}

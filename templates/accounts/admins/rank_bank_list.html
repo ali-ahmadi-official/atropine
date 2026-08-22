@@ -36,9 +36,14 @@
 
                     </span>
 
-                    <a href="{% url 'rank_field_edit' field.id %}">
-                        <span class="badge bg-info rounded-pill">ویرایش</span>
-                    </a>
+                    <div>
+                        <a href="{% url 'rank_field_edit' field.id %}">
+                            <span class="badge bg-info rounded-pill">ویرایش</span>
+                        </a>
+                        <a href="{% url 'rank_field_delete' field.id %}">
+                            <span class="badge bg-danger rounded-pill">حذف</span>
+                        </a>
+                    </div>
                 </li>
             {% empty %}
                 <li class="list-group-item text-center text-muted py-4">
