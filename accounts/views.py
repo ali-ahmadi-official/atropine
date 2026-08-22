@@ -3,6 +3,7 @@ import jdatetime
 import requests
 from collections import defaultdict
 from datetime import timedelta, datetime
+from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -274,11 +275,43 @@ def admin_dashboard(request):
     aside = aside_super_admin_context()
     return render(request, "accounts/admins/dashboard.html", aside)
 
+class OTPListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
+    allowed_roles = ["super_admin"]
+    model = OTP
+    template_name = "accounts/admins/otp_list.html"
+    context_object_name = "otps"
+
+    def get_queryset(self):
+        queryset = OTP.objects.filter(
+            is_used=False,
+            created_at__gte=timezone.now() - timedelta(minutes=10)
+        )
+
+        return queryset
+
 class UserListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
     allowed_roles = ["super_admin"]
     model = User
     template_name = "accounts/admins/user_list.html"
     context_object_name = "users"
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        search = self.request.GET.get("q")
+
+        if search:
+            queryset = queryset.filter(
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(mobile__icontains=search)
+            )
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search"] = self.request.GET.get("q", "")
+        return context
 
 class UserCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
     allowed_roles = ["super_admin"]
@@ -922,6 +955,24 @@ class WalletListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView)
     template_name = "accounts/admins/wallet_list.html"
     context_object_name = "wallets"
 
+    def get_queryset(self):
+        queryset = Wallet.objects.all()
+        search = self.request.GET.get("q")
+    
+        if search:
+            queryset = queryset.filter(
+                Q(student__user__first_name__icontains=search) |
+                Q(student__user__last_name__icontains=search) |
+                Q(student__user__mobile__icontains=search)
+            )
+    
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["search"] = self.request.GET.get("q", "")
+        return context
+
 class WalletCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
     allowed_roles = ["super_admin"]
     model = Wallet
@@ -1096,15 +1147,7 @@ class ConsultantScheduleListView(ListView):
 
             week_dict[week_start].append(schedule)
 
-        future = sorted(
-            [w for w in week_dict if w >= current_week_start]
-        )
-
-        past = sorted(
-            [w for w in week_dict if w < current_week_start]
-        )
-
-        ordered = future + past
+        ordered = sorted(week_dict.keys())
 
         day_names = [
             "شنبه",
@@ -1196,6 +1239,15 @@ class ConsultantScheduleUpdateView(UpdateView):
     template_name = "accounts/consultants/schedule_edit.html"
     success_url = reverse_lazy("schedule_list")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["shamsi_date"] = jdatetime.date.fromgregorian(
+            date=self.object.date
+        ).strftime("%Y/%m/%d")
+
+        return context
+
 class ConsultantScheduleDeleteView(DeleteView):
     model = ConsultantSchedule
     template_name = 'accounts/consultants/schedule_delete.html'
@@ -1242,20 +1294,7 @@ def show_my_student(request, id):
 
             message = request.POST.get("message", "").strip()
 
-            form_type = request.POST.get("form_type")
-
-            form_links = {
-                "1": "https://my.atropine.ir/student-form1/",
-                "2": "https://my.atropine.ir/student-form2/",
-                "3": "https://my.atropine.ir/student-form3/",
-            }
-
-            form_link = form_links.get(form_type)
-
             if message:
-
-                if form_link:
-                    message = f"{message}\n{form_link}"
 
                 sms = SMS.objects.create(
                     sender=request.user,
@@ -1393,9 +1432,22 @@ def send_student_sms(request, student_id):
 
     message = request.POST.get("message", "").strip()
 
+    form_type = request.POST.get("form_type")
+    
+    form_links = {
+        "1": "https://my.atropine.ir/student-form1/",
+        "2": "https://my.atropine.ir/student-form2/",
+        "3": "https://my.atropine.ir/student-form3/",
+    }
+    
+    form_link = form_links.get(form_type)
+
     if not message:
         messages.error(request, "متن پیام وارد نشده است.")
         return redirect("show_my_student", id=request.POST["schedule_id"])
+
+    if form_link:
+        message = f"{message}\n{form_link}"
 
     sms = SMS.objects.create(
         sender=request.user,

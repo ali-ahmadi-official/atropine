@@ -82,6 +82,11 @@ class ConsultantSchedule(models.Model):
         verbose_name="رزرو شده؟"
     )
 
+    is_held = models.BooleanField(
+        default=False,
+        verbose_name="برگزار شده؟"
+    )
+
     class Meta:
         verbose_name = "برنامه حضور مشاور"
         verbose_name_plural = "برنامه های حضور مشاور"
@@ -97,7 +102,7 @@ class OTP(models.Model):
         from django.utils import timezone
         return (
             not self.is_used and
-            timezone.now() - self.created_at < timedelta(minutes=2)
+            timezone.now() - self.created_at < timedelta(minutes=10)
         )
 
 class SMS(models.Model):

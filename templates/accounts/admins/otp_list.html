@@ -1,0 +1,45 @@
+{% extends 'bases/dashboard.html' %}
+
+{% load static %}
+
+{% block title %}
+لیست کد ورود معتبر
+{% endblock %}
+
+{% block content %}
+<div class="table-responsive" dir="rtl">
+    <div class="card-header justify-content-between">
+        <div class="card-title">
+            <h4>
+                لیست کد ورود معتبر
+            </h4>
+        </div>
+    </div>
+    <table class="table text-nowrap table-hover">
+        <thead>
+            <tr>
+                <th scope="col">موبایل</th>
+                <th scope="col">کد ورود</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for otp in otps %}
+            <tr>
+                <td>
+                    {{ otp.mobile }}
+                </td>
+                <td>
+                    {{ otp.code }}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    موردی یافت نشد.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

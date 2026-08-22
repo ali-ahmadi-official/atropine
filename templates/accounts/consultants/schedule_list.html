@@ -121,6 +121,30 @@
 
                                         </button>
 
+                                    {% elif slot.is_held %}
+
+                                        <button class="btn btn-info btn-sm w-100">
+
+                                            {{ slot.start_time|time:"H:i" }}
+                                            -
+                                            {{ slot.end_time|time:"H:i" }}
+
+                                            <br>
+
+                                            برگزار شده
+
+                                            <br>
+
+                                            <a href="{% url 'schedule_edit' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-edit-line"></i>
+                                            </a>
+
+                                            <a href="{% url 'schedule_delete' slot.id %}" class="btn btn-icon btn-sm btn-primary rounded-pill">
+                                                <i class="ri-delete-bin-line"></i>
+                                            </a>
+
+                                        </button>
+
                                     {% elif not slot.is_available %}
 
                                         <button class="btn btn-warning btn-sm w-100">

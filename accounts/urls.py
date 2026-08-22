@@ -8,6 +8,7 @@ from .views import (
     MainLogoutView,
 
     admin_dashboard,
+    OTPListView,
     UserListView,
     UserCreateView,
     UserUpdateView,
@@ -115,6 +116,8 @@ urlpatterns = [
     path("main-logout/", MainLogoutView.as_view(), name="main_logout"),
 
     path("admins/dashboard/", admin_dashboard, name="admin_dashboard"),
+
+    path("admins/otps/", OTPListView.as_view(), name="otp_list"),
 
     path("admins/users/", UserListView.as_view(), name="user_list"),
     path("admins/users/add/", UserCreateView.as_view(), name="user_add"),

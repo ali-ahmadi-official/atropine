@@ -12,7 +12,7 @@
         {% csrf_token %}
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">تاریخ</p>
-            <input data-jdp type="text" name="date" class="form-control" value="{{ form.date.value|default:'' }}" autocomplete="off" required>
+            <input data-jdp type="text" name="date" class="form-control" value="{{ shamsi_date|default:'' }}" autocomplete="off" required>
         </div>
         <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
             <p class="mt-2 text-muted">{{ form.start_time.label }}</p>
@@ -28,6 +28,11 @@
             <p class="mt-2 text-muted">{{ form.is_reserved.label }}</p>
             {% include 'includes/error.html' with errors=form.is_reserved.errors %}
             {{ form.is_reserved }}
+        </div>
+        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
+            <p class="mt-2 text-muted">{{ form.is_held.label }}</p>
+            {% include 'includes/error.html' with errors=form.is_held.errors %}
+            {{ form.is_held }}
         </div>
         <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
     </form>

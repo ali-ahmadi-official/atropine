@@ -158,7 +158,21 @@
 
                                     {% if slot %}
 
-                                    {% if slot.is_available %}
+                                    {% if slot.is_held %}
+
+                                    <button class="btn btn-info btn-sm w-100">
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
+                                        رزرو شده
+
+                                    </button>
+
+                                    {% elif slot.is_available %}
 
                                     <a href="{% url 'reserve_consultation' slot.id %}"
                                         class="btn btn-success btn-sm w-100">

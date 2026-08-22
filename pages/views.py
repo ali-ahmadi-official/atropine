@@ -289,15 +289,7 @@ def consultant_show(request, id):
 
         week_dict[week_start].append(schedule)
 
-    future_weeks = sorted(
-        [w for w in week_dict.keys() if w >= current_week_start]
-    )
-
-    past_weeks = sorted(
-        [w for w in week_dict.keys() if w < current_week_start]
-    )
-
-    ordered_weeks = future_weeks + past_weeks
+    ordered_weeks = sorted(week_dict.keys())
 
     day_names = [
         "شنبه",

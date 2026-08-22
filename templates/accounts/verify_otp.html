@@ -28,6 +28,10 @@
         <span class="new-color-black" id="timer"></span>
     </div>
 
+    <div class="w100 d-flex justify-content-center">
+        <span class="new-color-black">اگر بعد از ۲ دقیقه صبوری، کد ورود را از طریق پیامک دریافت نکردید، به پشتیبانی ما در بله یا تلگرام پیام دهید.</span>
+    </div>
+
     <button class="btn btn-danger mt-4">
         تایید و ادامه
     </button>
@@ -37,7 +41,7 @@
 <script>
 
     const created = new Date("{{ otp.created_at|date:'c' }}").getTime();
-    const expire = created + (2 * 60 * 1000);
+    const expire = created + (10 * 60 * 1000);
 
     function updateTimer() {
 

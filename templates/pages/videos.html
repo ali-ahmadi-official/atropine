@@ -417,10 +417,12 @@
 
         showLoader();
 
-        source.src = videoUrl;
-
+        video.pause();
+        video.removeAttribute("src");
         video.load();
 
+        source.src = videoUrl;
+        video.load();
         player.play();
 
         title.textContent = videoTitle;
@@ -440,6 +442,8 @@
 
     // نمایش Loader
     function showLoader() {
+        progressBar.style.width = '0%';
+        percentText.textContent = '0%';
         loader.classList.add('active');
     }
 
@@ -452,62 +456,27 @@
 
     // محاسبه مقدار Buffer شده
     function updateBufferProgress() {
-
-        if (!video.duration || !video.buffered.length) {
+        if (!video.duration || video.buffered.length === 0) {
+            progressBar.style.width = "0%";
+            percentText.textContent = "0%";
             return;
         }
 
-        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        const end = video.buffered.end(video.buffered.length - 1);
+        const percent = Math.min(100, Math.floor((end / video.duration) * 100));
 
-        let percent = (bufferedEnd / video.duration) * 100;
-
-        percent = Math.min(100, Math.round(percent));
-
-        progressBar.style.width = percent + '%';
-        percentText.textContent = percent + '%';
+        progressBar.style.width = percent + "%";
+        percentText.textContent = percent + "%";
     }
 
-
-    // وقتی ویدیو شروع به لود شدن می‌کند
-    video.addEventListener('loadstart', () => {
-        showLoader();
-    });
-
-
-    // وقتی metadata دریافت شد
-    video.addEventListener('loadedmetadata', () => {
-        updateBufferProgress();
-    });
-
-
-    // وقتی اطلاعات بیشتری از ویدیو دریافت می‌شود
-    video.addEventListener('progress', () => {
-        updateBufferProgress();
-    });
-
-
-    // وقتی ویدیو آماده پخش است
-    video.addEventListener('canplay', () => {
-        hideLoader();
-    });
-
-
-    // هنگام Buffer شدن
-    video.addEventListener('waiting', () => {
-        showLoader();
-    });
-
-
-    // وقتی Buffer دوباره آماده شد
-    video.addEventListener('playing', () => {
-        hideLoader();
-    });
-
-
-    // اگر ویدیو به انتها رسید
-    video.addEventListener('ended', () => {
-        hideLoader();
-    });
+    video.addEventListener("progress", updateBufferProgress);
+    video.addEventListener("loadedmetadata", updateBufferProgress);
+    video.addEventListener("durationchange", updateBufferProgress);
+    video.addEventListener('loadstart', () => {showLoader();});
+    video.addEventListener('canplaythrough', () => {hideLoader();});
+    video.addEventListener('waiting', () => {showLoader();});
+    video.addEventListener('playing', () => {hideLoader();});
+    video.addEventListener('ended', () => {hideLoader();});
 </script>
 <script>
     const singleBtn = document.getElementById("singleBtn");
