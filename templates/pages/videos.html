@@ -297,8 +297,9 @@
             <div class="col-12">
                 <div class="reading-list w-100">
                     {% if is_paid or media.is_free %}
-                    <div class="reading-box video-item" data-video="{{ media.content.url }}"
-                        data-title="{{ media.title }}" data-description="{{ media.description }}">
+                    <div
+                        class="reading-box video-item"
+                        data-id="{{ media.id }}">
                         <div class="reading-detail">
                             <div class="reading-image">
                                 {% if media.cover %}
@@ -405,34 +406,73 @@
 
     const container = document.getElementById('media-list');
 
-    container.addEventListener('click', function (e) {
+    container.addEventListener('click', async function (e) {
 
         const item = e.target.closest('.video-item');
 
         if (!item) return;
 
-        const videoUrl = item.dataset.video;
-        const videoTitle = item.dataset.title;
-        const videoDescription = item.dataset.description;
+        const mediaId = item.dataset.id;
+
+        if (!mediaId) return;
 
         showLoader();
 
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
+        try {
 
-        source.src = videoUrl;
-        video.load();
-        player.play();
+            const response = await fetch(
+                `/media-video-api/${mediaId}/`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }
+            );
 
-        title.textContent = videoTitle;
-        description.innerHTML = videoDescription;
+            const result = await response.json();
 
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
+            if (!response.ok || !result.success) {
+                throw new Error(
+                    result.message || 'خطا در دریافت اطلاعات فیلم'
+                );
+            }
 
+            const media = result.data;
+
+            video.pause();
+
+            video.removeAttribute("src");
+
+            source.removeAttribute("src");
+
+            video.load();
+
+            source.src = media.video;
+
+            video.load();
+
+            title.textContent = media.title;
+
+            description.innerHTML = media.description || '';
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+
+            player.play().catch(error => {
+                console.log('Autoplay blocked:', error);
+            });
+
+        } catch (error) {
+
+            console.error(error);
+
+            alert(error.message || 'خطا در دریافت فیلم');
+
+            hideLoader();
+        }
     });
 </script>
 <script>

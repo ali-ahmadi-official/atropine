@@ -559,18 +559,12 @@ class DiscountCodeForm(BaseModelForm):
         label="برای همه کاربران"
     )
 
-    apply_to_all_packages = forms.BooleanField(
-        required=False,
-        label="برای همه پلن‌ها"
-    )
-
     class Meta:
         model = DiscountCode
 
         fields = [
             "code",
             "type",
-            "value",
             "max_discount",
             "minimum_amount",
             "usage_limit",
@@ -580,8 +574,6 @@ class DiscountCodeForm(BaseModelForm):
             "active",
             "apply_to_all_users",
             "users",
-            "apply_to_all_packages",
-            "packages",
         ]
 
         widgets = {
@@ -618,10 +610,5 @@ class DiscountCodeForm(BaseModelForm):
                 obj.users.set(User.objects.all())
             else:
                 obj.users.set(self.cleaned_data["users"])
-
-            if self.cleaned_data["apply_to_all_packages"]:
-                obj.packages.set(Package.objects.all())
-            else:
-                obj.packages.set(self.cleaned_data["packages"])
 
         return obj

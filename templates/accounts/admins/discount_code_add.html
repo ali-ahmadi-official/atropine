@@ -14,17 +14,53 @@
 {% endblock %}
 
 {% block content %}
-<div class="row gy-۴" dir="rtl">
-    <form method="post" enctype="multipart/form-data">
+<div class="row" dir="rtl">
+    <form method="post">
         {% csrf_token %}
+
         {% for field in form %}
-        <div class="col-xl-۶ col-lg-۶ col-md-۶ col-sm-۱۲">
-            <p class="mt-2 text-muted">{{ field.label }}</p>
-            {% include 'includes/error.html' with errors=field.errors %}
-            {{ field }}
+            {% if field.name != "packages" %}
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% include 'includes/error.html' with errors=field.errors %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <div class="col-12 mt-4">
+            <h5>تخفیف هر پلن</h5>
+        </div>
+
+        {% for package in packages %}
+        <div class="col-md-6 mb-3 package-box" id="box{{ package.id }}">
+            <div class="card border">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <strong>{{ package.name }}</strong>
+
+                        <button type="button"
+                                class="btn btn-sm btn-outline-danger remove-package"
+                                data-id="{{ package.id }}">
+                            ✕
+                        </button>
+                    </div>
+
+                    <label>مقدار تخفیف</label>
+                    <input type="number"
+                           name="package_{{ package.id }}_value"
+                           class="form-control"
+                           placeholder="مثلاً 20 یا 50000">
+                </div>
+            </div>
         </div>
         {% endfor %}
-        <button type="submit" class="btn btn-success w-100 my-3">ثبت</button>
+
+        <div class="col-12 mt-3">
+            <button class="btn btn-success w-100">
+                ثبت کدهای تخفیف
+            </button>
+        </div>
     </form>
 </div>
 
@@ -37,5 +73,11 @@
         width: '100%',
         placeholder: 'پکیج‌ها را انتخاب کنید'
     });
+</script>
+<script>
+$('.remove-package').click(function () {
+    const id = $(this).data('id');
+    $('#box' + id).remove();
+});
 </script>
 {% endblock %}

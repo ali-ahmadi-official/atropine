@@ -3,6 +3,8 @@ import jdatetime
 import requests
 from collections import defaultdict
 from datetime import timedelta, datetime
+from itertools import groupby
+from django.db import transaction
 from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -934,7 +936,36 @@ class DiscountCodeListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, Lis
     allowed_roles = ["super_admin"]
     model = DiscountCode
     template_name = "accounts/admins/discount_code_list.html"
-    context_object_name = "discount_codes"
+    context_object_name = "groups"
+
+    def get_queryset(self):
+        discounts = DiscountCode.objects.prefetch_related("packages").order_by("code", "-id")
+
+        data = []
+        for code, items in groupby(discounts, key=lambda x: x.code):
+            items = list(items)
+            first = items[0]
+
+            package_values = []
+            for d in items:
+                for p in d.packages.all():
+                    package_values.append({
+                        "name": p.name,
+                        "value": d.value,
+                    })
+
+            data.append({
+                "id": first.id,
+                "code": first.code,
+                "type": first.get_type_display(),
+                "active": first.active,
+                "end_at": first.end_at,
+                "usage_count": sum(i.usage_count for i in items),
+                "usage_limit": first.usage_limit,
+                "packages": package_values,
+            })
+
+        return data
 
 class DiscountCodeCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, CreateView):
     allowed_roles = ["super_admin"]
@@ -942,6 +973,45 @@ class DiscountCodeCreateView(RoleRequiredMixin, SuperAdminSidebarContextMixin, C
     form_class = DiscountCodeForm
     template_name = "accounts/admins/discount_code_add.html"
     success_url = reverse_lazy("discount_code_list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["packages"] = Package.objects.all()
+        return context
+
+    @transaction.atomic
+    def form_valid(self, form):
+        packages = Package.objects.all()
+
+        for package in packages:
+            value = self.request.POST.get(f"package_{package.id}_value")
+
+            if not value:  # یعنی روی ضربدر حذف شده
+                continue
+
+            discount = DiscountCode.objects.create(
+                code=form.cleaned_data["code"],
+                type=form.cleaned_data["type"],
+                value=int(value),
+                max_discount=form.cleaned_data["max_discount"],
+                minimum_amount=form.cleaned_data["minimum_amount"],
+                usage_limit=form.cleaned_data["usage_limit"],
+                per_user_limit=form.cleaned_data["per_user_limit"],
+                start_at=form.cleaned_data["start_at"],
+                end_at=form.cleaned_data["end_at"],
+                active=form.cleaned_data["active"],
+                apply_to_all_users=form.cleaned_data["apply_to_all_users"],
+                apply_to_all_packages=False,
+            )
+
+            if form.cleaned_data["apply_to_all_users"]:
+                discount.users.set(User.objects.all())
+            else:
+                discount.users.set(form.cleaned_data["users"])
+
+            discount.packages.add(package)
+
+        return redirect(self.success_url)
 
 class DiscountCodeDeleteView(RoleRequiredMixin, SuperAdminSidebarContextMixin, DeleteView):
     allowed_roles = ["super_admin"]

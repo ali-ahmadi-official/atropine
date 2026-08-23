@@ -115,7 +115,6 @@ class DiscountCode(models.Model):
 
     code = models.CharField(
         max_length=30,
-        unique=True,
         verbose_name="کد"
     )
 

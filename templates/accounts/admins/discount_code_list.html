@@ -23,121 +23,73 @@
 
     <table class="table text-nowrap table-hover">
         <thead>
-            <tr>
-                <th>شناسه</th>
-                <th>کد</th>
-                <th>نوع</th>
-                <th>مقدار</th>
-                <th>تعداد استفاده</th>
-                <th>وضعیت</th>
-                <th>انقضا</th>
-                <th>عملیات</th>
-            </tr>
+        <tr>
+            <th>شناسه</th>
+            <th>کد</th>
+            <th>پلن‌ها و تخفیف</th>
+            <th>تعداد استفاده</th>
+            <th>وضعیت</th>
+            <th>انقضا</th>
+            <th>عملیات</th>
+        </tr>
         </thead>
 
         <tbody>
+        {% for discount in groups %}
+        <tr>
+            <td>{{ discount.id }}</td>
 
-            {% for discount in discount_codes %}
+            <td>
+                <strong>{{ discount.code }}</strong><br>
+                <small>{{ discount.type }}</small>
+            </td>
 
-            <tr>
+            <td>
+                {% for item in discount.packages %}
+                    <div class="mb-1">
+                        <span class="badge bg-primary">{{ item.name }}</span>
 
-                <td>
-                    {{ discount.id }}
-                </td>
+                        {% if discount.type == "درصدی" %}
+                            {{ item.value }}٪
+                        {% else %}
+                            {{ item.value }} تومان
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </td>
 
-                <td>
-                    {{ discount.code }}
-                </td>
+            <td>
+                {{ discount.usage_count }} /
+                {% if discount.usage_limit == 0 %}
+                    نامحدود
+                {% else %}
+                    {{ discount.usage_limit }}
+                {% endif %}
+            </td>
 
-                <td>
-                    {{ discount.get_type_display }}
-                </td>
+            <td>
+                {% if discount.active %}
+                    <span class="badge bg-success">فعال</span>
+                {% else %}
+                    <span class="badge bg-danger">غیرفعال</span>
+                {% endif %}
+            </td>
 
-                <td>
+            <td>{{ discount.end_at|date:"Y/m/d H:i" }}</td>
 
-                    {% if discount.type == "percent" %}
-
-                        {{ discount.value }} %
-
-                    {% else %}
-
-                        {{ discount.value }} تومان
-
-                    {% endif %}
-
-                </td>
-
-                <td>
-
-                    {{ discount.usage_count }}
-
-                    /
-
-                    {% if discount.usage_limit == 0 %}
-
-                        نامحدود
-
-                    {% else %}
-
-                        {{ discount.usage_limit }}
-
-                    {% endif %}
-
-                </td>
-
-                <td>
-
-                    {% if discount.active %}
-
-                        <span class="badge bg-success">
-                            فعال
-                        </span>
-
-                    {% else %}
-
-                        <span class="badge bg-danger">
-                            غیرفعال
-                        </span>
-
-                    {% endif %}
-
-                </td>
-
-                <td>
-
-                    {{ discount.end_at|date:"Y/m/d H:i" }}
-
-                </td>
-
-                <td>
-
-                    <a href="{% url 'discount_code_delete' discount.id %}"
-                       class="btn btn-icon btn-sm btn-danger-transparent rounded-pill">
-
-                        <i class="ri-delete-bin-line"></i>
-
-                    </a>
-
-                </td>
-
-            </tr>
-
-            {% empty %}
-
-            <tr>
-
-                <td colspan="8" style="text-align:center">
-
-                    موردی یافت نشد.
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
+            <td>
+                <a href="{% url 'discount_code_delete' discount.id %}"
+                class="btn btn-sm btn-danger-transparent rounded-pill">
+                    <i class="ri-delete-bin-line"></i>
+                </a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7" class="text-center">موردی یافت نشد.</td>
+        </tr>
+        {% endfor %}
         </tbody>
-
     </table>
 
 </div>

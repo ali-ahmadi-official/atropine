@@ -9,6 +9,7 @@ from .views import (
 )
 
 from accounts.views import mobile_login
+from .api import media_video_api
 
 urlpatterns = [
     path('', mobile_login),
@@ -45,4 +46,5 @@ urlpatterns = [
     path('student-form1/', student_form1, name='student_form1'),
     path('student-form2/', student_form2, name='student_form2'),
     path('student-form3/', student_form3, name='student_form3'),
+    path('media-video-api/<int:media_id>/', media_video_api, name='media_video_api'),
 ]
