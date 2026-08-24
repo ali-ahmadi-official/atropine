@@ -623,27 +623,34 @@ def data_introduction(request, id):
     }
     return render(request, 'pages/data_introduction.html', context)
 
-def videos(request):
-    medias = Media.objects.filter(media_type="video")
+def get_video_access(request):
     is_paid = False
-    
+
     if request.user.is_authenticated and request.user.role == "student":
-    
         student = getattr(request.user, "user_student", None)
-    
+
         if student:
-    
             has_database_service = ServiceToStudent.objects.filter(
                 student=student,
                 service="5",
                 is_used=False
             ).exists()
-    
+
             if has_database_service:
                 is_paid = True
-    
+
     if request.user.is_authenticated and request.user.role != "student":
         is_paid = True
+
+    return is_paid
+
+def videos(request):
+
+    medias = Media.objects.filter(
+        media_type="video"
+    )
+
+    is_paid = get_video_access(request)
 
     shamsi_years = sorted(
         medias.order_by()
@@ -663,12 +670,27 @@ def videos(request):
     selected_category = request.GET.get("category")
 
     if selected_year:
-        medias = medias.filter(year=selected_year)
+        medias = medias.filter(
+            year=selected_year
+        )
 
     if selected_category:
-        medias = medias.filter(category=selected_category)
+        medias = medias.filter(
+            category=selected_category
+        )
 
-    packages = Package.objects.filter(is_public=True)
+    # فقط اطلاعات مورد نیاز کارت‌ها
+    medias = medias.only(
+        "id",
+        "title",
+        "description",
+        "cover",
+        "is_free",
+    )
+
+    packages = Package.objects.filter(
+        is_public=True
+    )
 
     single_service_packages = [
         p for p in packages
@@ -687,91 +709,212 @@ def videos(request):
     context = {
         "database_package": database_package,
         "is_paid": is_paid,
+
         "title": "ویدئوهای معرفی اختصاصی رشته ها",
+        "media_type": "video",
+
         "shamsi_years": shamsi_years,
         "categories": categories,
+
         "selected_year": selected_year,
         "selected_category": selected_category,
+
         "medias": medias,
+
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
-    return render(request, 'pages/videos.html', context)
+
+    return render(
+        request,
+        "pages/videos.html",
+        context
+    )
+
+def video_detail(request, media_id, media_type):
+
+    is_paid = get_video_access(request)
+
+    # فیلم اصلی
+    media = get_object_or_404(
+        Media.objects.filter(
+            media_type=media_type,
+        ),
+        id=media_id
+    )
+
+    # لیست زیر فیلم
+    medias = Media.objects.filter(
+        media_type=media_type,
+    )
+
+    shamsi_years = sorted(
+        medias.order_by()
+        .values_list("year", flat=True)
+        .distinct(),
+        reverse=True,
+    )
+    
+    categories = sorted(
+        medias.order_by()
+        .exclude(category="")
+        .values_list("category", flat=True)
+        .distinct()
+    )
+    
+    selected_year = request.GET.get("year")
+    selected_category = request.GET.get("category")
+    
+    if selected_year:
+        medias = medias.filter(
+            year=selected_year
+        )
+    
+    if selected_category:
+        medias = medias.filter(
+            category=selected_category
+        )
+    
+    # فقط اطلاعات مورد نیاز کارت‌ها
+    medias = medias.only(
+        "id",
+        "title",
+        "description",
+        "cover",
+        "is_free",
+    )
+    
+    packages = Package.objects.filter(
+        is_public=True
+    )
+    
+    single_service_packages = [
+        p for p in packages
+        if len(p.service) == 1
+    ]
+    
+    multi_service_packages = [
+        p for p in packages
+        if len(p.service) != 1
+    ]
+
+    database_package = Package.objects.filter(
+        service=["5"]
+    ).first()
+
+    context = {
+        "database_package": database_package,
+
+        "is_paid": is_paid,
+
+        "title": f"{media.title}",
+        "media_type": media_type,
+
+        "media": media,
+
+        "medias": medias,
+
+        "shamsi_years": shamsi_years,
+        "categories": categories,
+
+        "selected_year": selected_year,
+        "selected_category": selected_category,
+
+        "single_service_packages": single_service_packages,
+        "multi_service_packages": multi_service_packages,
+    }
+
+    return render(
+        request,
+        "pages/video_detail.html",
+        context
+    )
 
 def else_videos(request):
-    medias = Media.objects.filter(media_type="else_video")
-    is_paid = False
+    medias = Media.objects.filter(
+        media_type="else_video"
+    )
     
-    if request.user.is_authenticated and request.user.role == "student":
+    is_paid = get_video_access(request)
     
-        student = getattr(request.user, "user_student", None)
-    
-        if student:
-    
-            has_database_service = ServiceToStudent.objects.filter(
-                student=student,
-                service="5",
-                is_used=False
-            ).exists()
-    
-            if has_database_service:
-                is_paid = True
-    
-    if request.user.is_authenticated and request.user.role != "student":
-        is_paid = True
-
     shamsi_years = sorted(
         medias.order_by()
         .values_list("year", flat=True)
         .distinct(),
         reverse=True,
     )
-
+    
     categories = sorted(
         medias.order_by()
         .exclude(category="")
         .values_list("category", flat=True)
         .distinct()
     )
-
+    
     selected_year = request.GET.get("year")
     selected_category = request.GET.get("category")
-
+    
     if selected_year:
-        medias = medias.filter(year=selected_year)
-
+        medias = medias.filter(
+            year=selected_year
+        )
+    
     if selected_category:
-        medias = medias.filter(category=selected_category)
-
-    packages = Package.objects.filter(is_public=True)
-
+        medias = medias.filter(
+            category=selected_category
+        )
+    
+    # فقط اطلاعات مورد نیاز کارت‌ها
+    medias = medias.only(
+        "id",
+        "title",
+        "description",
+        "cover",
+        "is_free",
+    )
+    
+    packages = Package.objects.filter(
+        is_public=True
+    )
+    
     single_service_packages = [
         p for p in packages
         if len(p.service) == 1
     ]
-
+    
     multi_service_packages = [
         p for p in packages
         if len(p.service) != 1
     ]
-
+    
     database_package = Package.objects.filter(
         service=["5"]
     ).first()
-
+    
     context = {
         "database_package": database_package,
         "is_paid": is_paid,
+
         "title": "سایر ویدئوها",
+        "media_type": "else_video",
+
         "shamsi_years": shamsi_years,
         "categories": categories,
+    
         "selected_year": selected_year,
         "selected_category": selected_category,
+    
         "medias": medias,
+    
         "single_service_packages": single_service_packages,
         "multi_service_packages": multi_service_packages,
     }
-    return render(request, 'pages/videos.html', context)
+    
+    return render(
+        request,
+        "pages/videos.html",
+        context
+    )
 
 def voices(request):
     medias = Media.objects.filter(media_type="voice")
@@ -1214,7 +1357,8 @@ def payment_view(request, package_id):
             code = form.cleaned_data["code"].strip().upper()
 
             discount_code = DiscountCode.objects.filter(
-                code=code
+                code=code,
+                packages=package
             ).first()
 
             if discount_code:

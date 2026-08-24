@@ -3,13 +3,12 @@ from .views import (
     main, compass, story_show, self_story_show, courses, plans, data_introduction,
     counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
     live_introduction, live_time_steps, live_archives, support,
-    videos, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
+    videos, video_detail, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
     about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations,
     student_form1, student_form2, student_form3
 )
 
 from accounts.views import mobile_login
-from .api import media_video_api
 
 urlpatterns = [
     path('', mobile_login),
@@ -28,6 +27,7 @@ urlpatterns = [
     path('live-archives/', live_archives, name='live_archives'),
     path('videos/', videos, name='videos'),
     path('else-videos/', else_videos, name='else_videos'),
+    path("videos/<int:media_id>/<slug:media_type>/", video_detail, name="video_detail"),
     path('voices/', voices, name='voices'),
     path('else-voices/', else_voices, name='else_voices'),
     path('rank-bank/', rank_bank, name='rank_bank'),
@@ -46,5 +46,4 @@ urlpatterns = [
     path('student-form1/', student_form1, name='student_form1'),
     path('student-form2/', student_form2, name='student_form2'),
     path('student-form3/', student_form3, name='student_form3'),
-    path('media-video-api/<int:media_id>/', media_video_api, name='media_video_api'),
 ]

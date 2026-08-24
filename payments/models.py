@@ -211,7 +211,8 @@ class DiscountCode(models.Model):
 
         if DiscountUsage.objects.filter(
             discount=self,
-            user=user
+            user=user,
+            package_request__package=package
         ).count() >= self.per_user_limit:
 
             return False, "قبلاً از این کد استفاده کرده‌اید."
