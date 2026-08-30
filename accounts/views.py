@@ -1492,6 +1492,14 @@ def show_my_student(request, id):
         context
     )
 
+def schedule_held_toggle(request, id):
+    schedule = get_object_or_404(ConsultantSchedule, id=id)
+
+    schedule.is_held = not schedule.is_held
+    schedule.save()
+
+    return redirect(request.META.get('HTTP_REFERER', '/'))
+
 @login_required
 def send_student_sms(request, student_id):
 

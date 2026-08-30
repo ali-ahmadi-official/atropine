@@ -99,6 +99,7 @@ from .views import (
     ConsultantScheduleDeleteView,
     MyStudentListView,
     show_my_student,
+    schedule_held_toggle,
     send_student_sms,
 
     student_dashboard,
@@ -237,6 +238,7 @@ urlpatterns = [
 
     path("consultants/my-students/", MyStudentListView.as_view(), name="my_student_list"),
     path("consultants/my-student/<int:id>/", show_my_student, name="show_my_student"),
+    path("consultants/schedule-held-toggle/<int:id>/", schedule_held_toggle, name="schedule_held_toggle"),
     path("consultants/send-student-sms/<int:student_id>/", send_student_sms, name="send_student_sms"),
 
     # path("students/dashboard/", student_dashboard, name="student_dashboard"),

@@ -126,6 +126,18 @@
         flex: 0 0 100%;
     }
 </style>
+<style>
+    .back-atro {
+        background-image: url('/static/images/transparent.png');
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: auto;
+    }
+
+    .back-atro > p > span {
+        background-color: transparent !important;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -161,7 +173,7 @@
             {{ rule.title }}
         </h4>
 
-        <div class="text-muted" style="line-height:2; text-align:justify;">
+        <div class="text-muted back-atro" style="line-height:2; text-align:justify;">
             {{ rule.description|safe }}
         </div>
 
