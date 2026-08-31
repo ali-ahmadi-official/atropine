@@ -206,7 +206,7 @@ class DiscountCode(models.Model):
         if self.packages.exists() and package not in self.packages.all():
             return False, "این کد برای این پلن معتبر نیست."
 
-        if self.users.exists() and user not in self.users.all():
+        if self.users.exists() and user not in self.users.all() and not self.apply_to_all_users:
             return False, "این کد مخصوص کاربران خاص است."
 
         if DiscountUsage.objects.filter(
