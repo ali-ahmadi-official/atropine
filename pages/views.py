@@ -137,7 +137,13 @@ def compass(request):
                 date=live.start_datetime.date()
             ).strftime("%Y/%m/%d")
 
-            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            if live.is_active:
+                live.status = "درحال برگزاری"
+            elif live.start_datetime <= now:
+                live.status ="برگزار شده"
+            else:
+                live.status = "آتی"
+        
         else:
             live.start_date_shamsi = ""
             live.status = "-"
@@ -352,6 +358,11 @@ def consultant_show(request, id):
                         (slot_datetime > now)
                     )
 
+                    slot.is_held_2 = (
+                        (not slot.schedule_consultations.all()) and
+                        (slot_datetime <= now)
+                    )
+
                     row_data.append(slot)
 
                 else:
@@ -440,7 +451,13 @@ def live_introduction(request, id):
             date=live.start_datetime.date()
         ).strftime("%Y/%m/%d")
 
-        live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+        if live.is_active:
+            live.status = "درحال برگزاری"
+        elif live.start_datetime <= now:
+            live.status ="برگزار شده"
+        else:
+            live.status = "آتی"
+
     else:
         live.start_date_shamsi = ""
         live.status = "-"
@@ -480,7 +497,13 @@ def live_time_steps(request):
                 date=live.start_datetime.date()
             ).strftime("%Y/%m/%d")
 
-            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            if live.is_active:
+                live.status = "درحال برگزاری"
+            elif live.start_datetime <= now:
+                live.status ="برگزار شده"
+            else:
+                live.status = "آتی"
+        
         else:
             live.start_date_shamsi = ""
             live.status = "-"
@@ -542,7 +565,13 @@ def live_archives(request):
                 date=live.start_datetime.date()
             ).strftime("%Y/%m/%d")
 
-            live.status = "برگزار شده" if live.start_datetime <= now else "آتی"
+            if live.is_active:
+                live.status = "درحال برگزاری"
+            elif live.start_datetime <= now:
+                live.status ="برگزار شده"
+            else:
+                live.status = "آتی"
+        
         else:
             live.start_date_shamsi = ""
             live.status = "-"

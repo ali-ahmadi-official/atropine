@@ -175,21 +175,7 @@
 
                                     {% else %}
 
-                                    {% if slot.is_reserved %}
-
-                                    <button class="btn btn-danger btn-sm w-100">
-
-                                        {{ slot.start_time|time:"H:i" }}
-                                        -
-                                        {{ slot.end_time|time:"H:i" }}
-
-                                        <br>
-
-                                        رزرو شده
-
-                                    </button>
-
-                                    {% else %}
+                                    {% if slot.is_held_2 %}
 
                                     <button class="btn btn-info btn-sm w-100">
 
@@ -200,6 +186,20 @@
                                         <br>
 
                                         برگزار شده
+
+                                    </button>
+
+                                    {% elif slot.is_reserved %}
+
+                                    <button class="btn btn-danger btn-sm w-100">
+
+                                        {{ slot.start_time|time:"H:i" }}
+                                        -
+                                        {{ slot.end_time|time:"H:i" }}
+
+                                        <br>
+
+                                        رزرو شده
 
                                     </button>
 

@@ -259,18 +259,18 @@ class LiveEventForm(BaseModelForm):
 
         if self.instance.pk:
             if self.instance.start_datetime:
-                start = jdatetime.datetime.fromgregorian(
-                    datetime=self.instance.start_datetime
-                )
+                local_start = timezone.localtime(self.instance.start_datetime)
+
+                start = jdatetime.datetime.fromgregorian(datetime=local_start)
                 self.fields["start_date"].initial = start.strftime("%Y/%m/%d")
-                self.fields["start_time"].initial = start.strftime("%H:%M")
+                self.fields["start_time"].initial = local_start.strftime("%H:%M")
 
             if self.instance.end_datetime:
-                end = jdatetime.datetime.fromgregorian(
-                    datetime=self.instance.end_datetime
-                )
+                local_end = timezone.localtime(self.instance.end_datetime)
+
+                end = jdatetime.datetime.fromgregorian(datetime=local_end)
                 self.fields["end_date"].initial = end.strftime("%Y/%m/%d")
-                self.fields["end_time"].initial = end.strftime("%H:%M")
+                self.fields["end_time"].initial = local_end.strftime("%H:%M")
 
     def clean(self):
         cleaned_data = super().clean()
