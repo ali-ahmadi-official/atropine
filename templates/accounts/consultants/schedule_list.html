@@ -76,7 +76,13 @@
 
                                     {% if slot.request %}
                                     
-                                        <button class="btn btn-danger btn-sm w-100">
+                                        <button
+                                        {% if slot.is_held %}
+                                        class="btn btn-info btn-sm w-100"
+                                        {% else %}
+                                        class="btn btn-danger btn-sm w-100"
+                                        {% endif %}
+                                        >
                                         
                                             {{ slot.start_time|time:"H:i" }}
                                             -
@@ -84,7 +90,11 @@
                                             
                                             <br>
                                             
+                                            {% if slot.is_held %}
+                                            برگزار شده {{ slot.request.service.student.user.mobile }}
+                                            {% else %}
                                             رزرو شده {{ slot.request.service.student.user.mobile }}
+                                            {% endif %}
 
                                             <br>
 

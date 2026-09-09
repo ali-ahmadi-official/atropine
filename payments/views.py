@@ -1,9 +1,11 @@
 import requests
 import jdatetime
+from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_GET
 from django.http import JsonResponse
 from django.urls import reverse
 from django.db import transaction
@@ -20,13 +22,30 @@ from .models import (
     PaymentProvider
 )
 
-def send_sms(phone, message):
+def send_reserve_sms(phone, doctor, saat, tarikh):
     try:
         requests.get(
-            "https://atropine.ir/kiani/SMS/SendPayam.aspx",
+            "http://atropine.ir/kiani/SMS/SendReserve.aspx",
             params={
                 "phone": phone,
-                "payam": "-".join(message.split()),
+                "doctor": doctor,
+                "saat": saat,
+                "tarikh": tarikh,
+                "token": "tokenQeuykplnvnws",
+            },
+            timeout=10,
+        )
+    except Exception:
+        pass
+
+def send_doctor_sms(phone, saat, tarikh):
+    try:
+        requests.get(
+            "http://atropine.ir/kiani/SMS/SendDoctor.aspx",
+            params={
+                "phone": phone,
+                "saat": saat,
+                "tarikh": tarikh,
                 "token": "tokenQeuykplnvnws",
             },
             timeout=10,
@@ -300,48 +319,12 @@ def complete_payment(payment, ref_id=None):
             package_request=order,
         )
 
-    get_nayeb = False
-    get_jahan = False
-
     # ثبت خدمات
     for service in order.package.service:
 
         ServiceToStudent.objects.get_or_create(
             student=order.student,
             service=service
-        )
-
-        if service == "1":
-            get_nayeb = True
-        elif service == "2":
-            get_jahan = True
-
-    try:
-        nayeb_consultant_open = User.objects.filter(id=73).first().user_consultant.show_schedules
-        jahan_consultant_open = User.objects.filter(id=74).first().user_consultant.show_schedules
-    except:
-        nayeb_consultant_open = False
-        jahan_consultant_open = False
-
-    if get_nayeb and not nayeb_consultant_open:
-        send_sms(
-            order.student.user.mobile,
-            'پیش ثبت نام جلسه فردی با دکتر نایب زاده انجام شد. با انتشار دفترچه توسط سنجش، از طریق پیامک برای رزرو تاریخ و ساعت، به شما اطلاع رسانی خواهد شد. در آن زمان از طریق منوی سایت "قسمت تاریخچه رزرو مشاوره" می‌توانید برای تعیین تاریخ و ساعت جلسه اقدام کنید.'
-        )
-    elif get_jahan and not jahan_consultant_open:
-        send_sms(
-            order.student.user.mobile,
-            'پیش ثبت نام جلسه فردی با دکتر جهان تیغ انجام شد. با انتشار دفترچه توسط سنجش، از طریق پیامک برای رزرو تاریخ و ساعت، به شما اطلاع رسانی خواهد شد. در آن زمان از طریق منوی سایت "قسمت تاریخچه رزرو مشاوره" می‌توانید برای تعیین تاریخ و ساعت جلسه اقدام کنید.'
-        )
-    elif get_nayeb:
-        send_sms(
-            order.student.user.mobile,
-            'پیش ثبت نام جلسه فردی شما انجام شد. با مراجعه به صفحه ی "قسمت تاریخچه رزرو مشاوره" از منوی سایت، اقدام به تعیین تاریخ و ساعت برگزاری جلسه از جدول زمانی مشاور نمایید.'
-        )
-    elif get_jahan:
-        send_sms(
-            order.student.user.mobile,
-            'پیش ثبت نام جلسه فردی شما انجام شد. با مراجعه به صفحه ی "قسمت تاریخچه رزرو مشاوره" از منوی سایت، اقدام به تعیین تاریخ و ساعت برگزاری جلسه از جدول زمانی مشاور نمایید.'
         )
 
 def auto_reserve(schedule_id, student):
@@ -360,10 +343,10 @@ def auto_reserve(schedule_id, student):
 
     if schedule.consultant.user.last_name == "نایب زاده":
         service_code = "1"
-        doctor_name = "نایب زاده"
+        doctor_name = "نایب‌زاده"
     else:
         service_code = "2"
-        doctor_name = "جهان تیغ"
+        doctor_name = "جهان‌تیغ"
 
     service = ServiceToStudent.objects.filter(
         student=student,
@@ -386,10 +369,24 @@ def auto_reserve(schedule_id, student):
             service=service,
             schedule=schedule
         )
+        
+        tarikh = jdatetime.date.fromgregorian(
+            date=schedule.date
+        ).strftime("%Y%m%d")
 
-        send_sms(
-            service.student.user.mobile,
-            f'رزرو جلسه فردی شما با دکتر {doctor_name} برای تاریخ {schedule.date_shamsi} ساعت {schedule.start_time} تا ساعت {schedule.end_time} رزرو شد. اطلاعات تکمیلی و فرم های پرسشنامه برای تکمیل توسط شما، از طریق پیامک، طی چند روز قبل از برگزاری جلسه، برای شما ارسال خواهد شد.'
+        saat = schedule.time.strftime("%H")
+
+        send_reserve_sms(
+            phone=student.mobile,
+            doctor=doctor_name,
+            saat=saat,
+            tarikh=tarikh,
+        )
+
+        send_doctor_sms(
+            phone=schedule.consultant.user.mobile,
+            saat=saat,
+            tarikh=tarikh,
         )
 
     return True
@@ -527,3 +524,133 @@ def verify_kiani_payment(request):
         payment.save()
 
     return redirect("payment_list")
+
+@require_GET
+def check_pending_payments(request):
+
+    # امنیت اجرای Cron
+    if request.GET.get("token") != settings.PAYMENT_CRON_TOKEN:
+        return JsonResponse(
+            {"error": "Unauthorized"},
+            status=403
+        )
+
+    # پرداخت‌های کمتر از 15 دقیقه را بررسی نکن
+    cutoff = timezone.now() - timedelta(minutes=15)
+
+    payments = Payment.objects.filter(
+        status=PaymentStatus.INIT,
+        created_at__lte=cutoff,
+        provider__in=[
+            PaymentProvider.ZARINPAL,
+            PaymentProvider.SNAPPPAY,
+            PaymentProvider.DIGIPAY,
+        ],
+    ).order_by("created_at")
+
+    result = {
+        "checked": 0,
+        "success": 0,
+        "pending": 0,
+        "errors": 0,
+    }
+
+    for payment in payments:
+
+        result["checked"] += 1
+
+        try:
+
+            # =========================
+            # زرین پال
+            # =========================
+            if payment.provider == PaymentProvider.ZARINPAL:
+
+                response = requests.post(
+                    "https://payment.zarinpal.com/pg/v4/payment/verify.json",
+                    json={
+                        "merchant_id": settings.ZARINPAL_MERCHANT_ID,
+                        "amount": int(payment.gateway_amount) * 10,
+                        "authority": payment.authority,
+                    },
+                    timeout=15,
+                )
+
+                data = response.json()
+
+                if data.get("data", {}).get("code") == 100:
+
+                    ref_id = data["data"].get("ref_id")
+
+                    with transaction.atomic():
+
+                        # جلوگیری از اجرای همزمان با callback
+                        locked_payment = (
+                            Payment.objects
+                            .select_for_update()
+                            .get(pk=payment.pk)
+                        )
+
+                        # اگر callback قبلاً پرداخت را تکمیل کرده
+                        if locked_payment.status != PaymentStatus.INIT:
+                            continue
+
+                        complete_payment(
+                            locked_payment,
+                            ref_id=ref_id
+                        )
+
+                    result["success"] += 1
+
+                else:
+                    result["pending"] += 1
+
+            # =========================
+            # اسنپ پی / دیجی پی
+            # =========================
+            elif payment.provider in [
+                PaymentProvider.SNAPPPAY,
+                PaymentProvider.DIGIPAY,
+            ]:
+
+                if not payment.kiani_id:
+                    continue
+
+                response = requests.get(
+                    "https://atropine.ir/kiani/Get.aspx",
+                    params={
+                        "id": payment.kiani_id
+                    },
+                    timeout=15,
+                )
+
+                data = response.json()
+
+                if data.get("ok") and data.get("isPaid"):
+
+                    with transaction.atomic():
+
+                        locked_payment = (
+                            Payment.objects
+                            .select_for_update()
+                            .get(pk=payment.pk)
+                        )
+
+                        # ممکن است همزمان callback پرداخت را تکمیل کرده باشد
+                        if locked_payment.status != PaymentStatus.INIT:
+                            continue
+
+                        complete_payment(locked_payment)
+
+                    result["success"] += 1
+
+                else:
+                    result["pending"] += 1
+
+        except Exception:
+            result["errors"] += 1
+
+    return JsonResponse({
+        "ok": True,
+        **result
+    })

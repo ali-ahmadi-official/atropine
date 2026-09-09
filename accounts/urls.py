@@ -101,6 +101,7 @@ from .views import (
     show_my_student,
     schedule_held_toggle,
     send_student_sms,
+    send_static_sms,
 
     student_dashboard,
     PaymentListView,
@@ -240,6 +241,7 @@ urlpatterns = [
     path("consultants/my-student/<int:id>/", show_my_student, name="show_my_student"),
     path("consultants/schedule-held-toggle/<int:id>/", schedule_held_toggle, name="schedule_held_toggle"),
     path("consultants/send-student-sms/<int:student_id>/", send_student_sms, name="send_student_sms"),
+    path("consultants/send-static-sms/<int:student_id>/", send_static_sms, name="send_static_sms"),
 
     # path("students/dashboard/", student_dashboard, name="student_dashboard"),
 

@@ -3,6 +3,7 @@ from .views import (
     start_payment,
     verify_payment,
     verify_kiani_payment,
+    check_pending_payments
 )
 
 urlpatterns = [
@@ -22,5 +23,11 @@ urlpatterns = [
         "verify/kiani/",
         verify_kiani_payment,
         name="verify_kiani_payment",
+    ),
+
+    path(
+        "check-pending/",
+        check_pending_payments,
+        name="check_pending_payments"
     ),
 ]

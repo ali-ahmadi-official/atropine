@@ -621,7 +621,7 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
         queryset = ( 
             Payment.objects.select_related( 
                 "order__student__user", "order__package" 
-            ).order_by("-id") 
+            ).exclude(status=PaymentStatus.INIT).order_by("-id") 
         ) 
 
         # ----------------------------- # فیلتر تاریخ از - شمسی # -----------------------------
@@ -678,7 +678,7 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
         payments = self.get_queryset()
 
         for payment in context["payments"]: 
-            if payment.paid_at: 
+            if payment.paid_at:
                 payment.jalali_date = jdatetime.datetime.fromgregorian( datetime=payment.paid_at ).strftime("%Y/%m/%d - %H:%M")
             else: 
                 payment.jalali_date = "-"
@@ -711,25 +711,29 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
         failed_count = failed_payments.count()
         canceled_count = canceled_payments.count()
 
-        # --------------------------------
-        # پرداخت‌های موفق این ماه
-        # --------------------------------
-        today = timezone.localdate()
+        provider_stats = []
 
-        month_start = today.replace(day=1)
+        for provider_value, provider_label in PaymentProvider.choices:
 
-        month_success = success_payments.filter(
-            paid_at__date__gte=month_start,
-            paid_at__date__lte=today,
-        )
+            provider_payments = success_payments.filter(
+                provider=provider_value
+            )
 
-        month_amount = (
-            month_success.aggregate(
-                total=Sum("amount")
-            )["total"] or 0
-        )
+            provider_count = provider_payments.count()
 
-        month_count = month_success.count()
+            provider_amount = (
+                provider_payments.aggregate(
+                    total=Sum("amount")
+                )["total"] or 0
+            )
+
+            provider_stats.append({
+                "value": provider_value,
+                "label": provider_label,
+                "count": provider_count,
+                "amount": provider_amount,
+            })
+
 
         # --------------------------------
         # ارسال به Template
@@ -742,10 +746,6 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
             "failed_count": failed_count,
             "canceled_count": canceled_count,
             "total_success_amount": total_success_amount,
-
-            # این ماه
-            "month_amount": month_amount,
-            "month_count": month_count,
         })
 
         # -----------------------------
@@ -771,6 +771,7 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
         # لیست درگاه‌ها
         # -----------------------------
         context["providers"] = PaymentProvider.choices
+        context["provider_stats"] = provider_stats
 
         return context
 
@@ -1711,6 +1712,73 @@ def send_student_sms(request, student_id):
     return redirect(
         "show_my_student",
         id=request.POST["schedule_id"]
+    )
+
+@login_required
+def send_static_sms(request, student_id):
+    student = get_object_or_404(
+        Student,
+        id=student_id
+    )
+
+    schedule_id = request.POST.get("schedule_id")
+
+    schedule = get_object_or_404(
+        ConsultantSchedule,
+        id=schedule_id
+    )
+
+    doctor = request.POST.get("doctor", request.user.get_full_name())
+
+    saat = schedule.start_time.strftime("%H")
+
+    message = (
+        f"جلسه شما با {doctor}\n\n"
+        f"امروز ساعت {saat}\n\n"
+        "لطفاً پیش از جلسه، فرم ها را تکمیل کنید.\n\n"
+        f"تماس با شماره {student.user.mobile}\n\n"
+        "جلسه ۳۰ تا حداکثر ۴۰ دقیقه است؛ لطفاً در محیطی آرام و رأس ساعت تماس بگیرید.\n\n"
+        "تمرکز جلسه: تحلیل شانس قبولی و شرایط فردی شما. "
+        "اطلاعات جزئی دانشگاه‌ها، خوابگاه، بلک‌لیست و… "
+        "در پایگاه داده آتروپین قابل مشاهده است."
+    )
+
+    sms = SMS.objects.create(
+        sender=request.user,
+        message=message,
+    )
+
+    sms.students.add(student)
+
+    try:
+        response = requests.get(
+            "http://atropine.ir/kiani/SMS/SendPayamSabet.aspx",
+            params={
+                "phone": student.user.mobile,
+                "doctor": doctor,
+                "saat": saat,
+                "mobile": request.user.mobile,
+                "token": "tokenQeuykplnvnws",
+            },
+            timeout=10,
+        )
+
+        if response.text.strip() == '"1"':
+            sms.result = "1"
+            messages.success(request, "پیام ثابت با موفقیت ارسال شد.")
+        else:
+            sms.result = "-1"
+            messages.error(request, "ارسال پیام ثابت ناموفق بود.")
+
+    except Exception:
+        sms.result = "-1"
+        messages.error(request, "خطا در ارتباط با سامانه پیامک.")
+
+    sms.save()
+
+    return redirect(
+        "show_my_student",
+        id=schedule_id
     )
 
 # endregion

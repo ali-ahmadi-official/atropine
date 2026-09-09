@@ -426,6 +426,41 @@ class StudentForm2(models.Model):
         help_text="در صورت وجود"
     )
 
+    deprived_overall_rank = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="رتبه کل محروم",
+        help_text="در صورت وجود"
+    )
+
+    deprived_area1_name = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="نام استان ۱",
+        help_text="در صورت وجود"
+    )
+
+    deprived_area1_rank = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="رتبه استان ۱",
+        help_text="در صورت وجود"
+    )
+
+    deprived_area2_name = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name="نام استان ۲",
+        help_text="در صورت وجود"
+    )
+
+    deprived_area2_rank = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="رتبه استان ۲",
+        help_text="در صورت وجود"
+    )
+
     class Meta:
         verbose_name = "فرم شماره 2"
         verbose_name_plural = "فرم های شماره 2"
