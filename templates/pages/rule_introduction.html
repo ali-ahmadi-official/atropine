@@ -165,7 +165,7 @@
             <img src="{{ rule.image.url }}"
                 alt="{{ rule.title }}"
                 class="img-fluid rounded"
-                style="max-height:220px; object-fit:cover;">
+                style="object-fit:cover;">
         </div>
         {% endif %}
 
@@ -173,9 +173,11 @@
             {{ rule.title }}
         </h4>
 
+        {% if rule.description %}
         <div class="text-muted back-atro" style="line-height:2; text-align:justify;">
             {{ rule.description|safe }}
         </div>
+        {% endif %}
 
     </div>
 </div>

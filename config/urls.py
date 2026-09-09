@@ -17,6 +17,7 @@ Including another URLconf
 
 import os
 import re
+import mimetypes
 from django.http import FileResponse, HttpResponse, Http404
 from django.contrib import admin
 from django.urls import path, re_path, include
@@ -31,33 +32,71 @@ def stream_media(request, path):
         raise Http404
 
     file_size = os.path.getsize(file_path)
-    range_header = request.headers.get("Range")
 
-    if range_header:
-        match = re.match(r"bytes=(\d+)-(\d*)", range_header)
-        if match:
-            start = int(match.group(1))
-            end = int(match.group(2)) if match.group(2) else file_size - 1
+    # تشخیص نوع فایل
+    content_type, _ = mimetypes.guess_type(file_path)
+    content_type = content_type or "application/octet-stream"
 
-            length = end - start + 1
+    # --------------------------------
+    # فایل‌های ویدئویی
+    # --------------------------------
+    if content_type.startswith("video/"):
 
-            f = open(file_path, "rb")
-            f.seek(start)
+        range_header = request.headers.get("Range")
 
-            response = HttpResponse(
-                f.read(length),
-                status=206,
-                content_type="video/mp4"
-            )
+        if range_header:
+            match = re.match(r"bytes=(\d*)-(\d*)", range_header)
 
-            response["Content-Range"] = f"bytes {start}-{end}/{file_size}"
-            response["Accept-Ranges"] = "bytes"
-            response["Content-Length"] = str(length)
-            return response
+            if match:
+                start = int(match.group(1) or 0)
+                end = (
+                    int(match.group(2))
+                    if match.group(2)
+                    else file_size - 1
+                )
 
-    response = FileResponse(open(file_path, "rb"), content_type="video/mp4")
+                # جلوگیری از خارج شدن Range
+                end = min(end, file_size - 1)
+
+                length = end - start + 1
+
+                f = open(file_path, "rb")
+                f.seek(start)
+
+                response = HttpResponse(
+                    f.read(length),
+                    status=206,
+                    content_type=content_type,
+                )
+
+                response["Content-Range"] = (
+                    f"bytes {start}-{end}/{file_size}"
+                )
+                response["Accept-Ranges"] = "bytes"
+                response["Content-Length"] = str(length)
+
+                return response
+
+        response = FileResponse(
+            open(file_path, "rb"),
+            content_type=content_type,
+        )
+
+        response["Content-Length"] = str(file_size)
+        response["Accept-Ranges"] = "bytes"
+
+        return response
+
+    # --------------------------------
+    # تصاویر، PDF، فایل‌های معمولی و...
+    # --------------------------------
+    response = FileResponse(
+        open(file_path, "rb"),
+        content_type=content_type,
+    )
+
     response["Content-Length"] = str(file_size)
-    response["Accept-Ranges"] = "bytes"
+
     return response
 
 urlpatterns = [

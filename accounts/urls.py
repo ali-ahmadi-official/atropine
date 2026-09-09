@@ -1,5 +1,5 @@
 from django.urls import path
-from .excel import export_form1_excel, export_form2_excel, export_form3_excel
+from .excel import export_form1_excel, export_form2_excel, export_form3_excel, export_students_excel
 from .views import (
     admin_login,
     mobile_login,
@@ -264,5 +264,10 @@ urlpatterns += [
         "consultants/my-student/<int:id>/export/form3/",
         export_form3_excel,
         name="export_form3_excel",
+    ),
+    path(
+        "students/export-excel/",
+        export_students_excel,
+        name="export_students_excel",
     ),
 ]

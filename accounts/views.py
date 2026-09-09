@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import timedelta, datetime
 from itertools import groupby
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Count, Sum
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
@@ -21,7 +21,7 @@ from pages.models import (
     PlansIntroduction, CounselingIntroduction, EstimationIntroduction, DataIntroduction,
     ChoiceIntroduction, LiveIntroduction, AboutUsIntroduction, Media, RankField, RankBank, Rule, StaticMessage
 )
-from payments.models import Package, Consultation, Payment, ServiceToStudent, DiscountCode, Wallet, PaymentStatus
+from payments.models import Package, Consultation, Payment, ServiceToStudent, DiscountCode, Wallet, PaymentStatus, PaymentProvider
 from .models import User, Student, Consultant, ConsultantSchedule, Rank, OTP, AB, Personality60, SMS
 from .forms import (
     UserForm, UserCreationForm, StoryForm, AchievementForm, LiveEventForm, PosterForm, ConsultantForm, CreateConsultantForm, ConsultantScheduleForm,
@@ -616,6 +616,163 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
     model = Payment
     template_name = "accounts/admins/payment_list.html"
     context_object_name = "payments"
+
+    def get_queryset(self): 
+        queryset = ( 
+            Payment.objects.select_related( 
+                "order__student__user", "order__package" 
+            ).order_by("-id") 
+        ) 
+
+        # ----------------------------- # فیلتر تاریخ از - شمسی # -----------------------------
+        date_from = self.request.GET.get("date_from")
+
+        if date_from:
+            try:
+                year, month, day = map(int, date_from.split("/"))
+                gregorian_date = jdatetime.date(
+                    year, month, day
+                ).togregorian()
+
+                queryset = queryset.filter(
+                    paid_at__date__gte=gregorian_date
+                )
+            except (ValueError, TypeError):
+                pass
+
+        # ----------------------------- # فیلتر تاریخ تا - شمسی # -----------------------------
+        date_to = self.request.GET.get("date_to")
+
+        if date_to:
+            try:
+                year, month, day = map(int, date_to.split("/"))
+                gregorian_date = jdatetime.date(
+                    year, month, day
+                ).togregorian()
+
+                queryset = queryset.filter(
+                    paid_at__date__lte=gregorian_date
+                )
+            except (ValueError, TypeError):
+                pass
+
+        # ----------------------------- # فیلتر درگاه پرداخت # ----------------------------- 
+        provider = self.request.GET.get("provider")
+        if provider:
+            queryset = queryset.filter( provider=provider ) 
+
+        # ----------------------------- # فیلتر کاربر # -----------------------------
+        user = self.request.GET.get("user") 
+        if user: 
+            queryset = queryset.filter( 
+                Q(order__student__user__mobile__icontains=user) | 
+                Q(order__student__user__first_name__icontains=user) | 
+                Q(order__student__user__last_name__icontains=user)
+            ) 
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        payments = self.get_queryset()
+
+        for payment in context["payments"]: 
+            if payment.paid_at: 
+                payment.jalali_date = jdatetime.datetime.fromgregorian( datetime=payment.paid_at ).strftime("%Y/%m/%d - %H:%M")
+            else: 
+                payment.jalali_date = "-"
+
+        # --------------------------------
+        # آمار کلی
+        # --------------------------------
+
+        success_payments = payments.filter(
+            status=PaymentStatus.SUCCESS
+        )
+
+        failed_payments = payments.filter(
+            status=PaymentStatus.FAILED
+        )
+
+        canceled_payments = payments.filter(
+            status=PaymentStatus.CANCELED
+        )
+
+        total_success_amount = (
+            success_payments.aggregate(
+                total=Sum("amount")
+            )["total"] or 0
+        )
+
+        total_payments_count = payments.count()
+
+        success_count = success_payments.count()
+        failed_count = failed_payments.count()
+        canceled_count = canceled_payments.count()
+
+        # --------------------------------
+        # پرداخت‌های موفق این ماه
+        # --------------------------------
+        today = timezone.localdate()
+
+        month_start = today.replace(day=1)
+
+        month_success = success_payments.filter(
+            paid_at__date__gte=month_start,
+            paid_at__date__lte=today,
+        )
+
+        month_amount = (
+            month_success.aggregate(
+                total=Sum("amount")
+            )["total"] or 0
+        )
+
+        month_count = month_success.count()
+
+        # --------------------------------
+        # ارسال به Template
+        # --------------------------------
+
+        context.update({
+            # آمار کلی
+            "total_payments_count": total_payments_count,
+            "success_count": success_count,
+            "failed_count": failed_count,
+            "canceled_count": canceled_count,
+            "total_success_amount": total_success_amount,
+
+            # این ماه
+            "month_amount": month_amount,
+            "month_count": month_count,
+        })
+
+        # -----------------------------
+        # مقادیر فعلی فیلترها
+        # -----------------------------
+        context["date_from"] = self.request.GET.get(
+            "date_from", ""
+        )
+
+        context["date_to"] = self.request.GET.get(
+            "date_to", ""
+        )
+
+        context["selected_provider"] = self.request.GET.get(
+            "provider", ""
+        )
+
+        context["selected_user"] = self.request.GET.get(
+            "user", ""
+        )
+
+        # -----------------------------
+        # لیست درگاه‌ها
+        # -----------------------------
+        context["providers"] = PaymentProvider.choices
+
+        return context
 
 class MediaListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListView):
     allowed_roles = ["super_admin"]
