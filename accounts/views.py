@@ -1258,7 +1258,7 @@ class ConsultantScheduleListView(ListView):
 
             rows = []
 
-            for r in range(15):
+            for r in range(30):
 
                 row = []
 

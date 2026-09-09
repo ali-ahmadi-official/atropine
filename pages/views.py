@@ -339,7 +339,7 @@ def consultant_show(request, id):
         # ساخت ماتریس جدول
         rows = []
 
-        for row in range(15):
+        for row in range(30):
 
             row_data = []
 
@@ -358,10 +358,7 @@ def consultant_show(request, id):
                         (slot_datetime > now)
                     )
 
-                    slot.is_held_2 = (
-                        (not slot.schedule_consultations.all()) and
-                        (slot_datetime <= now)
-                    )
+                    slot.is_held_2 = (slot_datetime <= now)
 
                     row_data.append(slot)
 

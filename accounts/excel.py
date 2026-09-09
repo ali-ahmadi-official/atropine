@@ -1,10 +1,10 @@
-from openpyxl import Workbook
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from payments.models import Consultation
 from .models import ConsultantSchedule
 
 def export_form(request, id, form_attr, filename):
+    from openpyxl import Workbook
 
     schedule = get_object_or_404(
         ConsultantSchedule,
