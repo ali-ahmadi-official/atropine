@@ -1,49 +1,56 @@
-from django.urls import path
-from .views import (
-    main, compass, story_show, self_story_show, courses, plans, data_introduction,
-    counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
-    live_introduction, live_time_steps, live_archives, support,
-    videos, video_detail, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
-    about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations,
-    student_form1, student_form2, student_form3
-)
+# from django.urls import path
+# from .views import (
+#     main, compass, story_show, self_story_show, courses, plans, data_introduction,
+#     counseling_introduction, consultant_show, estimation_introduction, choice_introduction,
+#     live_introduction, live_time_steps, live_archives, support,
+#     videos, video_detail, else_videos, voices, else_voices, rank_bank, rule, rule_introduction, static_message,
+#     about_us, trust, achievement_list, atropine_team, payment_view, payment_list, reserve_consultation, student_consultations,
+#     student_form1, student_form2, student_form3
+# )
 
-from accounts.views import mobile_login
+# from accounts.views import mobile_login
+
+# urlpatterns = [
+#     path('', mobile_login),
+#     path('compass/', compass, name='main'),
+#     path('story-show/<int:id>/<slug:show>/', story_show, name='story_show'),
+#     path('self-story-show/<int:id>/', self_story_show, name='self_story_show'),
+#     path('courses/', courses, name='courses'),
+#     path('plans/', plans, name='plans'),
+#     path('plans/counseling-introduction/', counseling_introduction, name='counseling_introduction'),
+#     path('plans/consultant-show/<int:id>/', consultant_show, name='consultant_show'),
+#     path('plans/estimation-introduction/', estimation_introduction, name='estimation_introduction'),
+#     path('choice-introduction/', choice_introduction, name='choice_introduction'),
+#     path('data-introduction/<int:id>/', data_introduction, name='data_introduction'),
+#     path('live-introduction/<int:id>/', live_introduction, name='live_introduction'),
+#     path('live-time-steps/', live_time_steps, name='live_time_steps'),
+#     path('live-archives/', live_archives, name='live_archives'),
+#     path('videos/', videos, name='videos'),
+#     path('else-videos/', else_videos, name='else_videos'),
+#     path("videos/<int:media_id>/<slug:media_type>/", video_detail, name="video_detail"),
+#     path('voices/', voices, name='voices'),
+#     path('else-voices/', else_voices, name='else_voices'),
+#     path('rank-bank/', rank_bank, name='rank_bank'),
+#     path('rule/', rule, name='rule'),
+#     path('rule-introduction/<int:id>/', rule_introduction, name='rule_introduction'),
+#     path('static-message/', static_message, name='static_message'),
+#     path('about-us/', about_us, name='about_us'),
+#     path('support/', support, name='support'),
+#     path('trust/', trust, name='trust'),
+#     path('achievement-list/', achievement_list, name='achievement_list_show'),
+#     path('atropine-team/', atropine_team, name='atropine_team'),
+#     path('payment-view/<int:package_id>/', payment_view, name='payment_view'),
+#     path('payment-list/', payment_list, name='payment_list'),
+#     path('reserve-consultation/<int:schedule_id>/', reserve_consultation, name='reserve_consultation'),
+#     path('student-consultations/', student_consultations, name='student_consultations'),
+#     path('student-form1/', student_form1, name='student_form1'),
+#     path('student-form2/', student_form2, name='student_form2'),
+#     path('student-form3/', student_form3, name='student_form3'),
+# ]
+
+from .views import ended
+from django.urls import path
 
 urlpatterns = [
-    path('', mobile_login),
-    path('compass/', compass, name='main'),
-    path('story-show/<int:id>/<slug:show>/', story_show, name='story_show'),
-    path('self-story-show/<int:id>/', self_story_show, name='self_story_show'),
-    path('courses/', courses, name='courses'),
-    path('plans/', plans, name='plans'),
-    path('plans/counseling-introduction/', counseling_introduction, name='counseling_introduction'),
-    path('plans/consultant-show/<int:id>/', consultant_show, name='consultant_show'),
-    path('plans/estimation-introduction/', estimation_introduction, name='estimation_introduction'),
-    path('choice-introduction/', choice_introduction, name='choice_introduction'),
-    path('data-introduction/<int:id>/', data_introduction, name='data_introduction'),
-    path('live-introduction/<int:id>/', live_introduction, name='live_introduction'),
-    path('live-time-steps/', live_time_steps, name='live_time_steps'),
-    path('live-archives/', live_archives, name='live_archives'),
-    path('videos/', videos, name='videos'),
-    path('else-videos/', else_videos, name='else_videos'),
-    path("videos/<int:media_id>/<slug:media_type>/", video_detail, name="video_detail"),
-    path('voices/', voices, name='voices'),
-    path('else-voices/', else_voices, name='else_voices'),
-    path('rank-bank/', rank_bank, name='rank_bank'),
-    path('rule/', rule, name='rule'),
-    path('rule-introduction/<int:id>/', rule_introduction, name='rule_introduction'),
-    path('static-message/', static_message, name='static_message'),
-    path('about-us/', about_us, name='about_us'),
-    path('support/', support, name='support'),
-    path('trust/', trust, name='trust'),
-    path('achievement-list/', achievement_list, name='achievement_list_show'),
-    path('atropine-team/', atropine_team, name='atropine_team'),
-    path('payment-view/<int:package_id>/', payment_view, name='payment_view'),
-    path('payment-list/', payment_list, name='payment_list'),
-    path('reserve-consultation/<int:schedule_id>/', reserve_consultation, name='reserve_consultation'),
-    path('student-consultations/', student_consultations, name='student_consultations'),
-    path('student-form1/', student_form1, name='student_form1'),
-    path('student-form2/', student_form2, name='student_form2'),
-    path('student-form3/', student_form3, name='student_form3'),
+    path("", ended, name="ended")
 ]

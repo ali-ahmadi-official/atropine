@@ -183,7 +183,7 @@ def start_payment(request, package_id, provider):
             json=data
         ).json()
         
-        if response.get("data", {}).get("code") == 100:
+        if response.get("data", {}).get("code") in [100, 101]:
         
             authority = response["data"]["authority"]
         
@@ -191,7 +191,7 @@ def start_payment(request, package_id, provider):
                 order=order,
                 amount=order.final_price,
                 wallet_amount=wallet_amount,
-            gateway_amount=gateway_amount,
+                gateway_amount=gateway_amount,
                 authority=authority,
                 provider=PaymentProvider.ZARINPAL,
             )
@@ -445,7 +445,7 @@ def verify_payment(request):
             "body": response.text,
         }, status=500)
 
-    if response.get("data", {}).get("code") == 100:
+    if response.get("data", {}).get("code") in [100, 101]:
 
         complete_payment(
             payment,
@@ -578,7 +578,7 @@ def check_pending_payments(request):
 
                 data = response.json()
 
-                if data.get("data", {}).get("code") == 100:
+                if data.get("data", {}).get("code") in [100, 101]:
 
                     ref_id = data["data"].get("ref_id")
 

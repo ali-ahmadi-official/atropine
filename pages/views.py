@@ -1939,3 +1939,6 @@ def student_form3(request):
         "pages/student_form.html",
         context
     )
+
+def ended(request):
+    return render(request, "ended.html")
