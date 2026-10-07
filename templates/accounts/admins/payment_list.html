@@ -249,6 +249,11 @@
 
     </div>
 
+
+    <!-- ============================= -->
+    <!-- فرم فیلترها -->
+    <!-- ============================= -->
+
     <form method="get" class="row g-3 mb-4">
 
         <!-- از تاریخ -->
@@ -278,7 +283,7 @@
         </div>
 
         <!-- درگاه -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label">درگاه پرداخت</label>
 
             <select name="provider" class="form-select">
@@ -295,8 +300,26 @@
             </select>
         </div>
 
+        <!-- پکیج -->
+        <div class="col-md-2">
+            <label class="form-label">پلن</label>
+
+            <select name="package" class="form-select">
+                <option value="">همه پلن‌ها</option>
+
+                {% for package in all_packages %}
+                    <option
+                        value="{{ package.id }}"
+                        {% if selected_package == package.id|stringformat:"s" %}selected{% endif %}
+                    >
+                        {{ package.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
         <!-- کاربر -->
-        <div class="col-md-3">
+        <div class="col-md-2">
             <label class="form-label">کاربر</label>
 
             <input
@@ -322,10 +345,193 @@
 
 
     <!-- ============================= -->
-    <!-- جدول پرداخت ها -->
+    <!-- آمار مالی بر اساس پلن (برای محاسبه حقوق پرسنل) -->
     <!-- ============================= -->
 
     <div class="card custom-card">
+
+        <div class="card-header justify-content-between">
+
+            <div class="card-title">
+                آمار مالی به تفکیک پلن
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            {% if package_stats %}
+
+            <!-- نمودار مقایسه‌ای درآمد پلن‌ها -->
+            <div class="mb-4" style="max-height: 350px;">
+                <canvas id="chartjs-package-revenue"></canvas>
+            </div>
+
+            <div class="accordion" id="packageStatsAccordion">
+
+                {% for stat in package_stats %}
+
+                <div class="accordion-item">
+
+                    <h2 class="accordion-header">
+                        <button
+                            class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#packageCollapse{{ forloop.counter }}"
+                        >
+                            <div class="d-flex justify-content-between w-100 me-3">
+
+                                <span class="fw-semibold">
+                                    {{ stat.package.name }}
+                                </span>
+
+                                <span class="text-muted">
+                                    {{ stat.total_count }} تراکنش
+                                    &nbsp;|&nbsp;
+                                    {{ stat.total_amount|floatformat:0 }} تومان
+                                </span>
+
+                            </div>
+                        </button>
+                    </h2>
+
+                    <div
+                        id="packageCollapse{{ forloop.counter }}"
+                        class="accordion-collapse collapse"
+                        data-bs-parent="#packageStatsAccordion"
+                    >
+                        <div class="accordion-body">
+
+                            <div class="row">
+
+                                <!-- تفکیک بر اساس درگاه -->
+                                <div class="col-lg-6 mb-3">
+
+                                    <h6 class="fw-semibold mb-2">
+                                        تفکیک بر اساس درگاه پرداخت
+                                    </h6>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>درگاه</th>
+                                                    <th>تعداد</th>
+                                                    <th>مبلغ (تومان)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for p in stat.provider_stats %}
+                                                <tr>
+                                                    <td>{{ p.label }}</td>
+                                                    <td>{{ p.count }}</td>
+                                                    <td>{{ p.amount|floatformat:0 }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <span class="badge bg-info-transparent">
+                                        درآمد کل:
+                                        {{ stat.total_amount|floatformat:0 }} تومان
+                                    </span>
+
+                                </div>
+
+                                <!-- تفکیک بر اساس تخفیف -->
+                                <div class="col-lg-6 mb-3">
+
+                                    <h6 class="fw-semibold mb-2">
+                                        تفکیک بر اساس کد تخفیف
+                                    </h6>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>وضعیت</th>
+                                                    <th>تعداد</th>
+                                                    <th>مبلغ (تومان)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>بدون کد تخفیف</td>
+                                                    <td>{{ stat.without_discount.count }}</td>
+                                                    <td>{{ stat.without_discount.amount|floatformat:0 }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>با کد تخفیف</td>
+                                                    <td>{{ stat.with_discount.count }}</td>
+                                                    <td>{{ stat.with_discount.amount|floatformat:0 }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                                <!-- تفکیک بر اساس مبلغ نهایی (برای فروش در دوران آف و ...) -->
+                                <div class="col-12">
+
+                                    <h6 class="fw-semibold mb-2">
+                                        تفکیک بر اساس مبلغ نهایی فروش
+                                    </h6>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-sm text-nowrap">
+                                            <thead>
+                                                <tr>
+                                                    <th>مبلغ نهایی (تومان)</th>
+                                                    <th>تعداد</th>
+                                                    <th>جمع مبلغ پرداختی</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for group in stat.price_groups %}
+                                                <tr>
+                                                    <td>{{ group.order__final_price|floatformat:0 }}</td>
+                                                    <td>{{ group.count }}</td>
+                                                    <td>{{ group.amount|floatformat:0 }}</td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <p class="text-muted text-center mb-0">
+                داده‌ای برای نمایش وجود ندارد.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- جدول پرداخت ها -->
+    <!-- ============================= -->
+
+    <div class="card custom-card mt-4">
 
         <div class="card-header justify-content-between">
 
@@ -360,7 +566,9 @@
 
                             <th>خدمات دریافتی</th>
 
-                            <th>مبلغ</th>
+                            <th>مبلغ نهایی</th>
+
+                            <th>سهم پرداخت از کیف پول</th>
 
                             <th>کد پیگیری</th>
 
@@ -414,6 +622,12 @@
 
                             <td>
                                 {{ payment.amount|floatformat:0 }}
+                                تومان
+                            </td>
+
+
+                            <td>
+                                {{ payment.wallet_amount|floatformat:0 }}
                                 تومان
                             </td>
 
@@ -488,20 +702,36 @@
 
 </div>
 
+{{ package_chart_labels|json_script:"package-chart-labels" }}
+{{ package_chart_amounts|json_script:"package-chart-amounts" }}
+
 <script>
     jalaliDatepicker.startWatch();
 
-    const inputFile = document.getElementById('profile_image_input');
-    const previewImage = document.getElementById('profile_image_preview');
-    inputFile.addEventListener('change', function () {
-        const file = this.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                previewImage.src = e.target.result;
+    const packageChartEl = document.getElementById('chartjs-package-revenue');
+
+    if (packageChartEl) {
+        const packageLabels = JSON.parse(document.getElementById('package-chart-labels').textContent);
+        const packageAmounts = JSON.parse(document.getElementById('package-chart-amounts').textContent);
+
+        new Chart(packageChartEl, {
+            type: 'bar',
+            data: {
+                labels: packageLabels,
+                datasets: [{
+                    label: 'درآمد (تومان)',
+                    data: packageAmounts,
+                    backgroundColor: '#7b6ffb'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                }
             }
-            reader.readAsDataURL(file);
-        }
-    }); 
+        });
+    }
 </script>
 {% endblock %}

@@ -617,12 +617,12 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
     template_name = "accounts/admins/payment_list.html"
     context_object_name = "payments"
 
-    def get_queryset(self): 
-        queryset = ( 
-            Payment.objects.select_related( 
-                "order__student__user", "order__package" 
-            ).exclude(status=PaymentStatus.INIT).order_by("-id") 
-        ) 
+    def get_queryset(self):
+        queryset = (
+            Payment.objects.select_related(
+                "order__student__user", "order__package"
+            ).exclude(status=PaymentStatus.INIT).order_by("-id")
+        )
 
         # ----------------------------- # فیلتر تاریخ از - شمسی # -----------------------------
         date_from = self.request.GET.get("date_from")
@@ -656,19 +656,24 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
             except (ValueError, TypeError):
                 pass
 
-        # ----------------------------- # فیلتر درگاه پرداخت # ----------------------------- 
+        # ----------------------------- # فیلتر درگاه پرداخت # -----------------------------
         provider = self.request.GET.get("provider")
         if provider:
-            queryset = queryset.filter( provider=provider ) 
+            queryset = queryset.filter(provider=provider)
 
         # ----------------------------- # فیلتر کاربر # -----------------------------
-        user = self.request.GET.get("user") 
-        if user: 
-            queryset = queryset.filter( 
-                Q(order__student__user__mobile__icontains=user) | 
-                Q(order__student__user__first_name__icontains=user) | 
+        user = self.request.GET.get("user")
+        if user:
+            queryset = queryset.filter(
+                Q(order__student__user__mobile__icontains=user) |
+                Q(order__student__user__first_name__icontains=user) |
                 Q(order__student__user__last_name__icontains=user)
-            ) 
+            )
+
+        # ----------------------------- # فیلتر پکیج (برای بخش آمار خدمات) # -----------------------------
+        package_id = self.request.GET.get("package")
+        if package_id:
+            queryset = queryset.filter(order__package_id=package_id)
 
         return queryset
 
@@ -677,10 +682,10 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
 
         payments = self.get_queryset()
 
-        for payment in context["payments"]: 
+        for payment in context["payments"]:
             if payment.paid_at:
-                payment.jalali_date = jdatetime.datetime.fromgregorian( datetime=payment.paid_at ).strftime("%Y/%m/%d - %H:%M")
-            else: 
+                payment.jalali_date = jdatetime.datetime.fromgregorian(datetime=payment.paid_at).strftime("%Y/%m/%d - %H:%M")
+            else:
                 payment.jalali_date = "-"
 
         # --------------------------------
@@ -689,7 +694,7 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
 
         success_payments = payments.filter(
             status=PaymentStatus.SUCCESS
-        )
+        ).select_related("order__package")
 
         failed_payments = payments.filter(
             status=PaymentStatus.FAILED
@@ -734,6 +739,93 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
                 "amount": provider_amount,
             })
 
+        # --------------------------------
+        # آمار تفکیک‌شده بر اساس پکیج
+        # (برای محاسبه‌ی حقوق درصدی پرسنل)
+        # --------------------------------
+
+        package_stats = []
+
+        packages_with_sales = Package.objects.filter(
+            packege_requests__order__in=success_payments
+        ).distinct()
+
+        for package in packages_with_sales:
+
+            package_payments = success_payments.filter(
+                order__package=package
+            )
+
+            package_total_count = package_payments.count()
+
+            package_total_amount = (
+                package_payments.aggregate(
+                    total=Sum("amount")
+                )["total"] or 0
+            )
+
+            # ----------------------------- # تفکیک این پکیج بر اساس درگاه پرداخت # -----------------------------
+            # (شامل تفکیک کیف‌پول از درآمد واقعی، و مورد دیجی‌پی)
+
+            package_provider_stats = []
+
+            for provider_value, provider_label in PaymentProvider.choices:
+
+                pp = package_payments.filter(provider=provider_value)
+
+                pp_count = pp.count()
+
+                pp_amount = (
+                    pp.aggregate(total=Sum("amount"))["total"] or 0
+                )
+
+                package_provider_stats.append({
+                    "value": provider_value,
+                    "label": provider_label,
+                    "count": pp_count,
+                    "amount": pp_amount,
+                })
+
+            # ----------------------------- # تفکیک این پکیج بر اساس تخفیف/قیمت نهایی # -----------------------------
+
+            without_discount = package_payments.filter(
+                order__discount_code__isnull=True
+            )
+
+            with_discount = package_payments.filter(
+                order__discount_code__isnull=False
+            )
+
+            without_discount_stats = {
+                "count": without_discount.count(),
+                "amount": without_discount.aggregate(total=Sum("amount"))["total"] or 0,
+            }
+
+            with_discount_stats = {
+                "count": with_discount.count(),
+                "amount": with_discount.aggregate(total=Sum("amount"))["total"] or 0,
+            }
+
+            # گروه‌بندی بر اساس مبلغ نهایی متمایز (برای شناسایی فروش در دوران آف و ...)
+            price_groups = (
+                package_payments
+                .values("order__final_price")
+                .annotate(
+                    count=Count("id"),
+                    amount=Sum("amount"),
+                )
+                .order_by("-order__final_price")
+            )
+
+            package_stats.append({
+                "package": package,
+                "total_count": package_total_count,
+                "total_amount": package_total_amount,
+                "provider_stats": package_provider_stats,
+                "without_discount": without_discount_stats,
+                "with_discount": with_discount_stats,
+                "price_groups": list(price_groups),
+            })
 
         # --------------------------------
         # ارسال به Template
@@ -767,11 +859,23 @@ class AllPaymentListView(RoleRequiredMixin, SuperAdminSidebarContextMixin, ListV
             "user", ""
         )
 
+        context["selected_package"] = self.request.GET.get(
+            "package", ""
+        )
+
         # -----------------------------
-        # لیست درگاه‌ها
+        # لیست درگاه‌ها و پکیج‌ها
         # -----------------------------
         context["providers"] = PaymentProvider.choices
         context["provider_stats"] = provider_stats
+        context["all_packages"] = Package.objects.all()
+        context["package_stats"] = package_stats
+
+        # -----------------------------
+        # نمودار ها
+        # -----------------------------
+        context["package_chart_labels"] = [s["package"].name for s in package_stats]
+        context["package_chart_amounts"] = [float(s["total_amount"]) for s in package_stats]
 
         return context
 
