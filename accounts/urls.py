@@ -102,12 +102,6 @@ from .views import (
     schedule_held_toggle,
     send_student_sms,
     send_static_sms,
-
-    student_dashboard,
-    PaymentListView,
-    rank_form,
-    personality60,
-    validity,
 )
 
 urlpatterns = [
@@ -242,13 +236,6 @@ urlpatterns = [
     path("consultants/schedule-held-toggle/<int:id>/", schedule_held_toggle, name="schedule_held_toggle"),
     path("consultants/send-student-sms/<int:student_id>/", send_student_sms, name="send_student_sms"),
     path("consultants/send-static-sms/<int:student_id>/", send_static_sms, name="send_static_sms"),
-
-    # path("students/dashboard/", student_dashboard, name="student_dashboard"),
-
-    # path("students/payments/", PaymentListView.as_view(), name="payment_list"),
-    # path("students/personality/", personality60, name="personality60"),
-    # path("students/rank/", rank_form, name="rank_form"),
-    # path("students/validity/", validity, name="validity"),
 ]
 
 urlpatterns += [
